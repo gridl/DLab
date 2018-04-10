@@ -29,18 +29,20 @@ import java.util.Date;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserComputationalResource {
-    @JsonProperty("computational_name")
-    private String computationalName;
-    @JsonProperty("computational_id")
-    private String computationalId;
-    @JsonProperty("image")
-    private String imageName;
-    @JsonProperty("template_name")
-    private String templateName;
-    @JsonProperty
-    private String status;
-    @JsonProperty("up_time")
-    private Date uptime;
+	@JsonProperty("computational_name")
+	private String computationalName;
+	@JsonProperty("computational_id")
+	private String computationalId;
+	@JsonProperty("image")
+	private String imageName;
+	@JsonProperty("template_name")
+	private String templateName;
+	@JsonProperty
+	private String status;
+	@JsonProperty("up_time")
+	private Date uptime;
 	@JsonProperty("reupload_key_required")
 	private boolean reuploadKeyRequired = false;
+	@JsonProperty
+	private String diskSize;
 }

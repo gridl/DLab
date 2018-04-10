@@ -33,6 +33,9 @@ abstract public class ComputationalBase<T extends ComputationalBase<?>> extends 
     @JsonProperty("notebook_template_name")
     private String notebookTemplateName;
 
+    @JsonProperty("disk_size")
+    private String diskSize;
+
     public String getComputationalName() {
         return computationalName;
     }
@@ -72,12 +75,26 @@ abstract public class ComputationalBase<T extends ComputationalBase<?>> extends 
         return self;
     }
 
-    @Override
+	public String getDiskSize() {
+		return diskSize;
+	}
+
+	public void setDiskSize(String diskSize) {
+		this.diskSize = diskSize;
+	}
+
+	public T withDiskSize(String diskSize){
+    	setDiskSize(diskSize);
+    	return self;
+	}
+
+	@Override
     public ToStringHelper toStringHelper(Object self) {
         return super.toStringHelper(self)
                 .add("computationalName", computationalName)
                 .add("notebookInstanceName", notebookInstanceName)
-                .add("notebookTemplateName", notebookTemplateName);
+                .add("notebookTemplateName", notebookTemplateName)
+				.add("diskSize", diskSize);
     }
 
     @Override

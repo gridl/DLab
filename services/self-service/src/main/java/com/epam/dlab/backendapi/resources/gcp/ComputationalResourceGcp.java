@@ -64,7 +64,8 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 					.slaveShape(formDTO.getSlaveInstanceType())
 					.slaveNumber(formDTO.getSlaveInstanceCount())
 					.masterNumber(formDTO.getMasterInstanceCount())
-					.version(formDTO.getVersion()).build();
+					.version(formDTO.getVersion())
+					.diskSize(formDTO.getDiskSize()).build();
 			boolean resourceAdded = computationalService.createDataEngineService(userInfo, formDTO,
 					gcpComputationalResource);
 			return resourceAdded ? Response.ok().build() : Response.status(Response.Status.FOUND).build();

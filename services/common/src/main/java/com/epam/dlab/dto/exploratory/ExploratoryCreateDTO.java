@@ -25,56 +25,73 @@ import java.util.List;
 
 public class ExploratoryCreateDTO<T extends ExploratoryCreateDTO<?>> extends ExploratoryBaseDTO<T> {
 
-    @SuppressWarnings("unchecked")
-    private final T self = (T) this;
+	@SuppressWarnings("unchecked")
+	private final T self = (T) this;
 
-    @JsonProperty("git_creds")
-    private List<ExploratoryGitCreds> gitCreds;
-    @JsonProperty("notebook_image_name")
-    private String imageName;
+	@JsonProperty("git_creds")
+	private List<ExploratoryGitCreds> gitCreds;
+	@JsonProperty("notebook_image_name")
+	private String imageName;
+	@JsonProperty("disk_size")
+	private String diskSize;
 
-    /**
-     * Return the list of GIT credentials.
-     */
-    public List<ExploratoryGitCreds> getGitCreds() {
-        return gitCreds;
-    }
+	/**
+	 * Return the list of GIT credentials.
+	 */
+	public List<ExploratoryGitCreds> getGitCreds() {
+		return gitCreds;
+	}
 
-    /**
-     * Set the list of GIT credentials.
-     */
-    public void setGitCreds(List<ExploratoryGitCreds> gitCreds) {
-        this.gitCreds = gitCreds;
-    }
+	/**
+	 * Set the list of GIT credentials.
+	 */
+	public void setGitCreds(List<ExploratoryGitCreds> gitCreds) {
+		this.gitCreds = gitCreds;
+	}
 
-    /**
-     * Set the list of GIT credentials and return this object.
-     */
-    public T withGitCreds(List<ExploratoryGitCreds> gitCreds) {
-        setGitCreds(gitCreds);
-        return self;
-    }
+	/**
+	 * Set the list of GIT credentials and return this object.
+	 */
+	public T withGitCreds(List<ExploratoryGitCreds> gitCreds) {
+		setGitCreds(gitCreds);
+		return self;
+	}
 
-    /**
-     * Set the image name and return this object.
-     */
-    public T withImageName(String imageName) {
-        setImageName(imageName);
-        return self;
-    }
+	/**
+	 * Set the image name and return this object.
+	 */
+	public T withImageName(String imageName) {
+		setImageName(imageName);
+		return self;
+	}
 
-    public String getImageName() {
-        return imageName;
-    }
+	public String getImageName() {
+		return imageName;
+	}
 
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
-    }
+	public void setImageName(String imageName) {
+		this.imageName = imageName;
+	}
 
-    @Override
-    public ToStringHelper toStringHelper(Object self) {
-        return super.toStringHelper(self)
-                .add("gitCreds", gitCreds)
-                .add("imageName", imageName);
-    }
+
+	public String getDiskSize() {
+		return diskSize;
+	}
+
+	public void setDiskSize(String diskSize) {
+		this.diskSize = diskSize;
+	}
+
+	public T withDiskSize(String diskSize) {
+		setDiskSize(diskSize);
+		return self;
+	}
+
+	@Override
+	public ToStringHelper toStringHelper(Object self) {
+		return super.toStringHelper(self)
+				.add("gitCreds", gitCreds)
+				.add("imageName", imageName)
+				.add("diskSize", diskSize);
+	}
 }

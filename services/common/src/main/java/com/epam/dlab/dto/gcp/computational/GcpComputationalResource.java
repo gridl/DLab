@@ -50,8 +50,8 @@ public class GcpComputationalResource extends UserComputationalResource {
 	public GcpComputationalResource(String computationalName, String computationalId, String imageName,
 									String templateName, String status, Date uptime, boolean reuploadKeyRequired,
 									String instanceId, String masterShape, String slaveShape, String slaveNumber,
-									String masterNumber, String version) {
-		super(computationalName, computationalId, imageName, templateName, status, uptime, reuploadKeyRequired);
+									String masterNumber, String version, String diskSize) {
+		super(computationalName, computationalId, imageName, templateName, status, uptime, reuploadKeyRequired, diskSize);
         this.instanceId = instanceId;
         this.masterShape = masterShape;
         this.slaveShape = slaveShape;

@@ -232,7 +232,8 @@ public class ExploratoryServiceImpl implements ExploratoryService {
 				.withImageName(exploratory.getDockerImage())
 				.withImageVersion(exploratory.getVersion())
 				.withTemplateName(exploratory.getTemplateName())
-				.withShape(exploratory.getShape());
+				.withShape(exploratory.getShape())
+				.withDiskSize(exploratory.getDiskSize());
 		if (StringUtils.isNotBlank(exploratory.getImageName())) {
 			final List<LibInstallDTO> libInstallDtoList = getImageRelatedLibraries(userInfo, exploratory
 					.getImageName());

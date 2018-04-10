@@ -34,6 +34,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ExploratoryServiceImplTest {
 
+	private static final String DISK_SIZE = "size";
 	private final String USER = "test";
 	private final String TOKEN = "token";
 	private final String EXPLORATORY_NAME = "expName";
@@ -226,6 +227,7 @@ public class ExploratoryServiceImplTest {
 		when(gitCredsDAO.findGitCreds(anyString())).thenReturn(egcDto);
 
 		ExploratoryCreateDTO ecDto = new ExploratoryCreateDTO();
+		ecDto.setDiskSize(DISK_SIZE);
 		Exploratory exploratory = Exploratory.builder().name(EXPLORATORY_NAME).build();
 		when(requestBuilder.newExploratoryCreate(any(Exploratory.class), any(UserInfo.class),
 				any(ExploratoryGitCredsDTO.class))).thenReturn(ecDto);
@@ -242,8 +244,9 @@ public class ExploratoryServiceImplTest {
 		userInstance.withResources(Collections.emptyList());
 		verify(exploratoryDAO).insertExploratory(userInstance);
 		verify(gitCredsDAO).findGitCreds(USER);
-		verify(requestBuilder).newExploratoryCreate(exploratory, userInfo, egcDto);
-		verify(provisioningService).post(exploratoryCreate, TOKEN, ecDto, String.class);
+		verify(requestBuilder).newExploratoryCreate(refEq(exploratory), refEq(userInfo), refEq(egcDto));
+		verify(provisioningService).post(eq(exploratoryCreate), eq(TOKEN), refEq(new ExploratoryCreateDTO()
+				.withDiskSize(DISK_SIZE), "self"), eq(String.class));
 		verify(requestId).put(USER, UUID);
 		verifyNoMoreInteractions(exploratoryDAO, gitCredsDAO, requestBuilder, provisioningService, requestId);
 	}

@@ -28,20 +28,24 @@ import org.hibernate.validator.constraints.NotBlank;
 @Data
 public class ComputationalCreateFormDTO {
 
-    @NotBlank
-    @JsonProperty("template_name")
-    private String templateName;
+	@NotBlank
+	@JsonProperty("template_name")
+	private String templateName;
 
-    @NotBlank
-    @JsonProperty
-    private String image;
+	@NotBlank
+	@JsonProperty
+	private String image;
 
-    @NotBlank
-    @JsonProperty
-    private String name;
+	@NotBlank
+	@JsonProperty
+	private String name;
 
-    @NotBlank
-    @JsonProperty("notebook_name")
-    private String notebookName;
+	@NotBlank
+	@JsonProperty("notebook_name")
+	private String notebookName;
+
+	@NotBlank
+	@JsonProperty("disk_size")
+	private String diskSize;
 
 }

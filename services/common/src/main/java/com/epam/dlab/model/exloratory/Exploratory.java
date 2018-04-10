@@ -12,4 +12,5 @@ public class Exploratory {
     private final String templateName;
     private final String shape;
     private final String imageName;
+    private final String diskSize;
 }

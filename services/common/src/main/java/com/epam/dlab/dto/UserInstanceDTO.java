@@ -63,6 +63,8 @@ public class UserInstanceDTO {
 	private String privateIp;
 	@JsonProperty("scheduler_data")
 	private SchedulerJobDTO schedulerData;
+	@JsonProperty("disk_size")
+	private String diskSize;
 	@JsonProperty("reupload_key_required")
 	private boolean reuploadKeyRequired = false;
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -185,6 +187,14 @@ public class UserInstanceDTO {
 	 */
 	public UserInstanceDTO withLibs(List<LibInstallDTO> libs) {
 		setLibs(libs);
+		return this;
+	}
+
+	/**
+	 * Sets library list.
+	 */
+	public UserInstanceDTO withDiskSize(String diskSize) {
+		setDiskSize(diskSize);
 		return this;
 	}
 }

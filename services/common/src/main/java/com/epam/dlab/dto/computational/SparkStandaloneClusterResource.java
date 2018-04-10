@@ -29,21 +29,23 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class SparkStandaloneClusterResource extends UserComputationalResource {
-    @NotBlank
-    @JsonProperty("dataengine_instance_count")
-    private String dataEngineInstanceCount;
+	@NotBlank
+	@JsonProperty("dataengine_instance_count")
+	private String dataEngineInstanceCount;
 
-    @NotBlank
-    @JsonProperty("dataengine_instance_shape")
-    private String dataEngineInstanceShape;
+	@NotBlank
+	@JsonProperty("dataengine_instance_shape")
+	private String dataEngineInstanceShape;
 
-    @Builder
-    public SparkStandaloneClusterResource(String computationalName, String computationalId, String imageName,
+	@Builder
+	public SparkStandaloneClusterResource(String computationalName, String computationalId, String imageName,
 										  String templateName, String status, Date uptime, boolean reuploadKeyRequired,
-										  String dataEngineInstanceCount, String dataEngineInstanceShape) {
+										  String dataEngineInstanceCount,
+										  String dataEngineInstanceShape, String diskSize) {
 
-		super(computationalName, computationalId, imageName, templateName, status, uptime, reuploadKeyRequired);
-        this.dataEngineInstanceCount = dataEngineInstanceCount;
-        this.dataEngineInstanceShape = dataEngineInstanceShape;
-    }
+		super(computationalName, computationalId, imageName, templateName, status, uptime, reuploadKeyRequired,
+				diskSize);
+		this.dataEngineInstanceCount = dataEngineInstanceCount;
+		this.dataEngineInstanceShape = dataEngineInstanceShape;
+	}
 }

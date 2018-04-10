@@ -35,12 +35,14 @@ import java.util.List;
 
 import static com.epam.dlab.UserInstanceStatus.CREATING;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComputationalServiceImplTest {
 
+	private static final String DISK_SIZE = "test";
 	private final String USER = "test";
 	private final String TOKEN = "token";
 	private final String EXPLORATORY_NAME = "expName";
@@ -362,7 +364,7 @@ public class ComputationalServiceImplTest {
 
 		boolean creationResult =
 				computationalService.createDataEngineService(userInfo, formList.get(1), ucResource);
-		assertEquals(true, creationResult);
+		assertTrue(creationResult);
 
 		verify(computationalDAO).addComputational(eq(USER), eq(EXPLORATORY_NAME), refEq(ucResource));
 
@@ -460,9 +462,11 @@ public class ComputationalServiceImplTest {
 		sparkClusterForm.setName(COMP_NAME);
 		sparkClusterForm.setDataEngineInstanceCount(String.valueOf(2));
 		sparkClusterForm.setImage("dataengine");
+		sparkClusterForm.setDiskSize(DISK_SIZE);
 		ComputationalCreateFormDTO desClusterForm = new ComputationalCreateFormDTO();
 		desClusterForm.setNotebookName(EXPLORATORY_NAME);
 		desClusterForm.setName(COMP_NAME);
+		desClusterForm.setDiskSize(DISK_SIZE);
 		return Arrays.asList(sparkClusterForm, desClusterForm);
 	}
 
@@ -479,6 +483,7 @@ public class ComputationalServiceImplTest {
 				.computationalName(COMP_NAME)
 				.imageName("dataengine")
 				.status(CREATING.toString())
+				.diskSize(DISK_SIZE)
 				.dataEngineInstanceCount(String.valueOf(2))
 				.build();
 	}
@@ -486,6 +491,7 @@ public class ComputationalServiceImplTest {
 	private UserComputationalResource getUserComputationalResource() {
 		UserComputationalResource ucResource = new UserComputationalResource();
 		ucResource.setImageName("des");
+		ucResource.setDiskSize(DISK_SIZE);
 		return ucResource;
 	}
 

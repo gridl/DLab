@@ -341,7 +341,7 @@ public class RequestBuilder {
 	public <T extends LibListComputationalDTO> T newLibComputationalList(UserInfo userInfo,
 																		 UserInstanceDTO userInstance,
 																		 UserComputationalResource
-																					 computationalResource) {
+																				 computationalResource) {
 
 		checkInappropriateCloudProviderOrElseThrowException();
 		return (T) newResourceSysBaseDTO(userInfo, LibListComputationalDTO.class)
@@ -367,7 +367,8 @@ public class RequestBuilder {
 						.withSlaveInstanceType(awsForm.getSlaveInstanceType())
 						.withSlaveInstanceSpot(awsForm.getSlaveInstanceSpot())
 						.withSlaveInstanceSpotPctPrice(awsForm.getSlaveInstanceSpotPctPrice())
-						.withVersion(awsForm.getVersion());
+						.withVersion(awsForm.getVersion())
+						.withDiskSize(awsForm.getDiskSize());
 				break;
 			case GCP:
 				GcpComputationalCreateForm gcpForm = (GcpComputationalCreateForm) form;
@@ -377,7 +378,8 @@ public class RequestBuilder {
 						.withPreemptibleCount(gcpForm.getPreemptibleCount())
 						.withMasterInstanceType(gcpForm.getMasterInstanceType())
 						.withSlaveInstanceType(gcpForm.getSlaveInstanceType())
-						.withVersion(gcpForm.getVersion());
+						.withVersion(gcpForm.getVersion())
+						.withDiskSize(gcpForm.getDiskSize());
 				break;
 
 			default:
@@ -404,13 +406,15 @@ public class RequestBuilder {
 				computationalCreate = (T) newResourceSysBaseDTO(userInfo, SparkComputationalCreateAws.class)
 						.withDataEngineInstanceCount(form.getDataEngineInstanceCount())
 						.withDataEngineMasterShape(form.getDataEngineInstanceShape())
-						.withDataEngineSlaveShape(form.getDataEngineInstanceShape());
+						.withDataEngineSlaveShape(form.getDataEngineInstanceShape())
+						.withDiskSize(form.getDiskSize());
 				break;
 			case AZURE:
 				computationalCreate = (T) newResourceSysBaseDTO(userInfo, SparkComputationalCreateAzure.class)
 						.withDataEngineInstanceCount(form.getDataEngineInstanceCount())
 						.withDataEngineMasterSize(form.getDataEngineInstanceShape())
-						.withDataEngineSlaveSize(form.getDataEngineInstanceShape());
+						.withDataEngineSlaveSize(form.getDataEngineInstanceShape())
+						.withDiskSize(form.getDiskSize());
 
 				if (settingsDAO.isAzureDataLakeEnabled()) {
 					((SparkComputationalCreateAzure) computationalCreate)
@@ -426,7 +430,8 @@ public class RequestBuilder {
 				computationalCreate = (T) newResourceSysBaseDTO(userInfo, SparkComputationalCreateGcp.class)
 						.withDataEngineInstanceCount(form.getDataEngineInstanceCount())
 						.withDataEngineMasterSize(form.getDataEngineInstanceShape())
-						.withDataEngineSlaveSize(form.getDataEngineInstanceShape());
+						.withDataEngineSlaveSize(form.getDataEngineInstanceShape())
+						.withDiskSize(form.getDiskSize());
 				break;
 			default:
 				throw new IllegalArgumentException(UNSUPPORTED_CLOUD_PROVIDER_MESSAGE + cloudProvider());
