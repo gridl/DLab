@@ -19,6 +19,7 @@
 # ******************************************************************************
 
 from fabric.api import *
+from fabric.contrib.files import exists
 from dlab.fab import *
 import argparse
 import json
@@ -35,8 +36,9 @@ args = parser.parse_args()
 
 def copy_key(config):
     key = open('{}/{}.pub'.format(config['user_keydir'], config['user_keyname'])).read()
-    sudo('mv /home/{}/.ssh/authorized_keys /tmp/'.format(args.user))
-    sudo('head -n1 /tmp/authorized_keys >> /home/{1}/.ssh/authorized_keys'.format(key, args.user))
+    if exists('/home/{}/.ssh/authorized_keys'.format(args.user)):
+        sudo('mv /home/{}/.ssh/authorized_keys /tmp/'.format(args.user))
+        sudo('head -n1 /tmp/authorized_keys >> /home/{}/.ssh/authorized_keys'.format(args.user))
     sudo('echo "{0}" >> /home/{1}/.ssh/authorized_keys'.format(key, args.user))
     sudo('rm /tmp/authorized_keys')
 

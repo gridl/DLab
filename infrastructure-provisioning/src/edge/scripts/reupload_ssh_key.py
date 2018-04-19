@@ -32,9 +32,9 @@ import multiprocessing
 def reupload_key(instance_name):
     reupload_config['notebook_ip'] = get_instance_private_ip_address(reupload_config['tag_name'],
                                                                      instance_name)
-    params = '--user {} --hostname {} --keyfile "{}" --additional_config {}'.format(
+    params = "--user {} --hostname {} --keyfile '{}' --additional_config '{}'".format(
         reupload_config['os_user'], reupload_config['notebook_ip'], reupload_config['keyfile'],
-        reupload_config['additional_config'])
+        json.dumps(reupload_config['additional_config']))
     try:
         # Run script to manage git credentials
         local("~/scripts/{}.py {}".format('install_user_key', params))
@@ -52,6 +52,7 @@ if __name__ == "__main__":
                         filename=local_log_filepath)
 
     try:
+        create_aws_config_files()
         logging.info('[REUPLOADING USER SSH KEY]')
         print('[REUPLOADING USER SSH KEY]')
         reupload_config = dict()
@@ -69,7 +70,7 @@ if __name__ == "__main__":
         try:
             jobs = []
             for instance_name in reupload_config['instances_list']:
-                p = multiprocessing.Process(target=reupload_key, args=(instance_name))
+                p = multiprocessing.Process(target=reupload_key, args=instance_name)
                 jobs.append(p)
                 p.start()
             for job in jobs:
