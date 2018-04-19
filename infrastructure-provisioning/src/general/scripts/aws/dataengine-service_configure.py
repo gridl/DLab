@@ -40,6 +40,26 @@ def configure_dataengine_service(instance, emr_conf):
     emr_conf['instance_ip'] = instance.get('PrivateIpAddress')
     # configuring proxy on Data Engine service
     try:
+        logging.info('[CREATING DLAB SSH USER ON MASTER NODE]')
+        print('[CREATING DLAB SSH USER ON MASTER NODE]')
+        params = "--hostname {} --keyfile {} --initial_user {} --os_user {} --sudo_group {}".format\
+            (emr_conf['instance_ip'], emr_conf['key_path'], initial_user,
+             emr_conf['os_user'], sudo_group)
+
+        try:
+            local("~/scripts/{}.py {}".format('create_ssh_user', params))
+        except:
+            traceback.print_exc()
+            raise Exception
+    except Exception as err:
+        remove_ec2(data_engine['tag_name'], data_engine['master_node_name'])
+        for i in range(data_engine['instance_count'] - 1):
+            slave_name = data_engine['slave_node_name'] + '{}'.format(i + 1)
+            remove_ec2(data_engine['tag_name'], slave_name)
+        append_result("Failed to create ssh user on master.", str(err))
+        sys.exit(1)
+
+    try:
         logging.info('[CONFIGURE PROXY ON DATAENGINE SERVICE]')
         print('[CONFIGURE PROXY ON DATAENGINE SERVICE]')
         additional_config = {"proxy_host": emr_conf['edge_instance_hostname'], "proxy_port": "3128"}
@@ -129,7 +149,9 @@ if __name__ == "__main__":
     emr_conf['edge_instance_name'] = emr_conf['service_base_name'] + "-" + os.environ['edge_user_name'] + '-edge'
     emr_conf['edge_instance_hostname'] = get_instance_private_ip_address(emr_conf['tag_name'],
                                                                          emr_conf['edge_instance_name'])
-    emr_conf['os_user'] = 'ec2-user'
+    emr_conf['os_user'] = os.environ['conf_os_uesr']
+    initial_user = 'ec2-user'
+    sudo_group = 'wheel'
 
     try:
         jobs = []
