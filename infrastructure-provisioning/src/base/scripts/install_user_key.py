@@ -35,10 +35,10 @@ args = parser.parse_args()
 
 def copy_key(config):
     key = open('{}/{}.pub'.format(config['user_keydir'], config['user_keyname'])).read()
-    if sudo('echo "{0}" >> /home/{1}/.ssh/authorized_keys'.format(key, args.user)).succeeded:
-        return True
-    else:
-        return False
+    sudo('mv /home/{}/.ssh/authorized_keys /tmp/'.format(args.user))
+    sudo('head -n1 /tmp/authorized_keys >> /home/{1}/.ssh/authorized_keys'.format(key, args.user))
+    sudo('echo "{0}" >> /home/{1}/.ssh/authorized_keys'.format(key, args.user))
+    sudo('rm /tmp/authorized_keys')
 
 
 ##############
@@ -61,9 +61,9 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print("Installing users key...")
-    if copy_key(deeper_config):
-        sys.exit(0)
-    else:
+    try:
+        copy_key(deeper_config)
+    except:
         print("Users keyfile {0}.pub could not be found at {1}/{0}".format(args.keyfile, deeper_config['user_keydir']))
         sys.exit(1)
 

@@ -637,6 +637,34 @@ def get_hadoop_version(cluster_name):
     return hadoop_version[0:3]
 
 
+def get_instances_names(filter_string):
+    try:
+        list_instances_names = list()
+        client = boto3.client('ec2')
+        response = client.describe_instances(Filters=[
+            {
+                'Name': 'tag:Name',
+                'Values': [filter_string]
+            },
+            {
+                'Name': 'instance-state-name',
+                'Values': ['running']
+            }
+        ]).get('Reservations')
+        for instances in response:
+            for instance in instances.get('Instances'):
+                for tags in instance.get('Tags'):
+                    if tags['Key'] == 'Name':
+                        list_instances_names.append(tags['Value'])
+        return list_instances_names
+    except Exception as err:
+        logging.error("Error with getting instances IP addresses: " + str(err) + "\n Traceback: " +
+                      traceback.print_exc(file=sys.stdout))
+        append_result(str({"error": "Error with getting instances IP addresses",
+                           "error_message": str(err) + "\n Traceback: " + traceback.print_exc(file=sys.stdout)}))
+        traceback.print_exc(file=sys.stdout)
+
+
 def get_instance_status(tag_name, instance_name):
     client = boto3.client('ec2')
     response = client.describe_instances(Filters=[
