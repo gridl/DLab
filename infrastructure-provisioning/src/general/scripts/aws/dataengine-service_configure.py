@@ -149,7 +149,7 @@ if __name__ == "__main__":
     emr_conf['edge_instance_name'] = emr_conf['service_base_name'] + "-" + os.environ['edge_user_name'] + '-edge'
     emr_conf['edge_instance_hostname'] = get_instance_private_ip_address(emr_conf['tag_name'],
                                                                          emr_conf['edge_instance_name'])
-    emr_conf['os_user'] = os.environ['conf_os_uesr']
+    emr_conf['os_user'] = os.environ['conf_os_user']
     initial_user = 'ec2-user'
     sudo_group = 'wheel'
 
