@@ -18,10 +18,9 @@ limitations under the License.
 
 package com.epam.dlab.configuration;
 
-import javax.validation.Valid;
-
-import org.slf4j.LoggerFactory;
-
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import com.epam.dlab.exception.InitializationException;
 import com.epam.dlab.logging.AppenderBase;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,10 +30,10 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
+import javax.validation.Valid;
+import java.util.Map;
 
 /** Configuration and factory for logging.
  */
@@ -73,10 +72,9 @@ public class LoggingConfigurationFactory {
 	/** Set the list of logging levels for appenders. */
 	@JsonProperty
 	public void setLoggers(ImmutableMap<String, JsonNode> loggers) throws InitializationException {
-		ImmutableMap.Builder<String, Level> levels = new ImmutableMap.Builder<String, Level>();
-		for(String key : loggers.keySet()) {
-			JsonNode node = loggers.get(key);
-			levels.put(key, toLevel(node.asText()));
+		ImmutableMap.Builder<String, Level> levels = new ImmutableMap.Builder<>();
+		for (Map.Entry<String, JsonNode> entry : loggers.entrySet()) {
+			levels.put(entry.getKey(), toLevel(entry.getValue().asText()));
 		}
 		this.loggers = levels.build();
 	}
@@ -106,7 +104,7 @@ public class LoggingConfigurationFactory {
 	}
 
 	/** Configure logging appenders.
-	 * @throws InitializationException
+	 * @throws InitializationException is being throwed
 	 */
 	public void configure() throws InitializationException {
 		if (appenders == null) {
@@ -121,9 +119,9 @@ public class LoggingConfigurationFactory {
 
 		Logger logger = context.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 		logger.setLevel(level);
-		for (String name : loggers.keySet()) {
-			logger = context.getLogger(name);
-            logger.setLevel(loggers.get(name));
+		for (Map.Entry<String, Level> entry : loggers.entrySet()) {
+			logger = context.getLogger(entry.getKey());
+			logger.setLevel(entry.getValue());
 		}
 	}
 	

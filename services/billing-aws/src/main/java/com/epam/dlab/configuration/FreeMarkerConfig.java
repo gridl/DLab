@@ -18,23 +18,15 @@ limitations under the License.
 
 package com.epam.dlab.configuration;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.google.common.base.Throwables;
-
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 /** Provides Apache FreeMarker the template engine for the billing configuration.
  */
@@ -42,7 +34,7 @@ public class FreeMarkerConfig {
 	
 	/** Create and return the input stream for the configuration file.
 	 * @param filename the name of configuration file.
-	 * @throws IOException
+	 * @throws IOException is being throwed
 	 */
 	public InputStream getInputStream(final String filename) throws IOException {
 		try {
@@ -64,10 +56,9 @@ public class FreeMarkerConfig {
 	 */
 	private Map<String, Object> getDataModel() {
 		Map<String, Object> dataModel = new HashMap<>();
-		
-		Iterator<Object> sysProps = System.getProperties().keySet().iterator();
-		while (sysProps.hasNext()) {
-			String key = (String) sysProps.next();
+
+		for (Object o : System.getProperties().keySet()) {
+			String key = (String) o;
 			dataModel.put(key, System.getProperties().getProperty(key));
 		}
 		dataModel.putAll(System.getenv());

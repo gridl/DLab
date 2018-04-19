@@ -230,7 +230,7 @@ public class BillingToolConfiguration {
 	 * @param name       the name of module.
 	 * @param isOptional optional module or not.
 	 * @return module
-	 * @throws InitializationException
+	 * @throws InitializationException is being throwed
 	 */
 	private <T extends ModuleBase> T getModule(ImmutableList<T> modules, String name, boolean isOptional) throws
 			InitializationException {
@@ -245,10 +245,10 @@ public class BillingToolConfiguration {
 	 * Build and return the parser.
 	 *
 	 * @return the parser.
-	 * @throws InitializationException
+	 * @throws InitializationException is being throwed
 	 */
 	public ParserBase build() throws InitializationException {
-		ParserBase parser = getModule(this.parser, "parser", false);
+		ParserBase parserBase = getModule(this.parser, "parser", false);
 		AdapterBase in = getModule(adapterIn, "adapterIn", false);
 		AdapterBase out = getModule(adapterOut, "adapterOut", false);
 		FilterBase f = getModule(filter, "filter", true);
@@ -261,7 +261,7 @@ public class BillingToolConfiguration {
 		}
 		moduleData = new ModuleData(connection);
 
-		parser.setModuleData(moduleData);
+		parserBase.setModuleData(moduleData);
 		in.setModuleData(moduleData);
 		out.setModuleData(moduleData);
 		if (f != null) {
@@ -276,7 +276,7 @@ public class BillingToolConfiguration {
 			}
 		}
 
-		return parser.build(in, out, f);
+		return parserBase.build(in, out, f);
 	}
 
 

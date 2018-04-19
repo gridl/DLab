@@ -18,16 +18,16 @@ limitations under the License.
 
 package com.epam.dlab.configuration;
 
-import java.util.Map;
-import java.util.Set;
+import com.epam.dlab.core.BillingUtils;
+import com.epam.dlab.exception.InitializationException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
-import com.epam.dlab.core.BillingUtils;
-import com.epam.dlab.exception.InitializationException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /** Json properties validator.
  * @param <T> Class for validation.
@@ -46,22 +46,19 @@ public class ConfigurationValidator<T> {
 		if (template == null) {
 			template = "Property \"%s\" %s";
 		}
-		return String.format(
-					messages.get(violation.getMessageTemplate()),
-					violation.getPropertyPath(),
-					violation.getInvalidValue());
+		return String.format(template, violation.getPropertyPath(), violation.getInvalidValue());
 	}
 
 	/** Validate properties in instance and throw exception if it have not valid property.
 	 * @param clazz instance for validation.
-	 * @throws InitializationException
+	 * @throws InitializationException is being throwed
 	 */
 	public void validate(T clazz) throws InitializationException {
 		ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
 		Validator validator = validatorFactory.getValidator();
-		Set<ConstraintViolation<T>> violations = validator.validate(clazz);
-		for (ConstraintViolation<T> violation : violations) {
-			throw new InitializationException(getMessage(violation));
+		List<ConstraintViolation<T>> violations = new ArrayList<>(validator.validate(clazz));
+		if (!violations.isEmpty()) {
+			throw new InitializationException(getMessage(violations.get(0)));
 		}
 	}
 }

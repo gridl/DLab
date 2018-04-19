@@ -18,17 +18,16 @@ limitations under the License.
 
 package com.epam.dlab.configuration;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.epam.dlab.exception.ParseException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Map;
+import java.util.TreeMap;
 
 /** Provides schedule time configuration.
  */
@@ -56,19 +55,19 @@ public class SchedulerConfiguration {
 	private Map<String, Calendar> realSchedule = new TreeMap<>();
 	
 	/** Build the schedule from user' schedule.
-	 * @throws ParseException
+	 * @throws ParseException is being throwed
 	 */
 	public void build() throws ParseException {
 		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
 		String [] unitArray = schedule.split(",");
 		realSchedule.clear();
-		for (int i = 0; i < unitArray.length; i++) {
+		for (String anUnitArray : unitArray) {
 			Calendar date = Calendar.getInstance();
-			int [] time = getTime(unitArray[i]);
+			int[] time = getTime(anUnitArray);
 			try {
 				df.parse(StringUtils.join(time, ':'));
 			} catch (Exception e) {
-				throw new ParseException("Cannot parse date " + unitArray[i] + ". " + e.getLocalizedMessage(), e);
+				throw new ParseException("Cannot parse date " + anUnitArray + ". " + e.getLocalizedMessage(), e);
 			}
 			date.clear();
 			date.set(1, 1, 1, time[0], time[1], time[2]);
@@ -79,13 +78,13 @@ public class SchedulerConfiguration {
 	
 	/** Return the schedule.
 	 */
-	public Map<String, Calendar> getRealSchedule() {
+	private Map<String, Calendar> getRealSchedule() {
 		return realSchedule;
 	}
 	
 	/** Return time array of user' schedule time.
 	 * @param time the time in format HH:mm:ss.
-	 * @throws ParseException
+	 * @throws ParseException is being throwed
 	 */
 	private int [] getTime(String time) throws ParseException {
 		String [] timeString = time.trim().split(":");
@@ -110,8 +109,8 @@ public class SchedulerConfiguration {
 	 */
 	public void adjustStartTime() {
 		Calendar now = Calendar.getInstance();
-		for(String key : realSchedule.keySet()) {
-			Calendar time = realSchedule.get(key);
+		for (Map.Entry<String, Calendar> entry : realSchedule.entrySet()) {
+			Calendar time = entry.getValue();
 			if (time.before(now)) {
 				time.set(now.get(Calendar.YEAR),
 						now.get(Calendar.MONTH),
@@ -122,23 +121,23 @@ public class SchedulerConfiguration {
 				if (time.before(now)) {
 					time.add(Calendar.DAY_OF_MONTH, 1);
 				}
-				realSchedule.put(key, time);
+				realSchedule.put(entry.getKey(), time);
 			}
 		}
 	}
 	
 	/** Return the key of the next start time from the schedule.
 	 */
-	public String getNextTimeKey() {
+	private String getNextTimeKey() {
 		long now = System.currentTimeMillis();
 		String nextKey = null;
 		long nextTime = -1;
-		
-		for(String key : realSchedule.keySet()) {
-			long time = realSchedule.get(key).getTimeInMillis();
+
+		for (Map.Entry<String, Calendar> entry : realSchedule.entrySet()) {
+			long time = entry.getValue().getTimeInMillis();
 			if ((time >= now && time < nextTime) || nextTime == -1) {
 				nextTime = time;
-				nextKey = key;
+				nextKey = entry.getKey();
 			}
 		}
 		return nextKey;
@@ -153,16 +152,16 @@ public class SchedulerConfiguration {
 	
 	/** Return the key of the near start time from the schedule to the current time.
 	 */
-	public String getNearTimeKey() {
+	private String getNearTimeKey() {
 		long now = System.currentTimeMillis();
 		String nextKey = null;
 		long nextTime = -1;
-		
-		for(String key : realSchedule.keySet()) {
-			long time = Math.abs(now - realSchedule.get(key).getTimeInMillis());
+
+		for (Map.Entry<String, Calendar> entry : realSchedule.entrySet()) {
+			long time = Math.abs(now - entry.getValue().getTimeInMillis());
 			if (time < nextTime || nextTime == -1) {
 				nextTime = time;
-				nextKey = key;
+				nextKey = entry.getKey();
 			}
 		}
 		return nextKey;
@@ -181,11 +180,11 @@ public class SchedulerConfiguration {
 	public ToStringHelper toStringHelper(Object self) {
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 		ToStringHelper helper = MoreObjects.toStringHelper(self);
-		for(String key : realSchedule.keySet()) {
-			Calendar time = realSchedule.get(key);
-			helper.add(key, df.format(time.getTime()));
+		for (Map.Entry<String, Calendar> entry : realSchedule.entrySet()) {
+			Calendar time = entry.getValue();
+			helper.add(entry.getKey(), df.format(time.getTime()));
 		}
-    	return helper;
+		return helper;
     }
     
     @Override

@@ -18,12 +18,12 @@ limitations under the License.
 
 package com.epam.dlab.configuration;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.epam.dlab.core.BillingUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /** Generate the json configuration of billing tool.
  */
@@ -78,7 +78,6 @@ public class ConfigJsonGenerator {
 	}
 	
 	/** Build and return json configuration.
-	 * @param properties the properties: key and value sequence.
 	 */
 	public JsonNode build() {
 		return new ObjectMapper()

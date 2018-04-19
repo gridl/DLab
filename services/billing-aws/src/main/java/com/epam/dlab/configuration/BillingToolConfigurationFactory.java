@@ -18,9 +18,6 @@ limitations under the License.
 
 package com.epam.dlab.configuration;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import com.epam.dlab.core.BillingUtils;
 import com.epam.dlab.exception.InitializationException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -29,18 +26,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /** Build the instance of class {@link BillingToolConfiguration}. 
  */
 public class BillingToolConfigurationFactory {
 
 	/** Mapper for reading configuration. */
 	private static ObjectMapper mapper;
+
+	private BillingToolConfigurationFactory() {
+	}
 	
 	/** Build the instance of class {@link BillingToolConfiguration} from YAML file.
 	 * @param filename the name of file.
 	 * @param confClass configuration class.
 	 * @return the instance of configuration.
-	 * @throws InitializationException
+	 * @throws InitializationException is being throwed
 	 */
 	public static <T extends BillingToolConfiguration> T build(String filename, Class<T> confClass) throws InitializationException {
 		try {
@@ -56,7 +59,7 @@ public class BillingToolConfigurationFactory {
 	 * @param node the content of configuration.
 	 * @param confClass configuration class.
 	 * @return the instance of configuration.
-	 * @throws InitializationException
+	 * @throws InitializationException is being throwed
 	 */
 	public static <T extends BillingToolConfiguration> T build(JsonNode node, Class<T> confClass) throws InitializationException {
 		T conf;
@@ -82,7 +85,7 @@ public class BillingToolConfigurationFactory {
 	}
 	
 	/** Return the mapper for reading configuration. 
-	 * @throws InitializationException
+	 * @throws InitializationException is being throwed
 	 */
 	private static ObjectMapper getMapper() throws InitializationException {
 		if (mapper != null) {
