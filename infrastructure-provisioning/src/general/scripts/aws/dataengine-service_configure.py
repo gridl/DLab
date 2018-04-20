@@ -90,6 +90,24 @@ def configure_dataengine_service(instance, emr_conf):
         sys.exit(1)
 
 
+    try:
+        print('[INSTALLING USERs KEY]')
+        logging.info('[INSTALLING USERs KEY]')
+        additional_config = {"user_keyname": emr_conf['user_keyname'],
+                             "user_keydir": os.environ['conf_key_dir']}
+        params = "--hostname {} --keyfile {} --additional_config '{}' --user {}".format(
+            emr_conf['instance_ip'], emr_conf['key_path'], json.dumps(additional_config), emr_conf['os_user'])
+        try:
+            local("~/scripts/{}.py {}".format('install_user_key', params))
+        except:
+            append_result("Failed installing users key")
+            raise Exception
+    except Exception as err:
+        append_result("Failed installing users key.", str(err))
+        terminate_emr(emr_conf['cluster_id'])
+        sys.exit(1)
+
+
 if __name__ == "__main__":
     local_log_filename = "{}_{}_{}.log".format(os.environ['conf_resource'], os.environ['edge_user_name'],
                                                os.environ['request_id'])
@@ -150,6 +168,7 @@ if __name__ == "__main__":
     emr_conf['edge_instance_hostname'] = get_instance_private_ip_address(emr_conf['tag_name'],
                                                                          emr_conf['edge_instance_name'])
     emr_conf['os_user'] = os.environ['conf_os_user']
+    emr_conf['user_keyname']= os.environ['edge_user_name']
     initial_user = 'ec2-user'
     sudo_group = 'wheel'
 

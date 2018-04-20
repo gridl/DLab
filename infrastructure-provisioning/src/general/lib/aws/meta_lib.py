@@ -124,6 +124,26 @@ def get_instance_ip_address(tag_name, instance_name):
         traceback.print_exc(file=sys.stdout)
 
 
+def get_instance_ip_address_by_id(instance_id):
+    try:
+        ec2 = boto3.resource('ec2')
+        instances = ec2.instances.filter(
+            Filters=[{'Name': 'instance-id', 'Values': [instance_id]},
+                     {'Name': 'instance-state-name', 'Values': ['running']}])
+        ips = {}
+        for instance in instances:
+            public = getattr(instance, 'public_ip_address')
+            private = getattr(instance, 'private_ip_address')
+            ips = {'Public': public, 'Private': private}
+        if ips == {}:
+            raise Exception("Unable to find instance IP addresses with instance id: " + instance_id)
+        return ips
+    except Exception as err:
+        logging.error("Error with getting ip address by id: " + str(err) + "\n Traceback: " + traceback.print_exc(file=sys.stdout))
+        append_result(str({"error": "Error with getting ip address by id", "error_message": str(err) + "\n Traceback: " + traceback.print_exc(file=sys.stdout)}))
+        traceback.print_exc(file=sys.stdout)
+
+
 def get_instance_private_ip_address(tag_name, instance_name):
     try:
         actions_lib.create_aws_config_files()
@@ -131,6 +151,16 @@ def get_instance_private_ip_address(tag_name, instance_name):
     except Exception as err:
         logging.error("Error with getting private ip address by name: " + str(err) + "\n Traceback: " + traceback.print_exc(file=sys.stdout))
         append_result(str({"error": "Error with getting private ip address by name", "error_message": str(err) + "\n Traceback: " + traceback.print_exc(file=sys.stdout)}))
+        traceback.print_exc(file=sys.stdout)
+
+
+def get_instance_private_ip_address_by_id(instance_id):
+    try:
+        actions_lib.create_aws_config_files()
+        return get_instance_ip_address_by_id(instance_id).get('Private')
+    except Exception as err:
+        logging.error("Error with getting private ip address by id: " + str(err) + "\n Traceback: " + traceback.print_exc(file=sys.stdout))
+        append_result(str({"error": "Error with getting private ip address by id", "error_message": str(err) + "\n Traceback: " + traceback.print_exc(file=sys.stdout)}))
         traceback.print_exc(file=sys.stdout)
 
 
@@ -637,9 +667,9 @@ def get_hadoop_version(cluster_name):
     return hadoop_version[0:3]
 
 
-def get_instances_names(filter_string):
+def get_instances_ids(filter_string):
     try:
-        list_instances_names = list()
+        list_instances_ids = list()
         client = boto3.client('ec2')
         response = client.describe_instances(Filters=[
             {
@@ -653,10 +683,8 @@ def get_instances_names(filter_string):
         ]).get('Reservations')
         for instances in response:
             for instance in instances.get('Instances'):
-                for tags in instance.get('Tags'):
-                    if tags['Key'] == 'Name':
-                        list_instances_names.append(tags['Value'])
-        return list_instances_names
+                list_instances_ids.append(instance['InstanceId'])
+        return list_instances_ids
     except Exception as err:
         logging.error("Error with getting instances IP addresses: " + str(err) + "\n Traceback: " +
                       traceback.print_exc(file=sys.stdout))
