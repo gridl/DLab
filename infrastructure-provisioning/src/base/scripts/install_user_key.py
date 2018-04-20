@@ -36,8 +36,10 @@ args = parser.parse_args()
 
 def copy_key(config):
     key = open('{}/{}.pub'.format(config['user_keydir'], config['user_keyname'])).read()
+    admin_key_pub = local('ssh-keygen -y -f /home/{0}/keys/{1}.pem'.format(args.user, os.environ['conf_key_name']),
+                          capture=True)
     sudo('rm -f /home/{}/.ssh/authorized_keys'.format(args.user))
-    sudo('ssh-keygen -y -f {} >> /home/{}/.ssh/authorized_keys'.format(args.keyfile, args.user))
+    sudo('echo "{0}" >> /home/{1}/.ssh/authorized_keys'.format(admin_key_pub, args.user))
     sudo('echo "{0}" >> /home/{1}/.ssh/authorized_keys'.format(key, args.user))
 
 
