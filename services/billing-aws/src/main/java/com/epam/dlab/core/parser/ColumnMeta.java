@@ -18,19 +18,14 @@ limitations under the License.
 
 package com.epam.dlab.core.parser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.epam.dlab.exception.InitializationException;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.epam.dlab.exception.InitializationException;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
+import java.util.*;
 
 /** Provides column meta information.
  */
@@ -38,9 +33,9 @@ public class ColumnMeta {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ColumnMeta.class);
 	
 	/** Character for separate the tag values and column names.*/
-	public static final char TAG_SEPARATOR = ',';
+	private static final char TAG_SEPARATOR = ',';
 	/** Character for separate the column mapping.*/
-	public static final char MAPPING_COLUMN_SEPARATOR = ';';
+	private static final char MAPPING_COLUMN_SEPARATOR = ';';
 
 	/** The column names for common format. */
 	static final String [] COLUMN_NAMES = {
@@ -76,9 +71,9 @@ public class ColumnMeta {
 	 * @param columnMappingString column mapping: source to target. if <b>null</b>
 	 *                            the source data will be converted without mapping.
 	 * @param sourceColumnNames the source column names.
-	 * @throws InitializationException
+	 * @throws InitializationException is being thrown
 	 */
-	public ColumnMeta(String columnMappingString, List<String> sourceColumnNames) throws InitializationException {
+	ColumnMeta(String columnMappingString, List<String> sourceColumnNames) throws InitializationException {
 		this.sourceColumnNames = sourceColumnNames;
 		if (columnMappingString != null) {
 			try {
@@ -149,10 +144,8 @@ public class ColumnMeta {
 	 * @throws InitializationException if column not found in the list of columns.
 	 */
 	private static int getColumnIndex(String columnName) throws InitializationException {
-		ArrayList<String> list = new ArrayList<String>(COLUMN_NAMES.length);
-	    for (String s : COLUMN_NAMES) {
-	    	list.add(s);
-	    }
+		ArrayList<String> list = new ArrayList<>(COLUMN_NAMES.length);
+		Collections.addAll(list, COLUMN_NAMES);
 		return getColumnIndexByName(columnName, list);
 	}
 	
@@ -162,18 +155,17 @@ public class ColumnMeta {
 	 * "accountId=PayerAccountId;usageIntervalStart=UsageStartDate;usageIntervalEnd=UsageEndDate; ...
 	 * ;tags=user:tag1,user:tag2,user:tagN".
 	 * @param columnMappingString column mapping: source to target.
-	 * @param sourceColumnNames
+	 * @param sourceColumnNames names of source columns
 	 * @return Map of target and source columns for column mapping.
-	 * @throws InitializationException
+	 * @throws InitializationException is being thrown
 	 */
-	private Map<String, String> getSourceToTarget(String columnMappingString, List<String> sourceColumnNames) throws InitializationException {
+	private Map<String, String> getSourceToTarget(String columnMappingString, List<String> sourceColumnNames)
+			throws InitializationException {
 		String [] entries = StringUtils.split(columnMappingString, MAPPING_COLUMN_SEPARATOR);
-	    Map<String, String> sourceToTarget = new HashMap<String, String>();
+		Map<String, String> sourceToTarget = new HashMap<>();
 	    
 	    for (String entry : entries) {
-	    	if (entry.trim().isEmpty() || !entry.contains("=")) {
-	            throw new InitializationException("Invalid the entry \"" + entry + "\"in column mapping");
-	        }
+			checkStringOrElseThrowException(entry);
 	    	String [] pair = StringUtils.split(entry, '=');
 	    	if (pair.length != 2) {
 	    		throw new InitializationException("Invalid the entry \"" + entry + "\"in column mapping");
@@ -208,6 +200,12 @@ public class ColumnMeta {
 	    return sourceToTarget;
 	}
 
+	private void checkStringOrElseThrowException(String string) throws InitializationException {
+		if (string.trim().isEmpty() || !string.contains("=")) {
+			throw new InitializationException("Invalid the entry \"" + string + "\"in column mapping");
+		}
+	}
+
 	/** Initialize and set column mapping. <b>columnMappingString</b> is semicolon separated string with key=value as
 	 * target=source columns name or indexes of source column. For example,<br>
 	 * "accountId=PayerAccountId;usageIntervalStart=UsageStartDate;usageIntervalEnd=UsageEndDate; ...
@@ -215,7 +213,7 @@ public class ColumnMeta {
 	 * @param columnMappingString column mapping: source to target. if <b>null</b>
 	 *                            the source data will be converted without mapping.
 	 * @param sourceColumnNames the list of source column names.
-	 * @throws InitializationException
+	 * @throws InitializationException is being thrown
 	 */
 	private void setColumnMapping(String columnMappingString, List<String> sourceColumnNames) throws InitializationException {
 		if (columnMappingString == null) {
@@ -230,8 +228,8 @@ public class ColumnMeta {
 		LOGGER.info("Mapping columns [target=source:name[index]]:");
 		int columnCount = COLUMN_NAMES.length - 1;
 		int tagCount = (tagColumns == null ? 0 : tagColumns.size());
-		columnMapping = new ArrayList<ColumnInfo>(columnCount + tagCount);
-		targetColumnNames = new ArrayList<String>(columnCount + tagCount);
+		columnMapping = new ArrayList<>(columnCount + tagCount);
+		targetColumnNames = new ArrayList<>(columnCount + tagCount);
 		
 		for (int i = 0; i < columnCount; i++) {
 			String sourceName = sourceToTarget.get(COLUMN_NAMES[i]);
@@ -241,7 +239,7 @@ public class ColumnMeta {
 					(sourceName == null ? -1 : getColumnIndex(sourceName, sourceColumnNames)));
 			columnMapping.add(columnInfo);
 			targetColumnNames.add(COLUMN_NAMES[i]);
-			LOGGER.info("  " + columnInfo.toString());
+			LOGGER.info("  {}", columnInfo);
 		}
 		
 		for (int i = 0; i < tagCount; i++) {
@@ -256,7 +254,7 @@ public class ColumnMeta {
 	    			sourceIndex);
 	    	columnMapping.add(columnInfo);
 	    	targetColumnNames.add(sourceName);
-		    LOGGER.info("  " + columnInfo.toString());
+			LOGGER.info("  {}", columnInfo);
 		}
 	}
 

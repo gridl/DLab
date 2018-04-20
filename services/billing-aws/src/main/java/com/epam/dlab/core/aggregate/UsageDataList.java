@@ -30,7 +30,6 @@ public class UsageDataList implements Iterable<String> {
 	
 	/** Appends the date to the list and returns it.
 	 * @param usageDate the date of data.
-	 * @return Instance of the range.
 	 */
 	public void append(String usageDate) {
 	    synchronized (this) {

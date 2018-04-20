@@ -36,7 +36,7 @@ public class ColumnInfo {
 	 * @param sourceName the source column name.
 	 * @param sourceIndex the source column index.
 	 */
-	public ColumnInfo(String targetName, String sourceName, int sourceIndex) {
+	ColumnInfo(String targetName, String sourceName, int sourceIndex) {
 		this.targetName = targetName;
 		this.sourceName = sourceName;
 		this.sourceIndex = sourceIndex;
@@ -44,6 +44,6 @@ public class ColumnInfo {
 	
 	@Override
 	public String toString() {
-		return targetName + "=" + (sourceName == null ? "" : sourceName + "[" + String.valueOf(sourceIndex) + "]");
+		return targetName + "=" + (sourceName == null ? "" : sourceName + "[" + sourceIndex + "]");
 	}
 }

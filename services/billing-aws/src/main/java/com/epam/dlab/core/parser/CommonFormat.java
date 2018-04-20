@@ -18,42 +18,40 @@ limitations under the License.
 
 package com.epam.dlab.core.parser;
 
+import com.epam.dlab.exception.ParseException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.epam.dlab.exception.ParseException;
-
 /** Provides common format features.
  */
+@Slf4j
 public class CommonFormat {
 	/** Character for separate field names and values. */
-	public static final char FIELD_SEPARATOR = ',';
+	private static final char FIELD_SEPARATOR = ',';
 	
 	/** Character for termination field names and values. */
-	public static final char FIELD_DELIMITER = '"';
+	private static final char FIELD_DELIMITER = '"';
 	
 	/** Escape character. */
-	public static final char ESCAPE_CHAR = '\\';
+	private static final char ESCAPE_CHAR = '\\';
 	
 	/** Default character used for decimal sign. */
-	public static final char DECIMAL_SEPARATOR_DEFAULT = '.';
+	private static final char DECIMAL_SEPARATOR_DEFAULT = '.';
 	
 	/** Default character used for thousands separator. */
-	public static final char DECIMAL_GROUPING_SEPARATOR_DEFAULT = ' ';
+	private static final char DECIMAL_GROUPING_SEPARATOR_DEFAULT = ' ';
 	
 	/** String of the field separator for replacement to target data. */
 	private static final String DELIMITER_REPLACE_FROM = String.valueOf(FIELD_DELIMITER);
 	
 	/** String of the escaped field separator for replacement to target data. */
-	private static final String DELIMITER_REPLACE_TO = new StringBuilder()
-			.append(ESCAPE_CHAR)
-			.append(FIELD_DELIMITER)
-			.toString();
+	private static final String DELIMITER_REPLACE_TO = String.valueOf(ESCAPE_CHAR) + FIELD_DELIMITER;
 
 	/** Formatter for convert decimal numbers to string. */
 	private static final DecimalFormat DECIMAL_TO_STRING_FORMAT;
@@ -84,10 +82,10 @@ public class CommonFormat {
 	
 	/** Instantiate the helper for common format.
 	 * @param columnMeta column meta information.
-	 * @param decimalSeparator the character used for decimal sign.
-	 * @param groupingSeparator the character used for thousands separator.
+	 * @param sourceDecimalSeparator the character used for decimal sign.
+	 * @param sourceGroupingSeparator the character used for thousands separator.
 	 */
-	public CommonFormat(ColumnMeta columnMeta, char sourceDecimalSeparator, char sourceGroupingSeparator) {
+	CommonFormat(ColumnMeta columnMeta, char sourceDecimalSeparator, char sourceGroupingSeparator) {
 		this.columnMeta = columnMeta;
 		this.sourceDecimalFormat = getDecimalFormat(sourceDecimalSeparator, sourceGroupingSeparator);
 	}
@@ -96,17 +94,22 @@ public class CommonFormat {
 	/** Create and return the target row for common format from source.
 	 * @param sourceRow the source row.
 	 * @return row in common format.
-	 * @throws ParseException 
+	 * @throws ParseException is being thrown
 	 */
 	public ReportLine toCommonFormat(List<String> sourceRow) throws ParseException {
 		if (columnMeta.getColumnMapping() == null) {
 			return toReportLine(sourceRow);
 		}
-		
-		List<String> targetRow = new ArrayList<String>();
+
+		List<String> targetRow = new ArrayList<>();
 		for (ColumnInfo columnInfo : columnMeta.getColumnMapping()) {
-			targetRow.add((columnInfo.sourceIndex < 0 ? "" :
-							(columnInfo.sourceIndex < sourceRow.size() ? sourceRow.get(columnInfo.sourceIndex) : null)));
+			if (columnInfo.sourceIndex < 0) {
+				targetRow.add("");
+			} else if (columnInfo.sourceIndex < sourceRow.size()) {
+				targetRow.add(sourceRow.get(columnInfo.sourceIndex));
+			} else {
+				targetRow.add(null);
+			}
 		}
 		return toReportLine(targetRow);
 	}
@@ -239,12 +242,12 @@ public class CommonFormat {
 	/** Print row to console.
 	 * @param row array of values.
 	 */
-	public static void printRow(String [] row) {
-		System.out.print(" | ");
+	private static void printRow(String[] row) {
+		StringBuilder sb = new StringBuilder(" | ");
 		for (String s : row) {
-			System.out.print(s + " | ");
+			sb.append(s).append(" | ");
 		}
-		System.out.println();
+		log.debug(sb.toString());
 	}
 
 	/** Print row to console.

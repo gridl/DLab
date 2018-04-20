@@ -18,9 +18,10 @@ limitations under the License.
 
 package com.epam.dlab.core.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.epam.dlab.exception.InitializationException;
+import com.epam.dlab.exception.ParseException;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import org.apache.commons.jexl3.JexlBuilder;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.jexl3.JexlEngine;
@@ -28,10 +29,8 @@ import org.apache.commons.jexl3.MapContext;
 import org.apache.commons.jexl3.internal.Script;
 import org.apache.commons.lang3.StringUtils;
 
-import com.epam.dlab.exception.InitializationException;
-import com.epam.dlab.exception.ParseException;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Evaluate condition for filtering source data.
  */
@@ -52,14 +51,13 @@ public class ConditionEvaluate {
 	/** Instantiate the engine to evaluate condition. 
 	 * @param columnNames the list of column names.
 	 * @param condition condition for filtering data.
-	 * @throws InitializationException
+	 * @throws InitializationException is being thrown
 	 */
-	public ConditionEvaluate(List<String> columnNames, String condition) throws InitializationException {
+	ConditionEvaluate(List<String> columnNames, String condition) throws InitializationException {
 		//Replace : to . in column names
 		List<String> colNames = new ArrayList<>(columnNames.size());
-		for (int i = 0; i < columnNames.size(); i++) {
-			String name = columnNames.get(i);
-			if (name.indexOf(':') > -1 && condition.indexOf(name) > -1) {
+		for (String name : columnNames) {
+			if (name.indexOf(':') > -1 && condition.contains(name)) {
 				String newName = StringUtils.replaceChars(name, ':', '.');
 				colNames.add(newName);
 				condition = StringUtils.replace(condition, name, newName);

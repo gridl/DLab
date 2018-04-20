@@ -18,13 +18,6 @@ limitations under the License.
 
 package com.epam.dlab.core.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.epam.dlab.core.AdapterBase;
 import com.epam.dlab.core.FilterBase;
 import com.epam.dlab.core.ModuleBase;
@@ -36,6 +29,11 @@ import com.epam.dlab.exception.ParseException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Abstract module of parser.<br>
  * See description of {@link ModuleBase} how to create your own parser.
@@ -43,10 +41,10 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 public abstract class ParserBase extends ModuleBase {
 	
 	/** Default character used for decimal sign. */
-	public static final char DECIMAL_SEPARATOR_DEFAULT = '.';
+	private static final char DECIMAL_SEPARATOR_DEFAULT = '.';
 	
 	/** Default character used for thousands separator. */
-	public static final char DECIMAL_GROUPING_SEPARATOR_DEFAULT = ' ';
+	private static final char DECIMAL_GROUPING_SEPARATOR_DEFAULT = ' ';
 	
 	/** Name of key for date report data. */
 	public static final String DATA_KEY_START_DATE = "ParserBase.maxStartDate";
@@ -111,6 +109,7 @@ public abstract class ParserBase extends ModuleBase {
 	
 	/** Current parser statistics. */
 	@JsonIgnore
+	private
 	ParserStatistics currentStatistics = null; 
 	
 	
@@ -140,7 +139,8 @@ public abstract class ParserBase extends ModuleBase {
 	}
 
 	/** Set how to aggregate the parsed data.
-	 * @throws InitializationException */
+	 * @throws InitializationException is being thrown
+	 * */
 	public void setAggregate(String aggregate) throws InitializationException {
 		if (aggregate == null) {
 			throw new InitializationException("Property aggregate cannot be null");
@@ -205,7 +205,7 @@ public abstract class ParserBase extends ModuleBase {
 	}
 	
 	/** Return the common format helper. */
-	public CommonFormat getCommonFormat() {
+	CommonFormat getCommonFormat() {
 		return commonFormat;
 	}
 	
@@ -217,27 +217,27 @@ public abstract class ParserBase extends ModuleBase {
 	/** Add and return the new instance for statistics.
 	 * @param entryName the name of new entry.
 	 */
-	public ParserStatistics addStatistics(String entryName) {
+	ParserStatistics addStatistics(String entryName) {
 		currentStatistics = new ParserStatistics(entryName);
 		statistics.add(currentStatistics);
 		return currentStatistics;
 	}
 	
 	/** Return the current parser statistics. */
-	public ParserStatistics getCurrentStatistics() {
+	protected ParserStatistics getCurrentStatistics() {
 		return currentStatistics;
 	}
 
 	
 	/** Initialize the parser.
-	 * @throws InitializationException
+	 * @throws InitializationException is being thrown
 	 */
 	public abstract void initialize()  throws InitializationException;
 	
 	/** Parse the source data to common format and write it to output adapter.
-	 * @throws InitializationException
-	 * @throws AdapterException
-	 * @throws ParseException
+	 * @throws InitializationException is being thrown
+	 * @throws AdapterException is being thrown
+	 * @throws ParseException is being thrown
 	 */
 	public abstract void parse() throws InitializationException, AdapterException, ParseException;
 	
@@ -259,8 +259,8 @@ public abstract class ParserBase extends ModuleBase {
 	
 	/** Initialize ParserBase.
 	 * @param header - the header of source data.
-	 * @throws InitializationException
-	 * @throws AdapterException
+	 * @throws InitializationException is being thrown
+	 * @throws AdapterException is being thrown
 	 */
 	protected void init(List<String> header) throws InitializationException, AdapterException {
 		columnMeta = new ColumnMeta(columnMapping, header);
@@ -286,7 +286,7 @@ public abstract class ParserBase extends ModuleBase {
 	
 	/** Return the index of source column by column name. 
 	 * @param columnName the name of column.
-	 * @throws InitializationException
+	 * @throws InitializationException is being thrown
 	 */
 	public int getSourceColumnIndexByName(String columnName) throws InitializationException {
 		return ColumnMeta.getColumnIndexByName(columnName, columnMeta.getSourceColumnNames());

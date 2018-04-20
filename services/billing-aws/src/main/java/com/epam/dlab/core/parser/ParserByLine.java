@@ -41,8 +41,8 @@ public abstract class ParserByLine extends ParserBase {
 	 * Parse the header of source data and return it.
 	 *
 	 * @return the header of source data.
-	 * @throws AdapterException
-	 * @throws ParseException
+	 * @throws AdapterException is being thrown
+	 * @throws ParseException is being thrown
 	 */
 	public abstract List<String> parseHeader() throws AdapterException, ParseException;
 
@@ -51,7 +51,7 @@ public abstract class ParserByLine extends ParserBase {
 	 *
 	 * @param line the source line.
 	 * @return the parsed row.
-	 * @throws ParseException
+	 * @throws ParseException is being thrown
 	 */
 	public abstract List<String> parseRow(String line) throws ParseException;
 
@@ -59,11 +59,11 @@ public abstract class ParserByLine extends ParserBase {
 	 * Read the line from adapter and return it.
 	 *
 	 * @return the parsed row from adapterIn.
-	 * @throws AdapterException
-	 * @throws ParseException
+	 * @throws AdapterException is being thrown
+	 * @throws ParseException is being thrown
 	 */
 	@JsonIgnore
-	public String getNextRow() throws AdapterException, ParseException {
+	protected String getNextRow() throws AdapterException {
 		String line = getAdapterIn().readLine();
 		if (line == null) {
 			return null;
@@ -75,9 +75,9 @@ public abstract class ParserByLine extends ParserBase {
 	/**
 	 * Initialize ParserBase.
 	 *
-	 * @throws InitializationException
-	 * @throws AdapterException
-	 * @throws ParseException
+	 * @throws InitializationException is being thrown
+	 * @throws AdapterException is being thrown
+	 * @throws ParseException is being thrown
 	 */
 	protected boolean init() throws InitializationException, AdapterException, ParseException {
 		getAdapterIn().open();
@@ -92,9 +92,9 @@ public abstract class ParserByLine extends ParserBase {
 	/**
 	 * Initialize for each entry ParserBase.
 	 *
-	 * @throws InitializationException
-	 * @throws AdapterException
-	 * @throws ParseException
+	 * @throws InitializationException is being thrown
+	 * @throws AdapterException is being thrown
+	 * @throws ParseException is being thrown
 	 */
 	private boolean initEntry() throws InitializationException, AdapterException, ParseException {
 		if (getAdapterIn().hasMultyEntry() && !getAdapterIn().hasEntryData()) {
@@ -114,9 +114,9 @@ public abstract class ParserByLine extends ParserBase {
 	/**
 	 * Close adapters.
 	 *
-	 * @throws AdapterException
+	 * @throws AdapterException is being thrown
 	 */
-	protected void closeAdapters(boolean silent) throws AdapterException {
+	private void closeAdapters(boolean silent) throws AdapterException {
 		AdapterException ex = null;
 		try {
 			getAdapterIn().close();
@@ -144,9 +144,9 @@ public abstract class ParserByLine extends ParserBase {
 	/**
 	 * Parse the source data to common format and write it to output adapter.
 	 *
-	 * @throws InitializationException
-	 * @throws AdapterException
-	 * @throws ParseException
+	 * @throws InitializationException is being thrown
+	 * @throws AdapterException is being thrown
+	 * @throws ParseException is being thrown
 	 */
 	public void parse() throws InitializationException, AdapterException, ParseException {
 		try {
@@ -166,80 +166,113 @@ public abstract class ParserByLine extends ParserBase {
 							getCurrentStatistics().incrRowFiltered();
 							continue;
 						}
-						try {
-							if (getCondition() != null && !getCondition().evaluate(row)) {
-								getCurrentStatistics().incrRowFiltered();
-								continue;
-							}
-						} catch (ParseException e) {
-							throw new ParseException(e.getLocalizedMessage() + "\nEntry name: " + getCurrentStatistics
-									().getEntryName() +
-									"\nSource line[" +
-									getCurrentStatistics().getRowReaded() + "]: " + line, e);
-						} catch (Exception e) {
-							throw new ParseException("Cannot evaluate condition " + getWhereCondition() + ". " +
-									e.getLocalizedMessage() + "\nEntry name: " + getCurrentStatistics().getEntryName()
-									+ "\nSource line[" + getCurrentStatistics().getRowReaded() + "]: " + line, e);
+						if (isCheckedEvaluationCondition(row, line)) {
+							continue;
 						}
+						reportLine = reportLineFromCommonFormat(row, line);
 
-						try {
-							reportLine = getCommonFormat().toCommonFormat(row);
-						} catch (ParseException e) {
-							throw new ParseException("Cannot cast row to common format. " +
-									e.getLocalizedMessage() + "\nEntry name: " + getCurrentStatistics().getEntryName
-									() +
-									"\nSource line[" + getCurrentStatistics().getRowReaded() + "]: " + line, e);
-						}
 						if (getFilter() != null && (reportLine = getFilter().canAccept(reportLine)) == null) {
 							getCurrentStatistics().incrRowFiltered();
 							continue;
 						}
 
 						getCurrentStatistics().incrRowParsed();
-						if (getAggregate() != AggregateGranularity.NONE) {
-							getAggregator().append(reportLine);
-						} else {
-							getAdapterOut().writeRow(reportLine);
-							getCurrentStatistics().incrRowWritten();
-						}
+						appendToAggregatorIfSatisfyCondition(reportLine);
 					}
 
-					if (getAggregate() != AggregateGranularity.NONE) {
-						for (int i = 0; i < getAggregator().size(); i++) {
-							getAdapterOut().writeRow(getAggregator().get(i));
-							getCurrentStatistics().incrRowWritten();
-						}
+					writeRowIfSatisfyCondition();
+
+					if (isAdapterMultyEntryConditionChecked()) {
+						break;
 					}
 
-					if (getAdapterIn().hasMultyEntry()) {
-						if (getAdapterIn().openNextEntry()) {
-							// Search entry with data
-							while (!initEntry()) {
-								if (!getAdapterIn().openNextEntry()) {
-									break;
-								}
-							}
-						} else {
-							break;
-						}
-					}
-				} while (getAdapterIn().hasMultyEntry() && getAdapterIn().hasEntryData());
+				} while (isAdapterDataConditionChecked());
 			}
 		} catch (GenericException e) {
 			closeAdapters(true);
-			if (getCurrentStatistics() != null) {
-				getCurrentStatistics().stop();
-			}
+			stopStatisticsIfNotNull();
 			throw e;
 		} catch (Exception e) {
 			closeAdapters(true);
-			if (getCurrentStatistics() != null) {
-				getCurrentStatistics().stop();
-			}
+			stopStatisticsIfNotNull();
 			throw new ParseException("Unknown parser error. " + e.getLocalizedMessage(), e);
 		}
 
 		closeAdapters(false);
+		stopStatisticsIfNotNull();
+	}
+
+	private boolean isCheckedEvaluationCondition(List<String> row, String line) throws ParseException {
+		try {
+			if (getCondition() != null && !getCondition().evaluate(row)) {
+				getCurrentStatistics().incrRowFiltered();
+				return true;
+			}
+		} catch (ParseException e) {
+			throw new ParseException(e.getLocalizedMessage() + "\nEntry name: " + getCurrentStatistics
+					().getEntryName() +
+					"\nSource line[" +
+					getCurrentStatistics().getRowReaded() + "]: " + line, e);
+		} catch (Exception e) {
+			throw new ParseException("Cannot evaluate condition " + getWhereCondition() + ". " +
+					e.getLocalizedMessage() + "\nEntry name: " + getCurrentStatistics().getEntryName()
+					+ "\nSource line[" + getCurrentStatistics().getRowReaded() + "]: " + line, e);
+		}
+		return false;
+	}
+
+	private ReportLine reportLineFromCommonFormat(List<String> row, String line) throws ParseException {
+		ReportLine reportLine;
+		try {
+			reportLine = getCommonFormat().toCommonFormat(row);
+		} catch (ParseException e) {
+			throw new ParseException("Cannot cast row to common format. " +
+					e.getLocalizedMessage() + "\nEntry name: " + getCurrentStatistics().getEntryName() +
+					"\nSource line[" + getCurrentStatistics().getRowReaded() + "]: " + line, e);
+		}
+		return reportLine;
+	}
+
+	private void appendToAggregatorIfSatisfyCondition(ReportLine reportLine) throws AdapterException {
+		if (getAggregate() != AggregateGranularity.NONE) {
+			getAggregator().append(reportLine);
+		} else {
+			getAdapterOut().writeRow(reportLine);
+			getCurrentStatistics().incrRowWritten();
+		}
+	}
+
+	private void writeRowIfSatisfyCondition() throws AdapterException {
+		if (getAggregate() != AggregateGranularity.NONE) {
+			for (int i = 0; i < getAggregator().size(); i++) {
+				getAdapterOut().writeRow(getAggregator().get(i));
+				getCurrentStatistics().incrRowWritten();
+			}
+		}
+	}
+
+	private boolean isAdapterMultyEntryConditionChecked() throws AdapterException, ParseException,
+			InitializationException {
+		if (getAdapterIn().hasMultyEntry()) {
+			if (getAdapterIn().openNextEntry()) {
+				// Search entry with data
+				while (!initEntry()) {
+					if (!getAdapterIn().openNextEntry()) {
+						break;
+					}
+				}
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isAdapterDataConditionChecked() {
+		return getAdapterIn().hasMultyEntry() && getAdapterIn().hasEntryData();
+	}
+
+	private void stopStatisticsIfNotNull() {
 		if (getCurrentStatistics() != null) {
 			getCurrentStatistics().stop();
 		}

@@ -18,13 +18,12 @@ limitations under the License.
 
 package com.epam.dlab.core.aggregate;
 
+import com.epam.dlab.core.parser.ReportLine;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.epam.dlab.core.parser.ReportLine;
 
 /** Aggregate billing report and summarizes column usage and cost.
  */
@@ -126,7 +125,10 @@ public class DataAggregator {
 			} else if (o2 == null) {
 				return 1;
 			}
-			
+			return comparingResult(o1, o2);
+		}
+
+		private int comparingResult(ReportLine o1, ReportLine o2) {
 			int result = StringUtils.compare(o1.getResourceId(), o2.getResourceId());
 			if (result == 0) {
 				result = StringUtils.compare(o1.getUsageType(), o2.getUsageType());
