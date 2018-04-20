@@ -132,6 +132,26 @@ def configure_slave(slave_number, data_engine):
         append_result("Failed to configure slave node.", str(err))
         sys.exit(1)
 
+    try:
+        print('[INSTALLING USERs KEY ON MASTER NODE]')
+        logging.info('[INSTALLING USERs KEY ON MASTER NODE]')
+        additional_config = {"user_keyname": data_engine['user_keyname'],
+                             "user_keydir": os.environ['conf_key_dir']}
+        params = "--hostname {} --keyfile {} --additional_config '{}' --user {}".format(
+            slave_hostname, keyfile_name, json.dumps(additional_config), data_engine['dlab_ssh_user'])
+        try:
+            local("~/scripts/{}.py {}".format('install_user_key', params))
+        except:
+            append_result("Failed installing users key")
+            raise Exception
+    except Exception as err:
+        remove_ec2(data_engine['tag_name'], data_engine['master_node_name'])
+        for i in range(data_engine['instance_count'] - 1):
+            slave_name = data_engine['slave_node_name'] + '{}'.format(i + 1)
+            remove_ec2(data_engine['tag_name'], slave_name)
+        append_result("Failed to install user's key.", str(err))
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     local_log_filename = "{}_{}_{}.log".format(os.environ['conf_resource'], os.environ['edge_user_name'],
@@ -180,6 +200,7 @@ if __name__ == "__main__":
         keyfile_name = "{}{}.pem".format(os.environ['conf_key_dir'], os.environ['conf_key_name'])
         edge_instance_name = os.environ['conf_service_base_name'] + "-" + os.environ['edge_user_name'] + '-edge'
         edge_instance_hostname = get_instance_hostname(data_engine['tag_name'], edge_instance_name)
+        data_engine['user_keyname'] = os.environ['edge_user_name']
 
         if os.environ['conf_os_family'] == 'debian':
             initial_user = 'ubuntu'
@@ -297,6 +318,26 @@ if __name__ == "__main__":
         for i in range(data_engine['instance_count'] - 1):
             slave_name = data_engine['slave_node_name'] + '{}'.format(i + 1)
             remove_ec2(data_engine['tag_name'], slave_name)
+        sys.exit(1)
+
+    try:
+        print('[INSTALLING USERs KEY ON MASTER NODE]')
+        logging.info('[INSTALLING USERs KEY ON MASTER NODE]')
+        additional_config = {"user_keyname": data_engine['user_keyname'],
+                             "user_keydir": os.environ['conf_key_dir']}
+        params = "--hostname {} --keyfile {} --additional_config '{}' --user {}".format(
+            master_node_hostname, keyfile_name, json.dumps(additional_config), data_engine['dlab_ssh_user'])
+        try:
+            local("~/scripts/{}.py {}".format('install_user_key', params))
+        except:
+            append_result("Failed installing users key")
+            raise Exception
+    except Exception as err:
+        remove_ec2(data_engine['tag_name'], data_engine['master_node_name'])
+        for i in range(data_engine['instance_count'] - 1):
+            slave_name = data_engine['slave_node_name'] + '{}'.format(i + 1)
+            remove_ec2(data_engine['tag_name'], slave_name)
+        append_result("Failed to install user's key.", str(err))
         sys.exit(1)
 
     try:

@@ -1,5 +1,6 @@
 {
     "request_id":"RID",
     "conf_resource": "edge",
+    "list_instane_names": "LIN",
     "edge_user_name":"UN"
 }

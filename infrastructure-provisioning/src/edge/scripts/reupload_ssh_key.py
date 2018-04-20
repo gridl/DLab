@@ -62,11 +62,14 @@ if __name__ == "__main__":
 
         reupload_config['tag_name'] = reupload_config['service_base_name'] + '-Tag'
         reupload_config['keyfile'] = '{}{}.pem'.format(os.environ['conf_key_dir'], os.environ['conf_key_name'])
-
-        reupload_config['instances_list'] = get_instances_names("{}-{}-*".format(reupload_config['service_base_name'],
-                                                                                 reupload_config['edge_user_name']))
+        reupload_config['list_instances_names'] = os.environ['List_instances_names']
+        reupload_config['instances_list'] = list()
+        for instance_name in reupload_config['list_instances_names'].split(','):
+            for instance in get_instances_names("{}-*".format(instance_name)):
+                reupload_config['instances_list'].append(instance)
+        reupload_config['instances_list'] = list(set(reupload_config['instances_list']))
         reupload_config['additional_config'] = {"user_keyname": reupload_config['edge_user_name'],
-                             "user_keydir": os.environ['conf_key_dir']}
+                                                "user_keydir": os.environ['conf_key_dir']}
         try:
             jobs = []
             for instance_name in reupload_config['instances_list']:
