@@ -18,12 +18,6 @@ limitations under the License.
 
 package com.epam.dlab.mongo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
-
-import org.bson.Document;
-
 import com.epam.dlab.core.DBAdapterBase;
 import com.epam.dlab.core.aggregate.UsageDataList;
 import com.epam.dlab.core.parser.ReportLine;
@@ -36,6 +30,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.mongodb.client.MongoCollection;
+import org.bson.Document;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
 /** The adapter for file system.
  */
@@ -68,7 +67,7 @@ public class AdapterMongoDb extends DBAdapterBase {
 	}
 	
 	/** Set the size of buffer for bulk insert. 
-	 * @throws InitializationException */
+	 * @throws InitializationException in case of exception*/
 	public void setBufferSize(int bufferSize) throws InitializationException {
 		if (upsert && bufferSize <= 0) {
 			throw new InitializationException("The bufferSize must be greater than zero when upsert mode is switched on");
@@ -82,7 +81,7 @@ public class AdapterMongoDb extends DBAdapterBase {
 	}
 	
 	/** Set the upsert mode. 
-	 * @throws InitializationException */
+	 * @throws InitializationException in case of exception*/
 	public void setUpsert(boolean upsert) throws InitializationException {
 		if (upsert && bufferSize <= 0) {
 			throw new InitializationException("Upsert mode cannot be enabled if the bufferSize is zero or less than zero");
@@ -162,7 +161,7 @@ public class AdapterMongoDb extends DBAdapterBase {
 	}
 
 	@Override
-	public void writeHeader(List<String> header) throws AdapterException {
+	public void writeHeader(List<String> header) {
 		// Nothing to do
 	}
 	
@@ -205,7 +204,7 @@ public class AdapterMongoDb extends DBAdapterBase {
 			throw new AdapterException("Cannot update total monthly cost. " + e.getLocalizedMessage(), e);
 		}
 		try {
-			if (months.size() > 0) {
+			if (!months.isEmpty()) {
 				resourceTypeDAO.updateExploratoryCost();
 			}
 		} catch (Exception e) {

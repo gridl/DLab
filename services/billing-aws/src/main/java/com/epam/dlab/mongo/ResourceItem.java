@@ -19,10 +19,12 @@ limitations under the License.
 package com.epam.dlab.mongo;
 
 import com.epam.dlab.billing.DlabResourceType;
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Nullable;
+import java.util.Objects;
 
 /** The resource of DLab environment.
  */
@@ -32,16 +34,16 @@ public class ResourceItem implements Comparable<ResourceItem> {
 	String resourceId;
 	
 	/** User friendly name of resource.*/
-	String resourceName;
+	private String resourceName;
 	
 	/** Type of resource. */
-	DlabResourceType type;
+	private DlabResourceType type;
 	
 	/** Name of user. */
-	String user;
+	private String user;
 	
 	/** Name of exploratory.*/
-	String exploratoryName;
+	private String exploratoryName;
 	
 	/** Instantiate resource of DLab environment.
 	 * @param resourceId resource id.
@@ -49,8 +51,8 @@ public class ResourceItem implements Comparable<ResourceItem> {
 	 * @param user the name of user.
 	 * @param exploratoryName the name of exploratory.
 	 */
-	public ResourceItem(String resourceId, String resourceName, DlabResourceType type,
-			String user, String exploratoryName) {
+	ResourceItem(String resourceId, String resourceName, DlabResourceType type,
+				 String user, String exploratoryName) {
 		this.resourceId = resourceId;
 		this.resourceName = resourceName;
 		this.type = type;
@@ -59,7 +61,7 @@ public class ResourceItem implements Comparable<ResourceItem> {
 	}
 
 	@Override
-	public int compareTo(ResourceItem o) {
+	public int compareTo(@Nullable ResourceItem o) {
 		if (o == null) {
 			return -1;
 		}
@@ -74,6 +76,24 @@ public class ResourceItem implements Comparable<ResourceItem> {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		ResourceItem ri = (ResourceItem) o;
+		return resourceId.equals(ri.resourceId) && exploratoryName.equals(ri.exploratoryName) &&
+				type.name().equals(ri.type.name()) && user.equals(ri.user);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(resourceId, exploratoryName, type.name(), user);
 	}
 
 

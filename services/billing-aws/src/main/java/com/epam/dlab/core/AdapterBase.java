@@ -18,20 +18,20 @@ limitations under the License.
 
 package com.epam.dlab.core;
 
-import java.util.List;
-
 import com.epam.dlab.core.parser.ReportLine;
 import com.epam.dlab.exception.AdapterException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects.ToStringHelper;
 
+import java.util.List;
+
 /** Abstract module for read/write adapter. 
  * See description of {@link ModuleBase} how to create your own adapter.
  */
 public abstract class AdapterBase extends ModuleBase {
-	public enum Mode {READ, WRITE};
-	
+	public enum Mode {READ, WRITE}
+
 	/** Flag the header of common format should be written to target. */
 	@JsonProperty
 	private boolean writeHeader = true;
@@ -109,19 +109,19 @@ public abstract class AdapterBase extends ModuleBase {
 	public abstract String getEntryName();
 	
 	/** Read the line of data from adapter and return it.
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	public abstract String readLine() throws AdapterException;
 	
 	/** Write the header of data to adapter.
 	 * @param header the header of common format.
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	public abstract void writeHeader(List<String> header) throws AdapterException;
 
 	/** Write the row of data to adapter.
 	 * @param row the row of common format.
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	public abstract void writeRow(ReportLine row) throws AdapterException;
 	

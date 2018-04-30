@@ -18,6 +18,12 @@ limitations under the License.
 
 package com.epam.dlab.core;
 
+import com.epam.dlab.configuration.BillingToolConfigurationFactory;
+import com.epam.dlab.core.parser.ParserBase;
+import com.epam.dlab.exception.InitializationException;
+import com.epam.dlab.logging.AppenderBase;
+import com.google.common.io.Resources;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -25,12 +31,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.epam.dlab.configuration.BillingToolConfigurationFactory;
-import com.epam.dlab.core.parser.ParserBase;
-import com.epam.dlab.exception.InitializationException;
-import com.epam.dlab.logging.AppenderBase;
-import com.google.common.io.Resources;
 
 /** Billing toll utilities. 
  */
@@ -63,7 +63,7 @@ public class BillingUtils {
 	/** Read and return content as string list from resource.
 	 * @param resourceName the name of resource.
 	 * @return list of strings.
-	 * @throws InitializationException
+	 * @throws InitializationException in case of exception
 	 */
 	public static List<String> getResourceAsList(String resourceName) throws InitializationException {
         try {
@@ -78,7 +78,7 @@ public class BillingUtils {
 	}
 	
 	/** Return the list of billing tool modules.
-	 * @throws InitializationException
+	 * @throws InitializationException in case of exception
 	 */
 	public static List<Class<?>> getModuleClassList() throws InitializationException {
 		List<String> modules = getResourceAsList(RESOURCE_MODULE_NAMES);
@@ -120,7 +120,7 @@ public class BillingUtils {
 	}
 	
 	/** Return the name of user without domain.
-	 * @param value the value.
+	 * @param username user's name.
 	 */
 	public static String getSimpleUserName(String username) {
         return (username == null ? null : username.replaceAll("@.*", ""));

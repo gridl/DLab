@@ -18,36 +18,8 @@ limitations under the License.
 
 package com.epam.dlab.mongo;
 
-import static com.mongodb.client.model.Accumulators.max;
-import static com.mongodb.client.model.Accumulators.min;
-import static com.mongodb.client.model.Accumulators.sum;
-import static com.mongodb.client.model.Aggregates.group;
-import static com.mongodb.client.model.Aggregates.match;
-import static com.mongodb.client.model.Aggregates.sort;
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.gte;
-import static com.mongodb.client.model.Filters.lte;
-import static com.mongodb.client.model.Projections.excludeId;
-import static com.mongodb.client.model.Projections.fields;
-import static com.mongodb.client.model.Projections.include;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.epam.dlab.billing.BillingCalculationUtils;
 import com.epam.dlab.billing.DlabResourceType;
-import org.apache.commons.lang3.StringUtils;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.epam.dlab.core.BillingUtils;
 import com.epam.dlab.core.parser.ReportLine;
 import com.epam.dlab.exception.InitializationException;
@@ -55,10 +27,25 @@ import com.epam.dlab.exception.ParseException;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Updates;
+import org.apache.commons.lang3.StringUtils;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static com.epam.dlab.mongo.MongoConstants.*;
+import static com.mongodb.client.model.Accumulators.*;
+import static com.mongodb.client.model.Aggregates.*;
+import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Projections.*;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /** Provides Mongo DAO for billing resources in DLab.
  */
-public class DlabResourceTypeDAO implements MongoConstants {
+public class DlabResourceTypeDAO {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DlabResourceTypeDAO.class);
 
 	/** Mongo database connection. */
@@ -73,21 +60,21 @@ public class DlabResourceTypeDAO implements MongoConstants {
 
 	/** Instantiate DAO for billing resources.
 	 * @param connection the connection to Mongo DB.
-	 * @throws InitializationException 
+	 * @throws InitializationException in case of exception
 	 */
-	public DlabResourceTypeDAO(MongoDbConnection connection) throws InitializationException {
+	DlabResourceTypeDAO(MongoDbConnection connection) throws InitializationException {
 		this.connection = connection;
 		setServiceBaseName();
 		setResourceList();
 	}
 	
     /** Returns the base name of service. */
-    public String getServiceBaseName() {
+	private String getServiceBaseName() {
     	return serviceBaseName;
     }
     
     /** Set the base name of service. 
-     * @throws InitializationException */
+	 * @throws InitializationException in case of exception*/
     private void setServiceBaseName() throws InitializationException {
 		Document d = connection.getCollection(COLLECTION_SETTINGS)
 				.find(eq(FIELD_ID, FIELD_SERIVICE_BASE_NAME))
@@ -107,9 +94,8 @@ public class DlabResourceTypeDAO implements MongoConstants {
     }
     
     /** Return DLab resources from Mongo DB.
-     * @throws InitializationException
      */
-    public ResourceItemList getResourceList() {
+	private ResourceItemList getResourceList() {
     	return resourceList;
     }
     
@@ -121,9 +107,8 @@ public class DlabResourceTypeDAO implements MongoConstants {
     }
     
     /** Load and return DLab resources from Mongo DB.
-     * @throws InitializationException
      */
-    private void setResourceList() throws InitializationException {
+	private void setResourceList() {
     	resourceList = new ResourceItemList();
 
     	// Add SSN
@@ -176,7 +161,7 @@ public class DlabResourceTypeDAO implements MongoConstants {
 	/** Convert and return the report line of billing to Mongo document.
 	 * @param row report line.
 	 * @return Mongo document.
-	 * @throws ParseException 
+	 * @throws ParseException in case of exception
 	 */
 	public Document transform(ReportLine row) throws ParseException {
 		String resourceId = row.getDlabId();
@@ -223,7 +208,7 @@ public class DlabResourceTypeDAO implements MongoConstants {
     
     /** Update monthly total in Mongo DB.
      * @param month the month in format YYYY-MM.
-     * @throws InitializationException
+	 * @throws InitializationException in case of exception
      */
     public void updateMonthTotalCost(String month) throws InitializationException {
     	LOGGER.debug("Update total cost for month {}", month);
@@ -259,7 +244,7 @@ public class DlabResourceTypeDAO implements MongoConstants {
     			.append(ReportLine.FIELD_COST, d.getDouble(ReportLine.FIELD_COST));
     		totals.add(total);
     	}
-    	if (totals.size() > 0) {
+		if (!totals.isEmpty()) {
         	LOGGER.debug("{} documents will be inserted into collection {}", totals.size(), COLLECTION_BILLING_TOTAL);
     		collection.insertMany(totals);
     	}
@@ -279,9 +264,9 @@ public class DlabResourceTypeDAO implements MongoConstants {
 			}
 			return result;
 		}
-	};
-    
-    /** Update exploratory cost in Mongo DB.
+	}
+
+	/** Update exploratory cost in Mongo DB.
      * @param user the name of user.
      * @param exploratoryName id of exploratory.
      */
@@ -333,7 +318,7 @@ public class DlabResourceTypeDAO implements MongoConstants {
     	Bson values = Updates.combine(
 				Updates.set(ReportLine.FIELD_COST, BillingCalculationUtils.formatDouble(costTotal)),
 				Updates.set(FIELD_CURRENCY_CODE, currencyCode),
-				Updates.set(COLLECTION_BILLING, (billing.size() > 0 ? billing : null)));
+				Updates.set(COLLECTION_BILLING, (!billing.isEmpty() ? billing : null)));
 		cExploratory.updateOne(
     			and(and(eq(FIELD_USER, user),
     					eq(FIELD_EXPLORATORY_NAME, exploratoryName))),

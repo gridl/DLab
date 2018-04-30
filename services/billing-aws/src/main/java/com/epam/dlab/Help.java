@@ -18,21 +18,22 @@ limitations under the License.
 
 package com.epam.dlab;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.epam.dlab.core.BillingUtils;
 import com.epam.dlab.core.ModuleType;
 import com.epam.dlab.exception.InitializationException;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** Print help for billing tool.
  */
+@Slf4j
 public class Help {
 
 	private Help() {
@@ -41,7 +42,7 @@ public class Help {
 	/** Print help to console.
 	 * @param resourceName the name of resource.
 	 * @param substitute - map for substitution in help content.
-	 * @throws InitializationException
+	 * @throws InitializationException in case of exception
 	 */
 	private static void printHelp(String resourceName, Map<String, String> substitute) throws InitializationException {
 		List<String> list = BillingUtils.getResourceAsList("/" + Help.class.getName() + "." + resourceName + ".txt");
@@ -51,16 +52,16 @@ public class Help {
 			substitute = new HashMap<>();
 		}
 		substitute.put("classname", BillingScheduler.class.getName());
-		
-		for (String key : substitute.keySet()) {
-			help = StringUtils.replace(help, "${" + key.toUpperCase() + "}", substitute.get(key));
+
+		for (Map.Entry<String, String> entry : substitute.entrySet()) {
+			help = StringUtils.replace(help, "${" + entry.getKey().toUpperCase() + "}", entry.getValue());
 		}
-		System.out.println(help);
+		log.debug(help);
 	}
 
 	/** Create and return substitutions for names of modules.
-	 * @return
-	 * @throws InitializationException
+	 * @return map
+	 * @throws InitializationException in case of exception
 	 */
 	private static Map<String, String> findModules() throws InitializationException {
 		List<Class<?>> modules = BillingUtils.getModuleClassList();
@@ -69,7 +70,7 @@ public class Help {
 		for (Class<?> module : modules) {
 			ModuleType type = BillingUtils.getModuleType(module);
 			JsonTypeName typeName = module.getAnnotation(JsonTypeName.class);
-			if (typeName != null) {
+			if (typeName != null && type != null) {
 				String typeNames = substitute.get(type.toString() + "s");
 				typeNames = (typeNames == null ? typeName.value() : typeNames + ", " + typeName.value());
 				substitute.put(type.toString() + "s", typeNames);
@@ -82,34 +83,40 @@ public class Help {
 	/** Find and return help for module.
 	 * @param type the type of module.
 	 * @param name the name of module.
-	 * @throws InitializationException
+	 * @throws InitializationException in case of exception
 	 */
 	private static String findModuleHelp(ModuleType type, String name) throws InitializationException {
 		List<Class<?>> modules = BillingUtils.getModuleClassList();
-		String typeNames = null;
+		StringBuilder typeNames = new StringBuilder();
 		for (Class<?> module : modules) {
 			ModuleType t = BillingUtils.getModuleType(module);
 			if (t == type) {
 				JsonTypeName typeName = module.getAnnotation(JsonTypeName.class);
 				if (typeName != null ) {
 					if (name.equals(typeName.value())) {
-						JsonClassDescription description = module.getAnnotation(JsonClassDescription.class);
-						if (description != null) {
-							return description.value();
-						}
-						throw new InitializationException("Help for " + type + " " + name + " not found");
+						return descriptionValue(module, type, name);
 					} else {
-						typeNames = (typeNames == null ? typeName.value() : typeNames + ", " + typeName.value());
+						typeNames.append(typeName.value()).append(", ");
 					}
 				}
 			}
 		}
 		throw new InitializationException("Module for " + type + " " + name + " not found." +
-				(typeNames == null ? "" : " Module type must be one of next: " + typeNames));
+				(typeNames.toString().isEmpty() ? "" : " Module type must be one of next: " +
+						typeNames.toString().substring(0, typeNames.toString().lastIndexOf(", "))));
+	}
+
+	private static String descriptionValue(Class<?> module, ModuleType type, String name) throws
+			InitializationException {
+		JsonClassDescription description = module.getAnnotation(JsonClassDescription.class);
+		if (description != null) {
+			return description.value();
+		}
+		throw new InitializationException("Help for " + type + " " + name + " not found");
 	}
 
 	/** Print help screen for billing tool. 
-	 * @throws InitializationException */
+	 * @throws InitializationException in case of exception*/
 	public static void usage(String ... args) throws InitializationException {
 		if (args == null || args.length == 0) {
 			printHelp("usage", null);
@@ -118,18 +125,18 @@ public class Help {
 		} else {
 			ModuleType type = ModuleType.of(args[0]);
 			if (type == null) {
-				System.out.println("Unknown --help " + args[0] + " command.");
+				log.error("Unknown --help " + args[0] + " command.");
 			} else if (args.length < 2) {
-				System.out.println("Missing the type of module.");
+				log.error("Missing the type of module.");
 				String typeNames = findModules().get(type.toString() + "s");
 				if (typeNames != null) {
-					System.out.println("Must be one of next: " + typeNames);
+					log.error("Must be one of next: " + typeNames);
 				}
 			} else if (args.length > 2) {
-				System.out.println("Extra arguments in command: " +
+				log.error("Extra arguments in command: " +
 					StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " "));
 			} else {
-				System.out.println(findModuleHelp(type, args[1]));
+				log.debug(findModuleHelp(type, args[1]));
 			}
 		}
 	}

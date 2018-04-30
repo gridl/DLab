@@ -47,9 +47,9 @@ public class ParserStatistics {
 	
 	/** Number of rows write. */
 	private long rowWritten;
-	
-	
-	public ParserStatistics(String entryName) {
+
+
+	ParserStatistics(String entryName) {
 		this.entryName = entryName;
 	}
 	
@@ -78,9 +78,13 @@ public class ParserStatistics {
 	
 	/** Return the elapsed time in milliseconds of initializing, reading, filtering, parsing and writing operations. */
 	public long getElapsedTime() {
-		return (elapsedTimeInMillis != 0 ?
-					elapsedTimeInMillis :
-					timeStartInMillis == 0 ? 0 : System.currentTimeMillis() - timeStartInMillis);
+		if (elapsedTimeInMillis != 0) {
+			return elapsedTimeInMillis;
+		} else if (timeStartInMillis == 0) {
+			return 0;
+		} else {
+			return System.currentTimeMillis() - timeStartInMillis;
+		}
 	}
 	
 	/** Return the number of rows read. */

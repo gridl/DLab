@@ -64,7 +64,7 @@ public class S3FileList {
 	 * @param bucket     the name of bucket.
 	 * @param moduleData data for working module
 	 */
-	public S3FileList(String bucket, ModuleData moduleData) {
+	S3FileList(String bucket, ModuleData moduleData) {
 		this.bucket = bucket;
 		this.moduleData = moduleData;
 	}
@@ -92,7 +92,7 @@ public class S3FileList {
 	 *
 	 * @param s3Client the S3 client.
 	 * @return the list of files.
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	public List<String> getFiles(AmazonS3 s3Client) throws AdapterException {
 		ListObjectsV2Request request = new ListObjectsV2Request()

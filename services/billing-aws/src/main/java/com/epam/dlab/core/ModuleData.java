@@ -18,7 +18,6 @@
 
 package com.epam.dlab.core;
 
-import com.epam.dlab.exception.InitializationException;
 import com.epam.dlab.mongo.MongoConstants;
 import com.epam.dlab.mongo.MongoDbConnection;
 import com.google.common.base.MoreObjects;
@@ -43,7 +42,7 @@ public class ModuleData {
 
 	private static final String ID_FIELD = "_id";
 	private static final String MODIFICATION_DATE = "lastModificationDate";
-	public static final String ENTRIES_FIELD = "entries";
+	private static final String ENTRIES_FIELD = "entries";
 	/**
 	 * Date formatter.
 	 */
@@ -74,7 +73,6 @@ public class ModuleData {
 	 * Instantiate module data.
 	 *
 	 * @param connection the name of data file.
-	 * @throws InitializationException
 	 */
 	public ModuleData(MongoDbConnection connection) {
 		this.connection = connection;
@@ -101,7 +99,7 @@ public class ModuleData {
 	 * Return the date value for given key or <b>null</b> if value not found.
 	 *
 	 * @param key the key of entry.
-	 * @throws ParseException
+	 * @throws ParseException in case of exception
 	 */
 	public Date getDate(String key) throws ParseException {
 		String value = entries.get(key);

@@ -18,24 +18,22 @@ limitations under the License.
 
 package com.epam.dlab;
 
-import java.util.Arrays;
-
-import com.epam.dlab.exceptions.DlabException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import com.epam.dlab.configuration.BillingToolConfiguration;
 import com.epam.dlab.configuration.BillingToolConfigurationFactory;
 import com.epam.dlab.core.parser.ParserBase;
 import com.epam.dlab.exception.AdapterException;
 import com.epam.dlab.exception.InitializationException;
 import com.epam.dlab.exception.ParseException;
+import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.utils.ServiceUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
+import java.util.Arrays;
 
 /** Provides billing parser features.
  */
@@ -44,9 +42,9 @@ public class BillingTool {
 	
 	/** Runs parser for given configuration.
 	 * @param conf billing configuration.
-	 * @throws InitializationException
-	 * @throws AdapterException
-	 * @throws ParseException
+	 * @throws InitializationException in case of exception
+	 * @throws AdapterException in case of exception
+	 * @throws ParseException in case of exception
 	 */
 	public void run(BillingToolConfiguration conf) throws InitializationException, AdapterException, ParseException {
 		ParserBase parser = conf.build();
@@ -59,9 +57,9 @@ public class BillingTool {
 	
 	/** Runs parser for given configuration in file.
 	 * @param filename the name of file for billing configuration.
-	 * @throws InitializationException
-	 * @throws AdapterException
-	 * @throws ParseException
+	 * @throws InitializationException in case of exception
+	 * @throws AdapterException in case of exception
+	 * @throws ParseException in case of exception
 	 */
 	public void run(String filename) throws InitializationException, AdapterException, ParseException {
 		run(BillingToolConfigurationFactory.build(filename, BillingToolConfiguration.class));
@@ -69,9 +67,9 @@ public class BillingTool {
 	
 	/** Runs parser for given configuration.
 	 * @param jsonNode the billing configuration.
-	 * @throws InitializationException
-	 * @throws AdapterException
-	 * @throws ParseException
+	 * @throws InitializationException in case of exception
+	 * @throws AdapterException in case of exception
+	 * @throws ParseException in case of exception
 	 */
 	public void run(JsonNode jsonNode) throws InitializationException, AdapterException, ParseException {
 		run(BillingToolConfigurationFactory.build(jsonNode, BillingToolConfiguration.class));
@@ -92,7 +90,7 @@ public class BillingTool {
 	 */
 	protected static void setLoggerLevel() {
 		ch.qos.logback.classic.LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-		ch.qos.logback.classic.Logger logger = context.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+		ch.qos.logback.classic.Logger logger;
 		String [] loggers = {
 			"org.hibernate",
 			"org.jboss.logging"
@@ -106,7 +104,7 @@ public class BillingTool {
 	
 	/** Runs parser for given configuration.
 	 * @param args the arguments of command line. 
-	 * @throws InitializationException
+	 * @throws InitializationException in case of exception
 	 */
 	public static void main(String[] args) throws InitializationException {
 		if (ServiceUtils.printAppVersion(BillingScheduler.class, args)) {
@@ -115,47 +113,50 @@ public class BillingTool {
 
 		String confName = null;
 		String json = null;
-		
-		for(int i = 0; i < args.length; i++) {
+
+		for (int i = 0; i < args.length; i += 2) {
 			if (isKey("help", args[i])) {
-				i++;
-				Help.usage(i < args.length ? Arrays.copyOfRange(args, i, args.length) : null);
+				Help.usage(i + 1 < args.length ? Arrays.copyOfRange(args, i + 1, args.length) : null);
 				return;
 			} else if (isKey("conf", args[i])) {
-				i++;
-				if (i < args.length) {
-					confName = args[i];
-				} else {
-					throw new InitializationException("Missing the name of configuration file");
-				}
+				confName = getValueOrElseThrowException(i, args, "Missing the name of configuration file");
 			} else if (isKey("json", args[i])) {
-				i++;
-				if (i < args.length) {
-					json = args[i];
-				} else {
-					throw new InitializationException("Missing the content of json configuration");
-				}
+				json = getValueOrElseThrowException(i, args, "Missing the content of json configuration");
 			} else {
 				throw new InitializationException("Unknow argument: " + args[i]);
 			}
 		}
 
-		if (confName == null && json == null) {
+		initialChecking(confName, json);
+		setLoggerLevel();
+		runBilling(confName, json);
+	}
+
+	private static String getValueOrElseThrowException(int position, String[] arguments, String exceptionMessage)
+			throws InitializationException {
+		if (position + 1 < arguments.length) {
+			return arguments[position + 1];
+		} else {
+			throw new InitializationException(exceptionMessage);
+		}
+	}
+
+	private static void initialChecking(String configurationName, String jsonData) throws InitializationException {
+		if (configurationName == null && jsonData == null) {
 			Help.usage();
 			throw new InitializationException("Missing arguments");
-		}
-		
-		if (confName != null && json != null) {
+		} else if (configurationName != null && jsonData != null) {
 			Help.usage();
 			throw new InitializationException("Invalid arguments.");
 		}
+	}
 
-		setLoggerLevel();
+	private static void runBilling(String configurationName, String jsonData) {
 		try {
-			if (confName != null) {
-				new BillingTool().run(confName);
+			if (configurationName != null) {
+				new BillingTool().run(configurationName);
 			} else {
-				JsonNode jsonNode = new ObjectMapper().valueToTree(json);
+				JsonNode jsonNode = new ObjectMapper().valueToTree(jsonData);
 				new BillingTool().run(jsonNode);
 			}
 		} catch (Exception e) {

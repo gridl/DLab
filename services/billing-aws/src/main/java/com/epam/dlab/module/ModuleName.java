@@ -28,4 +28,7 @@ public class ModuleName {
 	public static final String ADAPTER_MONGO_DLAB = "mongodlab";
 	public static final String PARSER_CSV = "csv";
 	public static final String FILTER_AWS = "aws";
+
+	private ModuleName() {
+	}
 }

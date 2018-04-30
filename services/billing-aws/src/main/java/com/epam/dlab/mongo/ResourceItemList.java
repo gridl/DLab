@@ -18,14 +18,13 @@ limitations under the License.
 
 package com.epam.dlab.mongo;
 
+import com.epam.dlab.billing.DlabResourceType;
+import com.google.common.base.MoreObjects;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
-
-import com.epam.dlab.billing.DlabResourceType;
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.base.MoreObjects;
 
 /** List of the DLab's resources.
  */
@@ -36,7 +35,7 @@ public class ResourceItemList {
 	
 	/** Constructs an empty list of resources.
      */
-	public ResourceItemList() {
+	ResourceItemList() {
 		list = new Vector<>();
 	}
 	
@@ -92,7 +91,7 @@ public class ResourceItemList {
 	}
 	
 	/** Find and return the resource by resource id.
-	 * @param index index of the resource.
+	 * @param resourceId id of the resource.
 	 */
 	public ResourceItem getById(String resourceId) {
 		findItemById.resourceId = resourceId;

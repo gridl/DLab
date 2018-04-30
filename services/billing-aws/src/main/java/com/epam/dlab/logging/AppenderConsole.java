@@ -18,13 +18,10 @@ limitations under the License.
 
 package com.epam.dlab.logging;
 
-import com.epam.dlab.exception.InitializationException;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.ConsoleAppender;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.ConsoleAppender;
 
 /** Console appender for logging.
  */
@@ -37,7 +34,7 @@ import ch.qos.logback.core.ConsoleAppender;
 public class AppenderConsole extends AppenderBase {
 	
 	@Override
-    public void configure(LoggerContext context)  throws InitializationException {
-    	super.configure(context, "console-appender", new ConsoleAppender<ILoggingEvent>());
+	public void configure(LoggerContext context) {
+		super.configure(context, "console-appender", new ConsoleAppender<>());
     }
 }

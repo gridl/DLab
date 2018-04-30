@@ -18,14 +18,14 @@ limitations under the License.
 
 package com.epam.dlab.core.parser;
 
-import java.util.LinkedHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.epam.dlab.exception.ParseException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** The line of billing report.
  */
@@ -76,7 +76,7 @@ public class ReportLine {
 	private String resourceId;
 
 	@JsonProperty
-	private LinkedHashMap<String, String> tags;
+	private Map<String, String> tags;
 
 	
 	public String getDlabId() {
@@ -151,11 +151,11 @@ public class ReportLine {
 		return resourceType;
 	}
 
-	public LinkedHashMap<String, String> getTags() {
+	public Map<String, String> getTags() {
 		return tags;
 	}
 
-	public void setTags(LinkedHashMap<String, String> tags) {
+	public void setTags(Map<String, String> tags) {
 		this.tags = tags;
 	}
 
@@ -167,7 +167,7 @@ public class ReportLine {
 	private static final Pattern pClusterId = Pattern.compile("j-[A-Z0-9]{12,13}$");
 	
 	/** Calculate and set the type of resource and resource id.
-	 * @throws ParseException */
+	 * @throws ParseException in case of exception*/
 	public void setResourceTypeId(String resourceTypeId) throws ParseException {
 		if (product == null) {
 			throw new ParseException("Property product is not set");
@@ -180,21 +180,25 @@ public class ReportLine {
 			resourceId = (m.find() ? m.group() : null);
 		} else {
 			if ("Amazon Elastic Compute Cloud".equals(product)) {
-				if (pInstancceId.matcher(resourceTypeId).find()) {
-					resourceType = ResourceType.COMPUTER;
-				} else if(pVolumeId.matcher(resourceTypeId).find()) {
-					resourceType = ResourceType.STORAGE_EBS;
-				} else if (pIpAddress.matcher(resourceTypeId).find()) {
-					resourceType = ResourceType.IP_ADDRESS;
-				} else {
-					resourceType = ResourceType.COMPUTER;
-				}
+				resourceType = getResourceType(resourceTypeId);
 			} else if ("Amazon Simple Storage Service".equals(product)) {
 				resourceType = ResourceType.STORAGE_BUCKET;
 			} else {
 				resourceType = ResourceType.OTHER;
 			}
 			resourceId = resourceTypeId;
+		}
+	}
+
+	private ResourceType getResourceType(String resourceTypeId) {
+		if (pInstancceId.matcher(resourceTypeId).find()) {
+			return ResourceType.COMPUTER;
+		} else if (pVolumeId.matcher(resourceTypeId).find()) {
+			return ResourceType.STORAGE_EBS;
+		} else if (pIpAddress.matcher(resourceTypeId).find()) {
+			return ResourceType.IP_ADDRESS;
+		} else {
+			return ResourceType.COMPUTER;
 		}
 	}
 

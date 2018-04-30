@@ -27,14 +27,14 @@ public abstract class GenericException extends Exception {
 	/** Constructs a new exception.
 	 * @param message error message.
 	 */
-	public GenericException(String message) {
+	GenericException(String message) {
 		super(message);
 	}
 
 	/** Constructs a new exception.
 	 * @param cause the cause.
 	 */
-	public GenericException(Exception cause) {
+	GenericException(Exception cause) {
 		super(cause);
 	}
 
@@ -42,7 +42,7 @@ public abstract class GenericException extends Exception {
 	 * @param message error message.
 	 * @param cause the cause.
 	 */
-	public GenericException(String message, Exception cause) {
+	GenericException(String message, Exception cause) {
 		super(message, cause);
 	}
 }

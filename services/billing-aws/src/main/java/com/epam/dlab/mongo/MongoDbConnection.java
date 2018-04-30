@@ -18,30 +18,25 @@ limitations under the License.
 
 package com.epam.dlab.mongo;
 
-import static com.mongodb.client.model.Filters.eq;
+import com.epam.dlab.core.aggregate.UsageDataList;
+import com.epam.dlab.core.parser.ReportLine;
+import com.epam.dlab.exception.AdapterException;
+import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.result.DeleteResult;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.epam.dlab.core.aggregate.UsageDataList;
-import com.epam.dlab.core.parser.ReportLine;
-import com.epam.dlab.exception.AdapterException;
-import com.mongodb.BasicDBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-import com.mongodb.WriteConcern;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.result.DeleteResult;
+import static com.mongodb.client.model.Filters.eq;
 
 /** Provides operation with Mongo database and billing report.
  */
@@ -61,7 +56,7 @@ public class MongoDbConnection implements Closeable {
 	 * @param databaseName the name of database.
 	 * @param username the name of user.
 	 * @param password the password.
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	public MongoDbConnection(String host, int port, String databaseName, String username, String password) throws AdapterException {
     	try {
@@ -131,7 +126,7 @@ public class MongoDbConnection implements Closeable {
 	/** Insert document to Mongo.
 	 * @param collection the name of collection.
 	 * @param document the document.
-	 * @throws AdapterException 
+	 * @throws AdapterException in case of exception
 	 */
 	public void insertOne(MongoCollection<Document> collection, Document document) throws AdapterException {
 		try {
@@ -145,12 +140,12 @@ public class MongoDbConnection implements Closeable {
 	/** Insert documents from list to Mongo collection and clear list.
 	 * @param collection Mongo collection.
 	 * @param documents the list of documents.
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	public void insertRows(MongoCollection<Document> collection, List<Document> documents)
 			throws AdapterException {
 		try {
-			if (documents.size() > 0) {
+			if (!documents.isEmpty()) {
 				collection.insertMany(documents);
 				LOGGER.debug("{} documents has been inserted into collection {}",
 						documents.size(), collection.getNamespace());
@@ -166,7 +161,7 @@ public class MongoDbConnection implements Closeable {
 	 * @param collection Mongo collection.
 	 * @param documents the list of documents.
 	 * @param usageDateList list of the data interval to deletion old data from Mongo.
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	public void upsertRows(MongoCollection<Document> collection, List<Document> documents, UsageDataList usageDateList)
 			throws AdapterException {
@@ -177,7 +172,7 @@ public class MongoDbConnection implements Closeable {
 	/** Delete the documents from Mongo collection.
 	 * @param collection Mongo collection.
 	 * @param usageDateList list of the data interval to deletion data from Mongo.
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	public void deleteRows(MongoCollection<Document> collection, UsageDataList usageDateList)
 			throws AdapterException {

@@ -20,37 +20,40 @@ package com.epam.dlab.mongo;
 
 /** The constants names of collections and fields in Mongo DB.
  */
-public interface MongoConstants {
+public class MongoConstants {
 	/** Name of ID field. */
-	public static final String FIELD_ID = "_id";
+	static final String FIELD_ID = "_id";
     
 	/** Collection environment settings. */
-    public static final String COLLECTION_SETTINGS = "settings";
-    public static final String FIELD_SERIVICE_BASE_NAME = "conf_service_base_name";
+	static final String COLLECTION_SETTINGS = "settings";
+	static final String FIELD_SERIVICE_BASE_NAME = "conf_service_base_name";
 
     /** Collection user AWS credentials. */
-    public static final String COLLECTION_USER_EDGE = "userCloudCredentials";
-    public static final String FIELD_EDGE_BUCKET = "user_own_bicket_name";
+	static final String COLLECTION_USER_EDGE = "userCloudCredentials";
+	static final String FIELD_EDGE_BUCKET = "user_own_bicket_name";
 
     /** Collection user instances. */
-    public static final String COLLECTION_USER_INSTANCES = "userInstances";
+	static final String COLLECTION_USER_INSTANCES = "userInstances";
     public static final String FIELD_EXPLORATORY_NAME = "exploratory_name";
-    public static final String FIELD_USER = "user";
-    public static final String FIELD_EXPLORATORY_ID = "exploratory_id";
-    public static final String FIELD_CURRENCY_CODE = "currency_code";
-    public static final String FIELD_COMPUTATIONAL_RESOURCES = "computational_resources";
-    public static final String FIELD_COMPUTATIONAL_ID = "computational_id";
-    public static final String FIELD_COMPUTATIONAL_NAME = "computational_name";
+	static final String FIELD_USER = "user";
+	static final String FIELD_EXPLORATORY_ID = "exploratory_id";
+	static final String FIELD_CURRENCY_CODE = "currency_code";
+	static final String FIELD_COMPUTATIONAL_RESOURCES = "computational_resources";
+	static final String FIELD_COMPUTATIONAL_ID = "computational_id";
+	static final String FIELD_COMPUTATIONAL_NAME = "computational_name";
 
     /** Collection billing. */
     public static final String COLLECTION_BILLING = "billing";
-	public static final String FIELD_DLAB_RESOURCE_ID = "dlab_resource_id";
-	public static final String FIELD_RESOURCE_NAME = "resource_name";
-	public static final String FIELD_DLAB_RESOURCE_TYPE = "dlab_resource_type";
+	static final String FIELD_DLAB_RESOURCE_ID = "dlab_resource_id";
+	static final String FIELD_RESOURCE_NAME = "resource_name";
+	static final String FIELD_DLAB_RESOURCE_TYPE = "dlab_resource_type";
 
     /** Collection billingTotal. */
-	public static final String COLLECTION_BILLING_TOTAL = "billingTotal";
-	public static final String FIELD_USAGE_DATE_START = "usage_date_start";
-	public static final String FIELD_USAGE_DATE_END = "usage_date_end";
-	String BILLING_DATA_COLLECTION = "BillingData";
+	static final String COLLECTION_BILLING_TOTAL = "billingTotal";
+	static final String FIELD_USAGE_DATE_START = "usage_date_start";
+	static final String FIELD_USAGE_DATE_END = "usage_date_end";
+	public static final String BILLING_DATA_COLLECTION = "BillingData";
+
+	private MongoConstants() {
+	}
 }

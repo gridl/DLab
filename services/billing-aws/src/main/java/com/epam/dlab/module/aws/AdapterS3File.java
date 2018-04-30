@@ -69,12 +69,12 @@ public class AdapterS3File extends AdapterBase {
 	/**
 	 * Name of key for the last loaded file.
 	 */
-	public static final String DATA_KEY_LAST_LOADED_FILE = "AdapterS3File_lastLoadedFile";
+	private static final String DATA_KEY_LAST_LOADED_FILE = "AdapterS3File_lastLoadedFile";
 
 	/**
 	 * Name of key for the modification date of loaded file.
 	 */
-	public static final String DATA_KEY_LAST_MODIFICATION_DATE = "AdapterS3File_lastModifyDate";
+	private static final String DATA_KEY_LAST_MODIFICATION_DATE = "AdapterS3File_lastModifyDate";
 	private static final String CANNOT_READ_FILE_FORMAT = "Cannot read file %s. %s";
 	private static final String DELIMITER = "/";
 
@@ -331,7 +331,7 @@ public class AdapterS3File extends AdapterBase {
 	/**
 	 * Return the current file name.
 	 */
-	public String getCurrentFileName() {
+	private String getCurrentFileName() {
 		return (filelist == null || currentFileIndex < 0 || currentFileIndex >= filelist.size() ? null : filelist.get
 				(currentFileIndex));
 	}
@@ -339,7 +339,7 @@ public class AdapterS3File extends AdapterBase {
 	/**
 	 * Creates and returns the Amazon client, as well as checks bucket existence.
 	 *
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	private AmazonS3 getAmazonClient() throws AdapterException {
 		AmazonS3 s3 = (accessKeyId == null ?
@@ -356,7 +356,7 @@ public class AdapterS3File extends AdapterBase {
 	/**
 	 * Open the source file and return reader.
 	 *
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	private InputStream getFileStream() throws AdapterException {
 		try {
@@ -373,7 +373,7 @@ public class AdapterS3File extends AdapterBase {
 	/**
 	 * Return the modification date of loaded file.
 	 *
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	private void setLastModificationDate() throws AdapterException {
 		try {
@@ -388,7 +388,7 @@ public class AdapterS3File extends AdapterBase {
 	 * Open a zip file.
 	 *
 	 * @param filename file name.
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	private void openZipFile(String filename) throws AdapterException {
 		LOGGER.debug("Open a zip file {}", filename);
@@ -410,7 +410,7 @@ public class AdapterS3File extends AdapterBase {
 	 *
 	 * @param filename file name.
 	 * @return <b>true</b> if a next entry has been opened.
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	private boolean openZipEntry(String filename) throws AdapterException {
 		ZipEntry entry;
@@ -436,7 +436,7 @@ public class AdapterS3File extends AdapterBase {
 	 * Close a zip file.
 	 *
 	 * @param filename file name.
-	 * @throws AdapterException
+	 * @throws AdapterException in case of exception
 	 */
 	private void closeZipFile(String filename) throws AdapterException {
 		if (fileInputStream != null) {

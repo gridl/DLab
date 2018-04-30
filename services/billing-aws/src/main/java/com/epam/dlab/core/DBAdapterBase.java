@@ -121,6 +121,6 @@ public abstract class DBAdapterBase extends AdapterBase {
 				.add("port", port)
 				.add("database", database)
 				.add("username", username)
-				.add("password", "***");
+				.add("pass", "***");
 	}
 }

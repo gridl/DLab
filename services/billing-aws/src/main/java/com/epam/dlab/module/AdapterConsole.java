@@ -18,24 +18,26 @@ limitations under the License.
 
 package com.epam.dlab.module;
 
-import java.util.List;
-
 import com.epam.dlab.core.AdapterBase;
 import com.epam.dlab.core.parser.CommonFormat;
 import com.epam.dlab.core.parser.ReportLine;
 import com.epam.dlab.exception.AdapterException;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 /** The adapter for console output.
  */
+@Slf4j
 @JsonTypeName(ModuleName.ADAPTER_CONSOLE)
 @JsonClassDescription(
-	"Console adapter.\n" +
-	"Output data to console. Can be used for AdapterOut only.\n" +
-	"  - type: " + ModuleName.ADAPTER_CONSOLE + "\n" +
-	"    [writeHeader: <true | false>]  - write header of data to the adapterOut."
-	)
+		"Console adapter.\n" +
+				"Output data to console. Can be used for AdapterOut only.\n" +
+				"  - type: " + ModuleName.ADAPTER_CONSOLE + "\n" +
+				"    [writeHeader: <true | false>]  - write header of data to the adapterOut."
+)
 public class AdapterConsole extends AdapterBase {
 
 	/** Default constructor for deserialization. */
@@ -57,7 +59,7 @@ public class AdapterConsole extends AdapterBase {
 	}
 
 	@Override
-	public void close() throws AdapterException {
+	public void close() {
 		// Nothing to do
 	}
 
@@ -72,12 +74,12 @@ public class AdapterConsole extends AdapterBase {
 	}
 
 	@Override
-	public void writeHeader(List<String> header) throws AdapterException {
-		System.out.println(CommonFormat.rowToString(header));
+	public void writeHeader(List<String> header) {
+		log.debug(CommonFormat.rowToString(header));
 	}
 	
 	@Override
-	public void writeRow(ReportLine row) throws AdapterException {
-		System.out.println(CommonFormat.rowToString(row));
+	public void writeRow(ReportLine row) {
+		log.debug(CommonFormat.rowToString(row));
 	}
 }

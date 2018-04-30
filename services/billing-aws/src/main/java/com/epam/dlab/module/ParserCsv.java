@@ -18,23 +18,19 @@ limitations under the License.
 
 package com.epam.dlab.module;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.epam.dlab.core.parser.ParserByLine;
 import com.epam.dlab.exception.AdapterException;
-import com.epam.dlab.exception.InitializationException;
 import com.epam.dlab.exception.ParseException;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Parse CSV format to common CSV format.
  */
@@ -72,13 +68,13 @@ public class ParserCsv extends ParserByLine {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ParserCsv.class);
 
 	/** Character for separate field names and values. */
-	public static final char FIELD_SEPARATOR_DEFAULT = ',';
+	private static final char FIELD_SEPARATOR_DEFAULT = ',';
 	
 	/** Character for termination field names and values. */
-	public static final char FIELD_DELIMITER_DEFAULT = '"';
+	private static final char FIELD_DELIMITER_DEFAULT = '"';
 	
 	/** Escape character. */
-	public static final char ESCAPE_CHAR_DEFAULT = '\\';
+	private static final char ESCAPE_CHAR_DEFAULT = '\\';
 	
 
 	/** Character for separate field names and values. */
@@ -157,7 +153,9 @@ public class ParserCsv extends ParserByLine {
 
 	
 	@Override
-	public void initialize() throws InitializationException { }
+	public void initialize() {
+		//method is empty
+	}
 	
 	@Override
 	public List<String> parseHeader() throws AdapterException, ParseException {
@@ -192,9 +190,8 @@ public class ParserCsv extends ParserByLine {
 	 * @return ParseException
 	 */
 	private ParseException getParseException(String message, int pos, String sourceLine) {
-		String s = String.format("%s at pos %d in line: ", message, pos);
-		LOGGER.error(s + sourceLine);
-		LOGGER.error(StringUtils.repeat(' ', s.length() + pos - 1) + '^');
+		String s = String.format("%s at pos %d in line: {}", message, pos);
+		LOGGER.error(s, sourceLine);
 		return new ParseException(s + sourceLine);
 	}
 
@@ -204,15 +201,10 @@ public class ParserCsv extends ParserByLine {
 		int pos = 0;
 		boolean isDelimiter = false;
 		StringBuilder sb = new StringBuilder(line);
-		List<String> row = new ArrayList<String>();
+		List<String> row = new ArrayList<>();
 		
 		while (pos < sb.length()) {
 			char c = sb.charAt(pos);
-			/*
-			LOGGER.debug("Current buffer {}", sb);
-			LOGGER.debug("pos {}", pos);
-			LOGGER.debug("isDelimiter {}", isDelimiter);
-			*/
 			if (c == escapeChar) {
 				realPos++;
 				pos++;
@@ -245,7 +237,6 @@ public class ParserCsv extends ParserByLine {
 				}
 				sb.delete(0, 1);
 				isDelimiter = true;
-				continue;
 			} else if (c == fieldSeparator) {
 				realPos++;
 				if (isDelimiter) {

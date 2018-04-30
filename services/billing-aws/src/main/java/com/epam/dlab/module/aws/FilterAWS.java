@@ -18,19 +18,17 @@ limitations under the License.
 
 package com.epam.dlab.module.aws;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import com.epam.dlab.core.FilterBase;
 import com.epam.dlab.core.parser.ReportLine;
 import com.epam.dlab.exception.InitializationException;
-import com.epam.dlab.exception.ParseException;
 import com.epam.dlab.module.ModuleName;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.base.MoreObjects.ToStringHelper;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /** Filter and transform the line of AWS detailed billing reports.
  */
@@ -105,12 +103,12 @@ public class FilterAWS extends FilterBase {
 	}
 
 	@Override
-	public String canParse(String line) throws ParseException {
-		return (line.indexOf("\",\"LineItem\",\"") < 0 ? null : line);
+	public String canParse(String line) {
+		return (!line.contains("\",\"LineItem\",\"") ? null : line);
 	}
 
 	@Override
-	public List<String> canTransform(List<String> row) throws ParseException {
+	public List<String> canTransform(List<String> row) {
 		if (dlabIdIndex != -1 &&
 			(row.size() <= dlabIdIndex ||
 			!row.get(dlabIdIndex).startsWith(dlabPrefix))) {
@@ -120,7 +118,7 @@ public class FilterAWS extends FilterBase {
 	}
 
 	@Override
-	public ReportLine canAccept(ReportLine row) throws ParseException {
+	public ReportLine canAccept(ReportLine row) {
 		row.setCurrencyCode(currencyCode);
 		return row;
 	}

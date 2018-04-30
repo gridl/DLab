@@ -18,13 +18,13 @@ limitations under the License.
 
 package com.epam.dlab.core;
 
-import java.util.List;
-
 import com.epam.dlab.core.parser.ParserBase;
 import com.epam.dlab.core.parser.ReportLine;
 import com.epam.dlab.exception.InitializationException;
 import com.epam.dlab.exception.ParseException;
 import com.google.common.base.MoreObjects.ToStringHelper;
+
+import java.util.List;
 
 /** Abstract module of filtering. 
  * See description of {@link ModuleBase} how to create your own filter.
@@ -46,28 +46,28 @@ public abstract class FilterBase extends ModuleBase {
 	
 	
 	/** Initialize the filter.
-	 * @throws InitializationException
+	 * @throws InitializationException in case of exception
 	 */
 	public abstract void initialize() throws InitializationException;
 
 	/** Return the line for parsing if line is accepted and may be parsed,
 	 * otherwise return <b>null</b>.
 	 * @param line the source line.
-	 * @throws ParseException
+	 * @throws ParseException in case of exception
 	 */
 	public abstract String canParse(String line) throws ParseException;
 
 	/** Return the list of values for transformation if value is accepted and may be transformed,
 	 * otherwise return <b>null</b>.
 	 * @param row the list of values.
-	 * @throws ParseException
+	 * @throws ParseException in case of exception
 	 */
 	public abstract List<String> canTransform(List<String> row) throws ParseException;
 
 	/** Return the row of billing report if row is accepted and may be written to target,
 	 * otherwise return <b>null</b>.
 	 * @param row the report line.
-	 * @throws ParseException
+	 * @throws ParseException in case of exception
 	 */
 	public abstract ReportLine canAccept(ReportLine row) throws ParseException;
 	

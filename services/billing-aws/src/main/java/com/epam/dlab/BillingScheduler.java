@@ -18,12 +18,6 @@ limitations under the License.
 
 package com.epam.dlab;
 
-import java.util.Arrays;
-
-import com.epam.dlab.exceptions.DlabException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.epam.dlab.configuration.BillingToolConfiguration;
 import com.epam.dlab.configuration.BillingToolConfigurationFactory;
 import com.epam.dlab.configuration.SchedulerConfiguration;
@@ -31,12 +25,18 @@ import com.epam.dlab.core.parser.ParserBase;
 import com.epam.dlab.exception.AdapterException;
 import com.epam.dlab.exception.InitializationException;
 import com.epam.dlab.exception.ParseException;
+import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.utils.ServiceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 /** Billing scheduler for loading billing report.
  */
 public class BillingScheduler implements Runnable {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BillingScheduler.class);
+	private static final String BILLING_REPORT_MSG = "Billing report will be loaded at {}";
 	
 	/** Timeout for check the schedule in milliseconds. */
 	private static final long CHECK_TIMEOUT_MILLIS = 60000;
@@ -46,7 +46,7 @@ public class BillingScheduler implements Runnable {
 
 	/** Starts the scheduler for given configuration.
 	 * @param filename the name of file for billing configuration.
-	 * @throws InitializationException 
+	 * @throws InitializationException in case of exception
 	 */
 	public static void start(String filename) throws InitializationException {
 		if (scheduler == null) {
@@ -82,41 +82,38 @@ public class BillingScheduler implements Runnable {
 	
 	/** Instantiate billing scheduler for given configuration.
 	 * @param filename the name of file for billing configuration.
-	 * @throws InitializationException
+	 * @throws InitializationException in case of exception
 	 */
-	public BillingScheduler(String filename) throws InitializationException {
+	private BillingScheduler(String filename) throws InitializationException {
 		this.confFilename = filename;
 		// Check configuration
 		LOGGER.debug("Billing report configuration file: {}", filename);
 		BillingToolConfiguration configuration = BillingToolConfigurationFactory.build(confFilename, BillingToolConfiguration.class);
-		@SuppressWarnings("unused")
-		ParserBase parser = configuration.build();
+		configuration.build();
 		LOGGER.debug("Billing report configuration: {}", configuration);
 		setSchedule(configuration);
 	}
 	
 	/** Loads the billing report.
-	 * @throws InitializationException
-	 * @throws AdapterException
-	 * @throws ParseException
+	 * @throws InitializationException in case of exception
+	 * @throws AdapterException in case of exception
+	 * @throws ParseException in case of exception
 	 */
 	private void load() throws InitializationException, AdapterException, ParseException {
 		BillingToolConfiguration configuration = BillingToolConfigurationFactory.build(confFilename, BillingToolConfiguration.class);
 		ParserBase parser = configuration.build();
 		long time = schedule.getNearTime().getTimeInMillis();
-		if (setSchedule(configuration)) {
-			if (time != schedule.getNearTime().getTimeInMillis()) {
-				LOGGER.info("Previous billing schedule has been canceled");
+		if (setSchedule(configuration) && time != schedule.getNearTime().getTimeInMillis()) {
+			LOGGER.info("Previous billing schedule has been canceled");
 				return;
-			}
 		}
 		
 		LOGGER.info("Try to laod billing report for configuration: {}", configuration);
 		parser.parse();
-		if (parser.getStatistics().size() > 0) {
+		if (!parser.getStatistics().isEmpty()) {
 			LOGGER.info("Billing report parser statistics:");
 			for (int i = 0; i < parser.getStatistics().size(); i++) {
-				LOGGER.info("  {}", parser.getStatistics().get(i).toString());
+				LOGGER.info("  {}", parser.getStatistics().get(i));
 			}
 		}
 	}
@@ -124,28 +121,28 @@ public class BillingScheduler implements Runnable {
 	/** Read the schedule from configuration.
 	 * @param configuration the billing configuration.
 	 * @return <b>true>/b> if new schedule was loaded, otherwise <b>false</b>.
-	 * @throws InitializationException
+	 * @throws InitializationException in case of exception
 	 */
 	private boolean setSchedule(BillingToolConfiguration configuration) throws InitializationException {
-		SchedulerConfiguration schedule = configuration.getScheduler();
+		SchedulerConfiguration schedulerConfiguration = configuration.getScheduler();
 		boolean isModified = false;
-		if (schedule == null) {
+		if (schedulerConfiguration == null) {
 			throw new InitializationException("Schedule of billing report in configuration file \"" + confFilename + " not found");
 		}
 		if (this.schedule == null) {
 			isModified = true;
-			LOGGER.debug("Billing report schedule: {}", schedule);
+			LOGGER.debug("Billing report schedule: {}", schedulerConfiguration);
 		} else {
 			this.schedule.adjustStartTime();
-			if (!schedule.equals(this.schedule)) {
+			if (!schedulerConfiguration.equals(this.schedule)) {
 				isModified = true;
-				LOGGER.debug("New billing report schedule has been loaded: {}", schedule);
+				LOGGER.debug("New billing report schedule has been loaded: {}", schedulerConfiguration);
 			}
 		}
 		
 		try {
 			this.schedule = new SchedulerConfiguration();
-			this.schedule.setSchedule(schedule.getSchedule());
+			this.schedule.setSchedule(schedulerConfiguration.getSchedule());
 			this.schedule.build();
 		} catch (Exception e) {
 			throw new InitializationException("Cannot configure billing scheduler. " + e.getLocalizedMessage(), e);
@@ -159,49 +156,55 @@ public class BillingScheduler implements Runnable {
 		LOGGER.info("Billing scheduler has been started");
 		long startTimeMillis = schedule.getNextTime().getTimeInMillis();
 		long timeMillis;
-		LOGGER.info("Billing report will be loaded at {}", schedule.getNextTime().getTime());
+		LOGGER.info(BILLING_REPORT_MSG, schedule.getNextTime().getTime());
 		
 		try {
 			while (!Thread.currentThread().isInterrupted()) {
 				if (startTimeMillis <= System.currentTimeMillis()) {
-					try {
-						LOGGER.debug("Try to load billing report for schedule {}", schedule.getNextTime().getTime());
-						load();
-					} catch (InitializationException | AdapterException | ParseException e) {
-						LOGGER.error("Error loading billing report: {}", e.getLocalizedMessage(), e);
-					}
+					loadBillingReport();
 					startTimeMillis = schedule.getNextTime().getTimeInMillis();
-					LOGGER.info("Billing report will be loaded at {}", schedule.getNextTime().getTime());
+					LOGGER.info(BILLING_REPORT_MSG, schedule.getNextTime().getTime());
 				} else {
 					schedule.adjustStartTime();
 					timeMillis = schedule.getNextTime().getTimeInMillis();
 					if (startTimeMillis != timeMillis) {
-						LOGGER.info("Billing report will be loaded at {}", schedule.getNextTime().getTime());
+						LOGGER.info(BILLING_REPORT_MSG, schedule.getNextTime().getTime());
 						startTimeMillis = timeMillis;
 					}
 				}
-				
-				try {
-					timeMillis = startTimeMillis - System.currentTimeMillis();
-					if (timeMillis > 0) {
-						timeMillis = Math.min(CHECK_TIMEOUT_MILLIS, timeMillis);
-						Thread.sleep(timeMillis);
-					}
-				} catch (InterruptedException e) {
-					LOGGER.warn("Billing scheduler interrupted", e);
-					Thread.currentThread().interrupt();
-				}
+				timeMillis = startTimeMillis - System.currentTimeMillis();
+				checkTime(timeMillis);
 			}
 		} catch (Exception e) {
 			LOGGER.error("Unhandled billing report error: {}", e.getLocalizedMessage(), e);
 		}
 		LOGGER.info("Scheduler has been stopped");
 	}
+
+	private void checkTime(long time) {
+		try {
+			if (time > 0) {
+				Thread.sleep(Math.min(CHECK_TIMEOUT_MILLIS, time));
+			}
+		} catch (InterruptedException e) {
+			LOGGER.warn("Billing scheduler interrupted", e);
+			Thread.currentThread().interrupt();
+		}
+	}
+
+	private void loadBillingReport() {
+		try {
+			LOGGER.debug("Try to load billing report for schedule {}", schedule.getNextTime().getTime());
+			load();
+		} catch (InitializationException | AdapterException | ParseException e) {
+			LOGGER.error("Error loading billing report: {}", e.getLocalizedMessage(), e);
+		}
+	}
 	
 	
 	/** Runs billing scheduler for given configuration file.
 	 * @param args the arguments of command line. 
-	 * @throws InitializationException
+	 * @throws InitializationException in case of exception
 	 */
 	public static void main(String[] args) throws InitializationException {
 		if (ServiceUtils.printAppVersion(BillingTool.class, args)) {
@@ -209,15 +212,13 @@ public class BillingScheduler implements Runnable {
 		}
 		
 		String confName = null;
-		for(int i = 0; i < args.length; i++) {
+		for (int i = 0; i < args.length; i += 2) {
 			if (BillingTool.isKey("help", args[i])) {
-				i++;
-				Help.usage(i < args.length ? Arrays.copyOfRange(args, i, args.length) : null);
+				Help.usage(i + 1 < args.length ? Arrays.copyOfRange(args, i + 1, args.length) : null);
 				return;
 			} else if (BillingTool.isKey("conf", args[i])) {
-				i++;
-				if (i < args.length) {
-					confName = args[i];
+				if (i + 1 < args.length) {
+					confName = args[i + 1];
 				} else {
 					throw new InitializationException("Missing the name of configuration file");
 				}
