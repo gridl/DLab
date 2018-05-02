@@ -15,13 +15,13 @@ limitations under the License.
 */
 package com.epam.dlab.process;
 
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
-
 import com.aegisql.conveyor.AssemblingConveyor;
 import com.aegisql.conveyor.BuildingSite;
 import com.aegisql.conveyor.cart.Cart;
 import com.aegisql.conveyor.cart.FutureCart;
+
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public class ProcessConveyor extends AssemblingConveyor<ProcessId,ProcessStep,ProcessInfo>{
 
@@ -39,9 +39,9 @@ public class ProcessConveyor extends AssemblingConveyor<ProcessId,ProcessStep,Pr
                 fc.get().cancel(true);
             }
         });
-        this.setResultConsumer((bin)->{
-            LOG.debug("process finished: {}",bin);
-        });
+		this.setResultConsumer(bin ->
+				LOG.debug("process finished: {}", bin)
+		);
     }
 
     public Supplier<? extends ProcessInfo> getInfoSupplier(ProcessId id) {

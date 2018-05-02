@@ -19,12 +19,11 @@ limitations under the License.
 package com.epam.dlab;
 
 import com.google.inject.AbstractModule;
-
 import io.dropwizard.setup.Environment;
 
 /** The base class for an application configuration of service.
  */
-abstract public class ModuleBase<T extends ServiceConfiguration> extends AbstractModule {
+public abstract class ModuleBase<T extends ServiceConfiguration> extends AbstractModule {
 	/** Application configuration of service. */
     protected T configuration;
     /** Environment of service. */

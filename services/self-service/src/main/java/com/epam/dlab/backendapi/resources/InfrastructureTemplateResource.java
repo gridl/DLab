@@ -20,7 +20,6 @@ import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.service.InfrastructureTemplateService;
 import com.epam.dlab.dto.base.computational.FullComputationalTemplate;
 import com.epam.dlab.dto.imagemetadata.ExploratoryMetadataDTO;
-import com.epam.dlab.rest.contracts.DockerAPI;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 
@@ -36,7 +35,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/infrastructure_templates")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class InfrastructureTemplateResource implements DockerAPI {
+public class InfrastructureTemplateResource {
 
 	@Inject
 	private InfrastructureTemplateService infrastructureTemplateService;

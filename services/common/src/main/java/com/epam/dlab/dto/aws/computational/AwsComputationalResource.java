@@ -50,7 +50,7 @@ public class AwsComputationalResource extends UserComputationalResource {
     private String version;
 
     @Builder
-    public AwsComputationalResource(String computationalName, String computationalId, String imageName,
+	public AwsComputationalResource(String computationalName, String computationalId, String imageName,
 									String templateName, String status, Date uptime,
 									SchedulerJobDTO schedulerJobData, boolean reuploadKeyRequired,
 									String instanceId, String masterShape, String slaveShape, Boolean slaveSpot,

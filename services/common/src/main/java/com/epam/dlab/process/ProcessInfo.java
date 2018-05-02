@@ -44,7 +44,7 @@ public class ProcessInfo {
         this.infoTimeStamp  = infoTimeStamp;
         this.pid            = pid;
 
-        if(rejected != null && rejected.size() > 0) {
+		if (rejected != null && !rejected.isEmpty()) {
             Collection<ProcessInfo> r = new ArrayList<>();
             for(ProcessInfo info:rejected) {
                 if(info != null) {

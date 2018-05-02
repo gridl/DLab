@@ -27,7 +27,6 @@ import com.epam.dlab.backendapi.roles.UserRoles;
 import com.epam.dlab.backendapi.service.ExploratoryService;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.model.exloratory.Exploratory;
-import com.epam.dlab.rest.contracts.ExploratoryAPI;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +45,7 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
-public class ExploratoryResource implements ExploratoryAPI {
+public class ExploratoryResource {
 
 	@Inject
 	private ExploratoryService exploratoryService;

@@ -18,15 +18,18 @@ limitations under the License.
 
 package com.epam.dlab.rest.contracts;
 
-public interface ExploratoryAPI {
-    String LIBRARY = "library/";
-    String EXPLORATORY = "exploratory";
-    String EXPLORATORY_CREATE = EXPLORATORY + "/create";
-    String EXPLORATORY_START = EXPLORATORY + "/start";
-    String EXPLORATORY_TERMINATE = EXPLORATORY + "/terminate";
-    String EXPLORATORY_STOP = EXPLORATORY + "/stop";
-    String EXPLORATORY_LIB_INSTALL = LIBRARY + EXPLORATORY + "/lib_install";
-    String EXPLORATORY_LIB_LIST = LIBRARY + EXPLORATORY + "/lib_list";
-    String EXPLORATORY_GIT_CREDS = EXPLORATORY + "/git_creds";
-    String EXPLORATORY_IMAGE = EXPLORATORY + "/image";
+public class ExploratoryAPI {
+	public static final String LIBRARY = "library/";
+	public static final String EXPLORATORY = "exploratory";
+	public static final String EXPLORATORY_CREATE = EXPLORATORY + "/create";
+	public static final String EXPLORATORY_START = EXPLORATORY + "/start";
+	public static final String EXPLORATORY_TERMINATE = EXPLORATORY + "/terminate";
+	public static final String EXPLORATORY_STOP = EXPLORATORY + "/stop";
+	public static final String EXPLORATORY_LIB_INSTALL = LIBRARY + EXPLORATORY + "/lib_install";
+	public static final String EXPLORATORY_LIB_LIST = LIBRARY + EXPLORATORY + "/lib_list";
+	public static final String EXPLORATORY_GIT_CREDS = EXPLORATORY + "/git_creds";
+	public static final String EXPLORATORY_IMAGE = EXPLORATORY + "/image";
+
+	private ExploratoryAPI() {
+	}
 }

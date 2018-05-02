@@ -20,7 +20,7 @@ import com.epam.dlab.dto.ResourceEnvBaseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects.ToStringHelper;
 
-abstract public class ComputationalBase<T extends ComputationalBase<?>> extends ResourceEnvBaseDTO<T> {
+public abstract class ComputationalBase<T extends ComputationalBase<?>> extends ResourceEnvBaseDTO<T> {
     @SuppressWarnings("unchecked")
     private final T self = (T) this;
 

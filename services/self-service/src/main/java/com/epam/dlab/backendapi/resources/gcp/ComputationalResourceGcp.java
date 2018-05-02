@@ -10,7 +10,6 @@ import com.epam.dlab.backendapi.service.ComputationalService;
 import com.epam.dlab.dto.base.DataEngineType;
 import com.epam.dlab.dto.gcp.computational.GcpComputationalResource;
 import com.epam.dlab.exceptions.DlabException;
-import com.epam.dlab.rest.contracts.ComputationalAPI;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ import static com.epam.dlab.UserInstanceStatus.CREATING;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
-public class ComputationalResourceGcp implements ComputationalAPI {
+public class ComputationalResourceGcp {
 
 	@Inject
 	private SelfServiceApplicationConfiguration configuration;

@@ -1,11 +1,11 @@
 package com.epam.dlab.dto.exploratory;
 
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 
 /** Describe GIT credentials.
  */
@@ -111,7 +111,7 @@ public class ExploratoryGitCreds implements Comparable<ExploratoryGitCreds> {
 	}
 	
 	@Override
-    public int compareTo(ExploratoryGitCreds obj) {
+	public int compareTo(@Nullable ExploratoryGitCreds obj) {
     	if (obj == null) {
     		return 1;
     	}
@@ -120,9 +120,7 @@ public class ExploratoryGitCreds implements Comparable<ExploratoryGitCreds> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		return (obj instanceof ExploratoryGitCreds ?
-				(this.compareTo((ExploratoryGitCreds)obj) == 0) : false);
+		return this == obj || (obj instanceof ExploratoryGitCreds && (this.compareTo((ExploratoryGitCreds) obj) == 0));
 
 	}
 
@@ -138,7 +136,7 @@ public class ExploratoryGitCreds implements Comparable<ExploratoryGitCreds> {
     			.add("username", username)
     			.add("email", email)
     			.add("login", login)
-    			.add("password", "***")
+				.add("pass", "***")
     			.toString();
     }
 }

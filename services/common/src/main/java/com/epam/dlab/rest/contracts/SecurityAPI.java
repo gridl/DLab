@@ -18,11 +18,14 @@ limitations under the License.
 
 package com.epam.dlab.rest.contracts;
 
-public interface SecurityAPI {
-    String LOGIN = "login";
-    String LOGIN_OAUTH = LOGIN + '/' + "oauth";
-    String GET_USER_INFO = "getuserinfo";
-    String LOGOUT = "logout";
-	String INIT_LOGIN_OAUTH_AZURE = "/user/azure/init";
-	String INIT_LOGIN_OAUTH_GCP = "/user/gcp/init";
+public class SecurityAPI {
+	public static final String LOGIN = "login";
+	public static final String LOGIN_OAUTH = LOGIN + '/' + "oauth";
+	public static final String GET_USER_INFO = "getuserinfo";
+	public static final String LOGOUT = "logout";
+	public static final String INIT_LOGIN_OAUTH_AZURE = "/user/azure/init";
+	public static final String INIT_LOGIN_OAUTH_GCP = "/user/gcp/init";
+
+	private SecurityAPI() {
+	}
 }

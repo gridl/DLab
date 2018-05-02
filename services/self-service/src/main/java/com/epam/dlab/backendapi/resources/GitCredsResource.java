@@ -19,7 +19,6 @@ package com.epam.dlab.backendapi.resources;
 import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.service.GitCredentialService;
 import com.epam.dlab.dto.exploratory.ExploratoryGitCredsDTO;
-import com.epam.dlab.rest.contracts.ExploratoryAPI;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +36,7 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
-public class GitCredsResource implements ExploratoryAPI {
+public class GitCredsResource {
 
 	@Inject
 	private GitCredentialService gitCredentialService;

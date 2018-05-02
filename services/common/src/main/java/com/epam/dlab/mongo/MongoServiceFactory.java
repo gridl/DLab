@@ -60,6 +60,7 @@ public class MongoServiceFactory {
         environment.lifecycle().manage(new Managed() {
             @Override
             public void start() {
+				//method is empty
             }
 
             @Override

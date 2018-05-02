@@ -18,7 +18,6 @@ package com.epam.dlab.backendapi.resources;
 
 import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.service.EdgeService;
-import com.epam.dlab.rest.contracts.EdgeAPI;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +35,7 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
-public class EdgeResource implements EdgeAPI {
+public class EdgeResource {
 	@Inject
 	private EdgeService edgeService;
 

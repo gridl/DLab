@@ -20,7 +20,6 @@ package com.epam.dlab.auth;
 
 import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.rest.client.RESTService;
-import com.epam.dlab.rest.contracts.SecurityAPI;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.dropwizard.auth.AuthenticationException;
@@ -30,7 +29,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public class SecurityRestAuthenticator implements Authenticator<String, UserInfo>, SecurityAPI {
+import static com.epam.dlab.rest.contracts.SecurityAPI.GET_USER_INFO;
+
+public class SecurityRestAuthenticator implements Authenticator<String, UserInfo> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityRestAuthenticator.class);
 
 	@Inject

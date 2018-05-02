@@ -1,5 +1,9 @@
 package com.epam.dlab.utils;
 
+import com.epam.dlab.constants.ServiceConsts;
+import com.epam.dlab.exceptions.DlabException;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -9,9 +13,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import com.epam.dlab.constants.ServiceConsts;
-import com.epam.dlab.exceptions.DlabException;
-
+@Slf4j
 public class ServiceUtils {
 
 	private static String includePath = null;
@@ -22,6 +24,9 @@ public class ServiceUtils {
         	includePath = getUserDir();
         }
 	}
+
+	private ServiceUtils() {
+	}
 	
 	/* Return working directory.
 	 */
@@ -30,7 +35,7 @@ public class ServiceUtils {
 	}
 	
 	/** Return path to DLab configuration directory.
-	 * @return
+	 * @return path
 	 */
 	public static String getConfPath() {
         return includePath;
@@ -39,7 +44,7 @@ public class ServiceUtils {
 	
 	/** Return manifest for given class or empty manifest if {@link JarFile#MANIFEST_NAME} not found.
 	 * @param clazz class.
-	 * @throws IOException
+	 * @throws IOException in case of exception
 	 */
 	private static Manifest getManifestForClass(Class<?> clazz) throws IOException {
 		URL url = clazz.getClassLoader().getResource(JarFile.MANIFEST_NAME);
@@ -48,7 +53,7 @@ public class ServiceUtils {
 
 	/** Return manifest from JAR file.
 	 * @param classPath path to class in JAR file.
-	 * @throws IOException
+	 * @throws IOException in case of exception
 	 */
 	private static Manifest getManifestFromJar(String classPath) throws IOException {
 		URL url = new URL(classPath);
@@ -59,7 +64,7 @@ public class ServiceUtils {
 	/** Return manifest map for given class or empty map if manifest not found or cannot be read.
 	 * @param clazz class.
 	 */
-	public static Map<String, String> getManifest(Class<?> clazz) {
+	private static Map<String, String> getManifest(Class<?> clazz) {
 		String className = "/" + clazz.getName().replace('.', '/') + ".class";
 		String classPath = clazz.getResource(className).toString();
 
@@ -67,11 +72,11 @@ public class ServiceUtils {
 		try {
 			Manifest manifest = (classPath.startsWith("jar:file:") ? getManifestFromJar(classPath) : getManifestForClass(clazz));
 			Attributes attributes = manifest.getMainAttributes();
-			for (Object key : attributes.keySet()) {
-				map.put(key.toString(), (String) attributes.get(key));
+			for (Map.Entry<Object, Object> entry : attributes.entrySet()) {
+				map.put(entry.getKey().toString(), (String) entry.getValue());
 			}
 		} catch (IOException e) {
-			System.err.println("Cannot found or open manifest for class " + className);
+			log.error("Cannot found or open manifest for class " + className);
 			throw new DlabException("Cannot read manifest file", e);
 		}
 		
@@ -96,7 +101,7 @@ public class ServiceUtils {
 	            }
 	        }
 			if (!result) {
-				return result;
+				return false;
 			}
 		}
 		
@@ -104,17 +109,17 @@ public class ServiceUtils {
 		if (manifest.isEmpty()) {
 			return result;
 		}
-		
-		System.out.println("Title       " + manifest.get("Implementation-Title"));
-		System.out.println("Version     " + manifest.get("Implementation-Version"));
-		System.out.println("Created By  " + manifest.get("Created-By"));
-		System.out.println("Vendor      " + manifest.get("Implementation-Vendor"));
-		System.out.println("GIT-Branch  " + manifest.get("GIT-Branch"));
-		System.out.println("GIT-Commit  " + manifest.get("GIT-Commit"));
-		System.out.println("Build JDK   " + manifest.get("Build-Jdk"));
-		System.out.println("Build OS    " + manifest.get("Build-OS"));
-		System.out.println("Built Time  " + manifest.get("Build-Time"));
-		System.out.println("Built By    " + manifest.get("Built-By"));
+
+		log.debug("Title       " + manifest.get("Implementation-Title"));
+		log.debug("Version     " + manifest.get("Implementation-Version"));
+		log.debug("Created By  " + manifest.get("Created-By"));
+		log.debug("Vendor      " + manifest.get("Implementation-Vendor"));
+		log.debug("GIT-Branch  " + manifest.get("GIT-Branch"));
+		log.debug("GIT-Commit  " + manifest.get("GIT-Commit"));
+		log.debug("Build JDK   " + manifest.get("Build-Jdk"));
+		log.debug("Build OS    " + manifest.get("Build-OS"));
+		log.debug("Built Time  " + manifest.get("Build-Time"));
+		log.debug("Built By    " + manifest.get("Built-By"));
 		
 		return result;
 	}

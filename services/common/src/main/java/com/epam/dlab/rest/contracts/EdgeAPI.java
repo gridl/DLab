@@ -18,10 +18,13 @@
 
 package com.epam.dlab.rest.contracts;
 
-public interface EdgeAPI {
-	String EDGE = "infrastructure/edge";
-	String EDGE_CREATE = EDGE + "/create";
-	String EDGE_START = EDGE + "/start";
-	String EDGE_STOP = EDGE + "/stop";
-	String EDGE_TERMINATE = EDGE + "/terminate";
+public class EdgeAPI {
+	public static final String EDGE = "infrastructure/edge";
+	public static final String EDGE_CREATE = EDGE + "/create";
+	public static final String EDGE_START = EDGE + "/start";
+	public static final String EDGE_STOP = EDGE + "/stop";
+	public static final String EDGE_TERMINATE = EDGE + "/terminate";
+
+	private EdgeAPI() {
+	}
 }

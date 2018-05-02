@@ -18,9 +18,12 @@ limitations under the License.
 
 package com.epam.dlab.rest.contracts;
 
-public interface DockerAPI {
-    String DOCKER = "docker";
-    String DOCKER_RUN = DOCKER + "/run";
-    String DOCKER_EXPLORATORY = DOCKER + "/exploratory";
-    String DOCKER_COMPUTATIONAL = DOCKER + "/computational";
+public class DockerAPI {
+	private static final String DOCKER = "docker";
+	public static final String DOCKER_RUN = DOCKER + "/run";
+	public static final String DOCKER_EXPLORATORY = DOCKER + "/exploratory";
+	public static final String DOCKER_COMPUTATIONAL = DOCKER + "/computational";
+
+	private DockerAPI() {
+	}
 }

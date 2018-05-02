@@ -33,21 +33,7 @@ public class SecurityAuthorizer implements Authorizer<UserInfo> {
 
     @Override
     public boolean authorize(UserInfo userInfo, String role) {
-        log.debug("authorize user = {} with role = {}", userInfo.getName(), role);
-        if (role == null) {
-            return true;
-        }
-
-        boolean authorized = false;
-
-        switch (role.toUpperCase()) {
-            case "AWSUSER":
-                authorized = userInfo.isAwsUser();
-                break;
-            default:
-                authorized = true;
-        }
-
-        return authorized;
-    }
+		log.debug("authorize user = {} with role = {}", userInfo.getName(), role);
+		return role == null || !role.equalsIgnoreCase("AWSUSER") || userInfo.isAwsUser();
+	}
 }

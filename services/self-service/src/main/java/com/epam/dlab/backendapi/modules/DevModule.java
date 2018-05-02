@@ -35,7 +35,6 @@ import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.dto.UserCredentialDTO;
 import com.epam.dlab.mongo.MongoService;
 import com.epam.dlab.rest.client.RESTService;
-import com.epam.dlab.rest.contracts.DockerAPI;
 import com.epam.dlab.rest.contracts.SecurityAPI;
 import com.google.inject.name.Names;
 import io.dropwizard.auth.Authorizer;
@@ -46,7 +45,7 @@ import javax.ws.rs.core.Response;
 /**
  * Mock class for an application configuration of SelfService for developer mode.
  */
-public class DevModule extends ModuleBase<SelfServiceApplicationConfiguration> implements SecurityAPI, DockerAPI {
+public class DevModule extends ModuleBase<SelfServiceApplicationConfiguration> {
 
 	public static final String TOKEN = "token123";
 	private static final String LOGIN_NAME = "test";
@@ -107,9 +106,10 @@ public class DevModule extends ModuleBase<SelfServiceApplicationConfiguration> i
 			@Override
 			@SuppressWarnings("unchecked")
 			public <T> T post(String path, Object parameter, Class<T> clazz) {
-				if (LOGIN.equals(path)) {
+				if (SecurityAPI.LOGIN.equals(path)) {
 					return authorize((UserCredentialDTO) parameter);
-				} else if (GET_USER_INFO.equals(path) && TOKEN.equals(parameter) && clazz.equals(UserInfo.class)) {
+				} else if (SecurityAPI.GET_USER_INFO.equals(path) && TOKEN.equals(parameter) && clazz.equals(UserInfo
+						.class)) {
 					return (T) getUserInfo();
 				} else if (LOGOUT.equals(path)) {
 					return (T) Response.ok().build();

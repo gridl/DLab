@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 
-abstract public class ResourceBaseDTO<T extends ResourceBaseDTO<?>> {
+public abstract class ResourceBaseDTO<T extends ResourceBaseDTO<?>> {
     @SuppressWarnings("unchecked")
     private final T self = (T) this;
     @JsonProperty("edge_user_name")

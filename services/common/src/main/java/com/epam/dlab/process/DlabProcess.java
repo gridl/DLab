@@ -30,9 +30,9 @@ import java.util.stream.Collectors;
 
 public class DlabProcess {
 
-    private final static Logger LOG = LoggerFactory.getLogger(DlabProcess.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DlabProcess.class);
 
-    private final static DlabProcess INSTANCE = new DlabProcess();
+	private static final DlabProcess INSTANCE = new DlabProcess();
 
     private ExecutorService executorService = Executors.newFixedThreadPool(50*3);
     private Map<String,ExecutorService> perUserService = new ConcurrentHashMap<>();
@@ -60,7 +60,7 @@ public class DlabProcess {
 
     public void setMaxProcessesPerUser(int parallelism) {
         this.userMaxparallelism = parallelism;
-        this.perUserService.forEach((k,e)->{e.shutdown();});
+		this.perUserService.forEach((k, e) -> e.shutdown());
         this.perUserService = new ConcurrentHashMap<>();
     }
 
@@ -125,7 +125,7 @@ public class DlabProcess {
         return pList;
     }
     public Collection<ProcessId> getActiveProcesses(String username){
-        return getActiveProcesses().stream().filter((id)->id.getUser().equals(username)).collect(Collectors.toList());
+		return getActiveProcesses().stream().filter(id -> id.getUser().equals(username)).collect(Collectors.toList());
     }
 
     public Supplier<? extends ProcessInfo> getProcessInfoSupplier(ProcessId id) {

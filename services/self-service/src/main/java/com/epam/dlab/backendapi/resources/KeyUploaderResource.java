@@ -21,7 +21,6 @@ import com.epam.dlab.backendapi.service.AccessKeyService;
 import com.epam.dlab.dto.keyload.KeyLoadStatus;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.exceptions.DlabValidationException;
-import com.epam.dlab.rest.contracts.EdgeAPI;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +45,7 @@ import java.util.stream.Collectors;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
-public class KeyUploaderResource implements EdgeAPI {
+public class KeyUploaderResource {
 
 	private static final String FILE_ATTACHMENT_FORMAT = "attachment; filename=\"%s.pem\"";
 	@Inject

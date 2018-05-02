@@ -27,7 +27,6 @@ import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.dto.UserCredentialDTO;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.rest.client.RESTService;
-import com.epam.dlab.rest.contracts.SecurityAPI;
 import com.epam.dlab.validation.AwsValidation;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -45,6 +44,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import static com.epam.dlab.rest.contracts.SecurityAPI.LOGIN;
+import static com.epam.dlab.rest.contracts.SecurityAPI.LOGOUT;
+
 /**
  * Provides the REST API for the user authorization.
  */
@@ -52,7 +54,7 @@ import javax.ws.rs.core.Response.Status;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
-public class SecurityResource implements SecurityAPI {
+public class SecurityResource {
 
     @Inject
     private SecurityDAO dao;

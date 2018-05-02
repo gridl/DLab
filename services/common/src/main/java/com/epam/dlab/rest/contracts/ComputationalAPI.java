@@ -16,20 +16,23 @@
 
 package com.epam.dlab.rest.contracts;
 
-public interface ComputationalAPI {
-	String LIBRARY = "library/";
-	String COMPUTATIONAL = "computational";
-	String COMPUTATIONAL_CREATE = COMPUTATIONAL + "/create";
-	String COMPUTATIONAL_STOP = COMPUTATIONAL + "/stop";
-	String COMPUTATIONAL_START = COMPUTATIONAL + "/start";
-	String SPARK = "/spark";
-	String COMPUTATIONAL_CREATE_SPARK = COMPUTATIONAL_CREATE + SPARK;
-	String COMPUTATIONAL_CREATE_CLOUD_SPECIFIC = COMPUTATIONAL_CREATE + "/cloud";
-	String COMPUTATIONAL_TERMINATE = COMPUTATIONAL + "/terminate";
-	String COMPUTATIONAL_TERMINATE_SPARK = COMPUTATIONAL_TERMINATE + SPARK;
-	String COMPUTATIONAL_STOP_SPARK = COMPUTATIONAL_STOP + SPARK;
-	String COMPUTATIONAL_START_SPARK = COMPUTATIONAL_START + SPARK;
-	String COMPUTATIONAL_TERMINATE_CLOUD_SPECIFIC = COMPUTATIONAL_TERMINATE + "/cloud";
-	String COMPUTATIONAL_LIB_INSTALL = LIBRARY + COMPUTATIONAL + "/lib_install";
-	String COMPUTATIONAL_LIB_LIST = LIBRARY + COMPUTATIONAL + "/lib_list";
+public class ComputationalAPI {
+	public static final String LIBRARY = "library/";
+	public static final String COMPUTATIONAL = "computational";
+	private static final String COMPUTATIONAL_CREATE = COMPUTATIONAL + "/create";
+	private static final String COMPUTATIONAL_STOP = COMPUTATIONAL + "/stop";
+	private static final String COMPUTATIONAL_START = COMPUTATIONAL + "/start";
+	private static final String SPARK = "/spark";
+	public static final String COMPUTATIONAL_CREATE_SPARK = COMPUTATIONAL_CREATE + SPARK;
+	public static final String COMPUTATIONAL_CREATE_CLOUD_SPECIFIC = COMPUTATIONAL_CREATE + "/cloud";
+	private static final String COMPUTATIONAL_TERMINATE = COMPUTATIONAL + "/terminate";
+	public static final String COMPUTATIONAL_TERMINATE_SPARK = COMPUTATIONAL_TERMINATE + SPARK;
+	public static final String COMPUTATIONAL_STOP_SPARK = COMPUTATIONAL_STOP + SPARK;
+	public static final String COMPUTATIONAL_START_SPARK = COMPUTATIONAL_START + SPARK;
+	public static final String COMPUTATIONAL_TERMINATE_CLOUD_SPECIFIC = COMPUTATIONAL_TERMINATE + "/cloud";
+	public static final String COMPUTATIONAL_LIB_INSTALL = LIBRARY + COMPUTATIONAL + "/lib_install";
+	public static final String COMPUTATIONAL_LIB_LIST = LIBRARY + COMPUTATIONAL + "/lib_list";
+
+	private ComputationalAPI() {
+	}
 }

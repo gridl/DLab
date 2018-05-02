@@ -25,7 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
 public abstract class GenericExceptionMapper<E extends Exception> implements ExceptionMapper<E> {
-    static final Logger LOGGER = LoggerFactory.getLogger(GenericExceptionMapper.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GenericExceptionMapper.class);
 
     @Override
     public Response toResponse(E exception) {
