@@ -199,7 +199,7 @@ After clicking you will see a window with 2 text boxes:
     <img src="doc/create_ami.png" alt="Create AMI" width="510">
 </p>
 
-After clicking on "Assign" button Notebook status changes to Creating AMI. If image is created Notebook status changes to Running.
+After clicking on "Assign" button the Notebook status changes to Creating AMI. If image is created the Notebook status changes to Running.
 
 To create new analytical environment from custom image  click "Create new" button on “List of Resources” page. 
 
