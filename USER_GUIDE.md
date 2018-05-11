@@ -17,7 +17,7 @@ DLab is an essential toolset for analytics. It is a self-service Web Console, us
 
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [Manage libraries](#manage_libraries)
 
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [Create AMI](#create_ami)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [Create image](#create_image)
 
 &nbsp; &nbsp; &nbsp; &nbsp; [Stop Notebook server](#notebook_stop)
 
@@ -183,25 +183,25 @@ After clicking on "Install" button you will see process of installation with app
 
 **Note:** If package can't be installed you will see "Failed" in status column and button to retry installation.
 
-### Create AMI <a name="create_ami"></a>
+### Create image <a name="create_image"></a>
 
-On every analytical tool instance you can create images from running notebook including libraries by clicking on gear icon ![gear](doc/gear_icon.png) in the Actions column for a needed Notebook and hit Create AMI:
+On every analytical tool instance you can create image from running notebook including libraries by clicking on gear icon ![gear](doc/gear_icon.png) in the Actions column for a needed Notebook and hit Create AMI:
 
 <p align="center"> 
     <img src="doc/notebook_menu_create_ami.png" alt="Notebook create_ami" width="150">
 </p>
 
-After clicking you will see the window with 2 text boxes:
--   Text box for typing a name of AMI (it is a mandatory field)
+After clicking you will see a window with 2 text boxes:
+-   Text box for typing a name of image (it is a mandatory field)
 -   Text box for typing a description (it is an optional field)
 
 <p align="center"> 
     <img src="doc/create_ami.png" alt="Create AMI" width="510">
 </p>
 
-After clicking on "Assign" button Notebook status changes to Creating AMI. If AMI is created Notebook status changes to Running.
+After clicking on "Assign" button Notebook status changes to Creating AMI. If image is created Notebook status changes to Running.
 
-
+To create new analytical environment from custom image  click "Create new" button on “List of Resources” page. 
 
 
 
