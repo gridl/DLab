@@ -39,7 +39,7 @@ DLab is an essential toolset for analytics. It is a self-service Web Console, us
 
 [DLab billing report](#billing_page)
 
-[Web UI filters](#filter)
+[Web UI filters](#filters)
 
 [Scheduler](#scheduler)
 
@@ -485,7 +485,7 @@ You can also filter data by each column:
 
 In the footer of billing report, you can see Total cost for all environments.
 --------------------
-# Web UI filters <a name="filters"></a>
+# Web UI filters <a name="filters"></a>   
 
 You can leverage functionality of build-in UI filter to quickly manage the analytical tools and computational resources, which you only want to see in your dashboard.
 
