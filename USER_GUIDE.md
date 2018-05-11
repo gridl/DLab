@@ -203,7 +203,13 @@ After clicking on "Assign" button Notebook status changes to Creating AMI. If im
 
 To create new analytical environment from custom image  click "Create new" button on “List of Resources” page. 
 
+“Create analytical tool” popup will show-up. Choose a template of Notebook for which the custom image is created:
 
+<p align="center"> 
+    <img src="doc/create_notebook_from_ami.png" alt="Create notebook from AMI" width="560">
+</p>
+
+Before clicking "Create" button you should choose the image from "Select AMI" and fill in the "Name" and "Instance shape".
 
 --------------------------
 ## Stop Notebook server <a name="notebook_stop"></a>
