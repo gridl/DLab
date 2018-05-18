@@ -663,10 +663,23 @@ def get_list_instance_statuses(instance_ids):
     for h in instance_ids:
         host = {}
         try:
-            response = client.describe_instances(InstanceIds=[h.get('id')]).get('Reservations')
+            response = client.describe_instances(
+                InstanceIds=[h.get('id')]).get('Reservations')
             for i in response:
                 inst = i.get('Instances')
                 for j in inst:
+                    for m in j.get('Tags'):
+                        if m.get('Value') in {'master'}:
+                            data_engine_id = (j.get('InstanceId'))
+                            if j.get('State').get('Name') not in {
+                                'stopping',
+                                'stopped',
+                                'rebooting'
+                                'shutting-down',
+                                'terminated'
+                            }:
+                                waiter = client.get_waiter('instance_status_ok')
+                                waiter.wait(InstanceIds=[data_engine_id])
                     host['id'] = j.get('InstanceId')
                     host['status'] = j.get('State').get('Name')
                     data.append(host)

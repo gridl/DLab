@@ -491,16 +491,25 @@ def start_ec2(tag_name, tag_value):
         client = boto3.client('ec2')
         inst = ec2.instances.filter(
             Filters=[{'Name': 'instance-state-name', 'Values': ['stopped']},
-                     {'Name': 'tag:{}'.format(tag_name), 'Values': ['{}'.format(tag_value)]}])
+                     {'Name': 'tag:{}'.format(tag_name), 'Values': [
+                         '{}'.format(tag_value)
+                     ]}])
         instances = list(inst)
         if instances:
+            id_instance = list()
+            print(instances)
             for instance in instances:
-                client.start_instances(InstanceIds=[instance.id])
-                waiter = client.get_waiter('instance_status_ok')
-                waiter.wait(InstanceIds=[instance.id])
-                print("The instance {} has been started successfully".format(tag_value))
+                id_instance.append(instance.id)
+            client.start_instances(InstanceIds=id_instance)
+            waiter = client.get_waiter('instance_status_ok')
+            waiter.wait(InstanceIds=id_instance)
+            print(
+            "The instance {} has been started successfully".format(tag_value)
+            )
         else:
-            print("There are no instances with {} name to start".format(tag_value))
+            print(
+                "There are no instances with {} name to start".format(tag_value)
+            )
     except Exception as err:
         logging.info("Unable to start EC2: " + str(err) + "\n Traceback: " + traceback.print_exc(file=sys.stdout))
         append_result(str({"error": "Unable to start EC2", "error_message": str(err) + "\n Traceback: " + traceback.print_exc(file=sys.stdout)}))
