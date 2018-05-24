@@ -63,7 +63,7 @@ def configure_dataengine_service(instance, emr_conf):
             configure_data_engine_service_pip(emr_conf['instance_ip'], emr_conf['os_user'], emr_conf['key_path'])
             if os.environ['emr_version'] == 'emr-5.12.0':
                 env['connection_attempts'] = 100
-                env.key_filename = [emr_conf['key_path']]
+                env.key_filename = emr_conf['key_path']
                 env.host_string = emr_conf['os_user'] + '@' + emr_conf['instance_ip']
                 sudo(
                     'echo "[main]" > /etc/yum/pluginconf.d/priorities.conf ; '
