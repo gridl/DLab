@@ -31,4 +31,7 @@ public interface ImageExploratoryService {
 	List<ImageInfoRecord> getCreatedImages(String user, String dockerImage);
 
 	ImageInfoRecord getImage(String user, String name);
+
+	String deleteImage(UserInfo user, String imageName);
+
 }

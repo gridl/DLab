@@ -64,6 +64,15 @@ public class ImageExploratoryResource {
 		return Response.accepted(uuid).location(imageUri).build();
 	}
 
+	@DELETE
+	@Path("delete/{name}")
+	public Response deleteImage(@Auth UserInfo ui, @PathParam("name") String imageName) {
+		log.debug("Deleting an image {} for user {}", imageName, ui.getName());
+		String uuid = imageExploratoryService.deleteImage(ui, imageName);
+		requestId.put(ui.getName(), uuid);
+		return Response.ok().build();
+	}
+
 
 	@GET
 	public Response getImages(@Auth UserInfo ui, @QueryParam("docker_image") String dockerImage) {

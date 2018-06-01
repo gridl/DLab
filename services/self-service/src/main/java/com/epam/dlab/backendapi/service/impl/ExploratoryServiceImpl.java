@@ -28,7 +28,6 @@ import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.dto.StatusEnvBaseDTO;
 import com.epam.dlab.dto.UserInstanceDTO;
 import com.epam.dlab.dto.UserInstanceStatus;
-import com.epam.dlab.dto.base.DataEngineType;
 import com.epam.dlab.dto.computational.UserComputationalResource;
 import com.epam.dlab.dto.exploratory.*;
 import com.epam.dlab.exceptions.DlabException;
@@ -294,6 +293,9 @@ public class ExploratoryServiceImpl implements ExploratoryService {
 					.getImageName());
 			userInstance.withLibs(libInstallDtoList);
 		}
+		// TODO: add possibility to distinguish exploratory created/creating from image and without it
+		// (additional field 'created_from_image' in UserInstanceDto with image name or null/'none' if instance
+		// created without image)
 		return userInstance;
 	}
 

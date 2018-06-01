@@ -126,6 +126,22 @@ public class ImageExploratoryServiceImpl implements ImageExploratoryService {
 				new ResourceNotFoundException(String.format(IMAGE_NOT_FOUND_MSG, name, user)));
 	}
 
+	@Override
+	public String deleteImage(UserInfo user, String imageName) {
+		if (!imageExploratoryDao.exist(user.getName(), imageName)) {
+			log.error(String.format(IMAGE_NOT_FOUND_MSG, imageName, user.getName()));
+			throw new ResourceNotFoundException(String.format(IMAGE_NOT_FOUND_MSG, imageName, user.getName()));
+		}
+		// TODO: 1. need to add checking if are there notebooks which are creating from image to be deleted.
+		// If yes, cancel deleting operation.
+		// 2. Change deleting image's status to 'deleting'.
+		// 3. Add operation 'delete' to ImageExploratoryDao.
+		// 4. Call provision-service and then call Docker.
+		// 5. Create callback handler which will handle Docker responses. If status 'ok' then delete image from DB,
+		// else change it's status to previous mode - 'created'.
+		return null;
+	}
+
 	private Map<String, List<Library>> fetchComputationalLibs(List<Library> libraries) {
 		return libraries.stream()
 				.filter(resourceTypePredicate(ResourceType.COMPUTATIONAL))
