@@ -50,7 +50,7 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 				.map(resourceData -> buildCallbackDTO(resourceData, getUuid(), dto))
 				.peek(callbackDto -> startCallbackListener(userName, callbackDto))
 				.peek(callbackDto ->
-						runDockerCmd(userName, callbackDto.getId(), buildRunDockerCommand(callbackDto.getId(), action),
+						runDockerCmd(userName, callbackDto.getId(), buildRunDockerCommand(callbackDto, action),
 								buildDockerCommandDTO(callbackDto)))
 				.count();
 		log.debug("Executed {} Docker commands", count);
@@ -88,15 +88,15 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 		return Directories.EDGE_LOG_DIRECTORY;
 	}
 
-	private RunDockerCommand buildRunDockerCommand(String uuid, DockerAction action) {
+	private RunDockerCommand buildRunDockerCommand(ReuploadKeyCallbackDTO callbackDto, DockerAction action) {
 		return new RunDockerCommand()
 				.withInteractive()
-				.withName(REUPLOAD_KEY_ACTION)
+				.withName(getContainerName(callbackDto))
 				.withVolumeForRootKeys(configuration.getKeyDirectory())
 				.withVolumeForResponse(configuration.getKeyLoaderDirectory())
 				.withVolumeForLog(configuration.getDockerLogDirectory(), getResourceType())
-				.withResource(getResourceType())
-				.withRequestId(uuid)
+				.withResource(callbackDto.getResource().getResourceType().toString())
+				.withRequestId(callbackDto.getId())
 				.withConfKeyName(configuration.getAdminKey())
 				.withImage(configuration.getEdgeImage())
 				.withAction(action);
@@ -108,6 +108,7 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 				.withEdgeUserName(dto.getEdgeUserName())
 				.withServiceBaseName(dto.getServiceBaseName())
 				.withConfOsFamily(dto.getConfOsFamily())
+				.withResourceId(resource.getResourceId())
 				.withResource(resource);
 	}
 
@@ -116,7 +117,13 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 				.withEdgeUserName(dto.getEdgeUserName())
 				.withServiceBaseName(dto.getServiceBaseName())
 				.withConfOsFamily(dto.getConfOsFamily())
-				.withResourceId(dto.getResource().getResourceId());
+				.withResourceId(dto.getResourceId());
+	}
+
+	private String getContainerName(ReuploadKeyCallbackDTO callbackDto) {
+		return nameContainer(callbackDto.getEdgeUserName(), REUPLOAD_KEY_ACTION,
+				callbackDto.getResource().getResourceType().toString(),
+				callbackDto.getResource().getResourceId());
 	}
 
 	private void selfServiceHandlerPost(BaseCallbackHandlerDTO handlerDto) {
