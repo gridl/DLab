@@ -38,6 +38,22 @@ args = parser.parse_args()
 
 def configure_dataengine_service(instance, emr_conf):
     emr_conf['instance_ip'] = instance.get('PrivateIpAddress')
+    try:
+        logging.info('[CREATING DLAB SSH USER ON DATAENGINE SERVICE]')
+        print('[CREATING DLAB SSH USER ON DATAENGINE SERVICE]')
+        params = "--hostname {} --keyfile {} --initial_user {} --os_user {} --sudo_group {}".format \
+            (emr_conf['instance_ip'], emr_conf['key_path'], emr_conf['initial_user'],
+             emr_conf['os_user'], emr_conf['sudo_group'])
+        try:
+            local("~/scripts/{}.py {}".format('create_ssh_user', params))
+        except:
+            traceback.print_exc()
+            raise Exception
+    except Exception as err:
+        append_result("Failed to configure proxy.", str(err))
+        terminate_emr(emr_conf['cluster_id'])
+        sys.exit(1)
+
     # configuring proxy on Data Engine service
     try:
         logging.info('[CONFIGURE PROXY ON DATAENGINE SERVICE]')
@@ -134,8 +150,9 @@ if __name__ == "__main__":
     emr_conf['edge_instance_name'] = emr_conf['service_base_name'] + "-" + os.environ['edge_user_name'] + '-edge'
     emr_conf['edge_instance_hostname'] = get_instance_private_ip_address(emr_conf['tag_name'],
                                                                          emr_conf['edge_instance_name'])
-    emr_conf['os_user'] = 'ec2-user'
-
+    emr_conf['os_user'] = 'dlab-user'
+    emr_conf['initial_user'] = 'ec2-user'
+    emr_conf['sudo_group'] = 'wheel'
     try:
         jobs = []
         for instance in emr_conf['cluster_instances']:
