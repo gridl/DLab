@@ -76,7 +76,11 @@ def ensure_r(os_user, r_libs, region, r_mirror):
             sudo('add-apt-repository -y ppa:marutter/rrutter')
             sudo('apt update')
             sudo('apt-get install -y libcurl4-openssl-dev libssl-dev libreadline-dev')
-            sudo('apt-get install -y cmake')
+            #sudo('apt-get install -y cmake')
+            with cd('/usr/lib/'):
+                sudo(
+                    'wget https://cmake.org/files/v3.11/cmake-3.11.3-Linux-x86_64.sh')
+                sudo('bash cmake-3.11.3-Linux-x86_64.sh --skip-license')
             sudo('apt-get install -y r-base r-base-dev')
             sudo('R CMD javareconf')
             sudo('cd /root; git clone https://github.com/zeromq/zeromq4-x.git; cd zeromq4-x/; mkdir build; cd build; cmake ..; make install; ldconfig')
@@ -409,8 +413,11 @@ def install_caffe2(os_user, caffe2_version):
     if not exists('/home/{}/.ensure_dir/caffe2_ensured'.format(os_user)):
         env.shell = "/bin/bash -l -c -i"
         sudo('apt-get update')
-        sudo('apt-get install -y --no-install-recommends build-essential cmake git libgoogle-glog-dev libprotobuf-dev'
+        sudo('apt-get install -y --no-install-recommends build-essential git libgoogle-glog-dev libprotobuf-dev'
              ' protobuf-compiler python-dev python-pip')
+        with cd('/usr/lib/'):
+            sudo('wget https://cmake.org/files/v3.11/cmake-3.11.3-Linux-x86_64.sh')
+            sudo('bash cmake-3.11.3-Linux-x86_64.sh --skip-license')
         sudo('pip2 install numpy protobuf --no-cache-dir')
         sudo('pip3 install numpy protobuf --no-cache-dir')
         sudo('apt-get install -y --no-install-recommends libgflags-dev')
@@ -442,6 +449,7 @@ def install_caffe2(os_user, caffe2_version):
             for module in submodules:
                 sudo('git submodule update --init {}'.format(module))
         cuda_arch = sudo("/opt/cuda-8.0/extras/demo_suite/deviceQuery | grep 'CUDA Capability' | tr -d ' ' | cut -f2 -d ':'")
+        prin(cuda_arch)
         with cd('/home/{}/caffe2/'.format(os_user)):
             with settings(warn_only=True):
                 sudo('git checkout v{}'.format(caffe2_version))

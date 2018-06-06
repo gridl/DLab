@@ -81,12 +81,12 @@ def ensure_r(os_user, r_libs, region, r_mirror):
                 r_repository = r_mirror
             else:
                 r_repository = 'http://cran.us.r-project.org'
-            sudo('yum install -y cmake')
+            sudo('yum install -y cmake3')
             sudo('yum -y install libcur*')
             sudo('echo -e "[base]\nname=CentOS-7-Base\nbaseurl=http://buildlogs.centos.org/centos/7/os/x86_64-20140704-1/\ngpgcheck=1\ngpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7\npriority=1\nexclude=php mysql" >> /etc/yum.repos.d/CentOS-base.repo')
             sudo('yum install -y R R-core R-core-devel R-devel --nogpgcheck')
             sudo('R CMD javareconf')
-            sudo('cd /root; git clone https://github.com/zeromq/zeromq4-x.git; cd zeromq4-x/; mkdir build; cd build; cmake ..; make install; ldconfig')
+            sudo('cd /root; git clone https://github.com/zeromq/zeromq4-x.git; cd zeromq4-x/; mkdir build; cd build; cmake3 ..; make install; ldconfig')
             for i in r_libs:
                 sudo('R -e "install.packages(\'{}\',repos=\'{}\')"'.format(i, r_repository))
             sudo('R -e "library(\'devtools\');install.packages(repos=\'{}\',c(\'rzmq\',\'repr\',\'digest\',\'stringr\',\'RJSONIO\',\'functional\',\'plyr\'))"'.format(r_repository))
@@ -373,7 +373,7 @@ def get_available_os_pkgs():
 
 def install_opencv(os_user):
     if not exists('/home/{}/.ensure_dir/opencv_ensured'.format(os_user)):
-        sudo('yum install -y cmake python34 python34-devel python34-pip gcc gcc-c++')
+        sudo('yum install -y cmake3 python34 python34-devel python34-pip gcc gcc-c++')
         sudo('pip2 install numpy --no-cache-dir')
         sudo('pip3.4 install numpy --no-cache-dir')
         sudo('pip3.5 install numpy --no-cache-dir')
@@ -382,7 +382,7 @@ def install_opencv(os_user):
             run('git checkout 3.2.0')
             run('mkdir release')
         with cd('/home/{}/opencv/release/'.format(os_user)):
-            run('cmake -DINSTALL_TESTS=OFF -D CUDA_GENERATION=Auto -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=$(python2 -c "import sys; print(sys.prefix)") -D PYTHON_EXECUTABLE=$(which python2) ..')
+            run('cmake3 -DINSTALL_TESTS=OFF -D CUDA_GENERATION=Auto -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=$(python2 -c "import sys; print(sys.prefix)") -D PYTHON_EXECUTABLE=$(which python2) ..')
             run('make -j$(nproc)')
             sudo('make install')
         sudo('touch /home/' + os_user + '/.ensure_dir/opencv_ensured')
@@ -469,7 +469,7 @@ def install_caffe2(os_user, caffe2_version):
             with settings(warn_only=True):
                 sudo('git checkout v{}'.format(caffe2_version))
                 sudo('git submodule update --recursive')
-            sudo('mkdir build && cd build && cmake .. -DCUDA_ARCH_BIN="{0}" -DCUDA_ARCH_PTX="{0}" && make "-j$(nproc)" install'.format(cuda_arch.replace('.', '')))
+            sudo('mkdir build && cd build && cmake3 .. -DCUDA_ARCH_BIN="{0}" -DCUDA_ARCH_PTX="{0}" && make "-j$(nproc)" install'.format(cuda_arch.replace('.', '')))
         sudo('touch /home/' + os_user + '/.ensure_dir/caffe2_ensured')
 
 
@@ -508,7 +508,7 @@ def install_torch(os_user):
     if not exists('/home/{}/.ensure_dir/torch_ensured'.format(os_user)):
         run('git clone https://github.com/torch/distro.git ~/torch --recursive')
         with cd('/home/{}/torch/'.format(os_user)):
-            sudo('yum install -y --nogpgcheck cmake curl readline-devel ncurses-devel gcc-c++ gcc-gfortran git '
+            sudo('yum install -y --nogpgcheck cmake3 curl readline-devel ncurses-devel gcc-c++ gcc-gfortran git '
                  'gnuplot unzip libjpeg-turbo-devel libpng-devel ImageMagick GraphicsMagick-devel fftw-devel '
                  'sox-devel sox zeromq3-devel qt-devel qtwebkit-devel sox-plugins-freeworld qt-devel')
             run('./install.sh -b')
