@@ -24,10 +24,8 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@SuppressWarnings("unchecked")
 public class BaseCallbackHandlerDTO<T extends BaseCallbackHandlerDTO> {
-
-	@SuppressWarnings("unchecked")
-	private final T self = (T) this;
 
 	@JsonProperty("_id")
 	private String id;
@@ -49,32 +47,32 @@ public class BaseCallbackHandlerDTO<T extends BaseCallbackHandlerDTO> {
 
 	public T withId(String id) {
 		setId(id);
-		return self;
+		return (T) this;
 	}
 
 	public T withHandlerType(String handlerType) {
 		setHandlerType(handlerType);
-		return self;
+		return (T) this;
 	}
 
 	public T withDockerAction(String dockerAction) {
 		setDockerAction(dockerAction);
-		return self;
+		return (T) this;
 	}
 
 	public T withUuid(String uuid) {
 		setUuid(uuid);
-		return self;
+		return (T) this;
 	}
 
 	public T withUser(String user) {
 		setUser(user);
-		return self;
+		return (T) this;
 	}
 
 	public T withTransferData(TransferData transferData) {
 		setTransferData(transferData);
-		return self;
+		return (T) this;
 	}
 
 }

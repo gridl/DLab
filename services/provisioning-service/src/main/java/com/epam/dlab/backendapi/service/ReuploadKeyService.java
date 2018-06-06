@@ -129,7 +129,7 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 	private void selfServiceHandlerPost(BaseCallbackHandlerDTO handlerDto) {
 		log.debug("Send post request to self service for storing callback handler data {} into database", handlerDto);
 		try {
-			selfService.post("/api/handler", handlerDto, Response.class);
+			selfService.post("/api/handler/create", handlerDto, Response.class);
 		} catch (Exception e) {
 			log.error("Send request error for handler data: {}", handlerDto, e.getLocalizedMessage(), e);
 			throw new DlabException("Send request error for handler data: " + handlerDto + ": "
