@@ -15,23 +15,25 @@
  *  * limitations under the License.
  *
  */
-package com.epam.dlab.backendapi.core.response.handlers;
+package com.epam.dlab.dto;
 
-public enum CallBackHandlerType {
-	BACKUP_HANDLER("backup_handler"),
-	COMPUTATIONAL_HANDLER("computational_handler"),
-	EDGE_HANDLER("edge_handler"),
-	EXPLORATORY_HANDLER("exploratory_handler"),
-	EXPLORATORY_GIT_CREDS_HANDLER("exploratory_git_creds_handler"),
-	IMAGE_CREATE_HANDLER("image_create_handler"),
-	LIB_INSTALL_HANDLER("lib_install_handler"),
-	LIB_LIST_HANDLER("lib_list_handler"),
-	RESOURCES_STATUS_HANDLER("resources_status_handler"),
-	REUPLOAD_KEY_HANDLER("reupload_key_handler");
+public enum DtoType {
+
+	COMPUTATIONAL_CREATE_AWS("computational_create_aws"),
+	AWS_COMPUTATIONAL_TERMINATE("aws_computational_terminate"),
+	COMPUTATIONAL_CREATE_GCP("computational_create_gcp"),
+	GCP_COMPUTATIONAL_TERMINATE("gcp_computational_terminate"),
+	COMPUTATIONAL_START("computational_start"),
+	COMPUTATIONAL_STOP("computational_stop"),
+	COMPUTATIONAL_TERMINATE("computational_terminate"),
+	EXPLORATORY_IMAGE("exploratory_image"),
+	LIBRARY_INSTALL("library_install"),
+	ENV_BACKUP("env_backup"),
+	REUPLOAD_KEY_CALLBACK("reupload_key_callback");
 
 	private String name;
 
-	CallBackHandlerType(String name) {
+	DtoType(String name) {
 		this.name = name;
 	}
 
@@ -40,9 +42,9 @@ public enum CallBackHandlerType {
 		return name;
 	}
 
-	public static CallBackHandlerType of(String type) {
+	public static DtoType of(String type) {
 		if (type != null) {
-			for (CallBackHandlerType uis : CallBackHandlerType.values()) {
+			for (DtoType uis : DtoType.values()) {
 				if (type.equalsIgnoreCase(uis.toString())) {
 					return uis;
 				}
@@ -50,5 +52,4 @@ public enum CallBackHandlerType {
 		}
 		return null;
 	}
-
 }

@@ -49,6 +49,10 @@ public class MongoCollections {
 	 * Backup
 	 */
 	public static final String BACKUPS = "backup";
+	/**
+	 * Callback handlers
+	 */
+	public static final String CALLBACK_HANDLERS = "callbackHandlers";
 
 	private MongoCollections() {
 	}

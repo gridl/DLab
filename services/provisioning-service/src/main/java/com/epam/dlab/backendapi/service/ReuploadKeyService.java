@@ -20,13 +20,21 @@ import com.epam.dlab.backendapi.core.Directories;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
 import com.epam.dlab.backendapi.core.commands.DockerCommands;
 import com.epam.dlab.backendapi.core.commands.RunDockerCommand;
+import com.epam.dlab.backendapi.core.response.handlers.CallBackHandlerType;
 import com.epam.dlab.backendapi.core.response.handlers.ReuploadKeyCallbackHandler;
+import com.epam.dlab.dto.DtoType;
+import com.epam.dlab.dto.handlers.BaseCallbackHandlerDTO;
+import com.epam.dlab.dto.handlers.ReuploadKeyCallbackHandlerDTO;
+import com.epam.dlab.dto.handlers.transferobjects.TransferData;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyCallbackDTO;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyDTO;
+import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.model.ResourceData;
 import com.epam.dlab.rest.contracts.ApiCallbacks;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.ws.rs.core.Response;
 
 @Slf4j
 @Singleton
@@ -68,6 +76,11 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 		folderListenerExecutor.start(configuration.getKeyLoaderDirectory(),
 				configuration.getKeyLoaderPollTimeout(),
 				new ReuploadKeyCallbackHandler(selfService, ApiCallbacks.REUPLOAD_KEY_URI, userName, dto));
+		selfServiceHandlerPost(
+				new ReuploadKeyCallbackHandlerDTO()
+						.withCallbackUri(ApiCallbacks.REUPLOAD_KEY_URI)
+						.withUser(userName).withHandlerType(CallBackHandlerType.REUPLOAD_KEY_HANDLER.toString())
+						.withTransferData(new TransferData(DtoType.REUPLOAD_KEY_CALLBACK.toString(), dto)));
 	}
 
 	@Override
@@ -104,6 +117,17 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 				.withServiceBaseName(dto.getServiceBaseName())
 				.withConfOsFamily(dto.getConfOsFamily())
 				.withResourceId(dto.getResource().getResourceId());
+	}
+
+	private void selfServiceHandlerPost(BaseCallbackHandlerDTO handlerDto) {
+		log.debug("Send post request to self service for storing callback handler data {} into database", handlerDto);
+		try {
+			selfService.post("/api/handler", handlerDto, Response.class);
+		} catch (Exception e) {
+			log.error("Send request error for handler data: {}", handlerDto, e.getLocalizedMessage(), e);
+			throw new DlabException("Send request error for handler data: " + handlerDto + ": "
+					+ e.getLocalizedMessage(), e);
+		}
 	}
 
 }
