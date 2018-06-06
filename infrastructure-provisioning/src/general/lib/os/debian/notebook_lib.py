@@ -76,14 +76,10 @@ def ensure_r(os_user, r_libs, region, r_mirror):
             sudo('add-apt-repository -y ppa:marutter/rrutter')
             sudo('apt update')
             sudo('apt-get install -y libcurl4-openssl-dev libssl-dev libreadline-dev')
-            #sudo('apt-get install -y cmake')
-            with cd('/usr/lib/'):
-                sudo(
-                    'wget https://cmake.org/files/v3.11/cmake-3.11.3-Linux-x86_64.sh')
-                sudo('bash cmake-3.11.3-Linux-x86_64.sh --skip-license')
+            sudo('apt-get install -y cmake3')
             sudo('apt-get install -y r-base r-base-dev')
             sudo('R CMD javareconf')
-            sudo('cd /root; git clone https://github.com/zeromq/zeromq4-x.git; cd zeromq4-x/; mkdir build; cd build; cmake ..; make install; ldconfig')
+            sudo('cd /root; git clone https://github.com/zeromq/zeromq4-x.git; cd zeromq4-x/; mkdir build; cd build; cmake3 ..; make install; ldconfig')
             for i in r_libs:
                 sudo('R -e "install.packages(\'{}\',repos=\'{}\')"'.format(i, r_repository))
             sudo('R -e "library(\'devtools\');install.packages(repos=\'{}\',c(\'rzmq\',\'repr\',\'digest\',\'stringr\',\'RJSONIO\',\'functional\',\'plyr\'))"'.format(r_repository))
@@ -413,11 +409,8 @@ def install_caffe2(os_user, caffe2_version):
     if not exists('/home/{}/.ensure_dir/caffe2_ensured'.format(os_user)):
         env.shell = "/bin/bash -l -c -i"
         sudo('apt-get update')
-        sudo('apt-get install -y --no-install-recommends build-essential git libgoogle-glog-dev libprotobuf-dev'
+        sudo('apt-get install -y --no-install-recommends build-essential git cmake3 libgoogle-glog-dev libprotobuf-dev'
              ' protobuf-compiler python-dev python-pip')
-        with cd('/usr/lib/'):
-            sudo('wget https://cmake.org/files/v3.11/cmake-3.11.3-Linux-x86_64.sh')
-            sudo('bash cmake-3.11.3-Linux-x86_64.sh --skip-license')
         sudo('pip2 install numpy protobuf --no-cache-dir')
         sudo('pip3 install numpy protobuf --no-cache-dir')
         sudo('apt-get install -y --no-install-recommends libgflags-dev')
@@ -454,7 +447,7 @@ def install_caffe2(os_user, caffe2_version):
             with settings(warn_only=True):
                 sudo('git checkout v{}'.format(caffe2_version))
                 sudo('git submodule update --recursive')
-            sudo('mkdir build && cd build && cmake .. -DCUDA_ARCH_BIN="{0}" -DCUDA_ARCH_PTX="{0}" && make "-j$(nproc)" install'.format(cuda_arch.replace('.', '')))
+            sudo('mkdir build && cd build && cmake3 .. -DCUDA_ARCH_BIN="{0}" -DCUDA_ARCH_PTX="{0}" && make "-j$(nproc)" install'.format(cuda_arch.replace('.', '')))
         sudo('touch /home/' + os_user + '/.ensure_dir/caffe2_ensured')
 
 
