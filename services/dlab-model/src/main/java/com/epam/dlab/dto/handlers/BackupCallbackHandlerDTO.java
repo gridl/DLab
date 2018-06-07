@@ -18,15 +18,22 @@
 package com.epam.dlab.dto.handlers;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BackupCallbackHandlerDTO extends BaseCallbackHandlerDTO {
 
 	@JsonProperty("callback_uri")
 	private String callbackUri;
+
+	public BackupCallbackHandlerDTO withCallbackUri(String callbackUri) {
+		setCallbackUri(callbackUri);
+		return this;
+	}
 }

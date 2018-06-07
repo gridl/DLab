@@ -18,15 +18,22 @@
 package com.epam.dlab.dto.handlers;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LibListCallbackHandlerDTO extends BaseCallbackHandlerDTO {
 
 	@JsonProperty("image_name")
 	private String imageName;
+
+	public LibListCallbackHandlerDTO withImageName(String imageName) {
+		setImageName(imageName);
+		return this;
+	}
 }

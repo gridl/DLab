@@ -18,17 +18,24 @@
 package com.epam.dlab.dto.handlers;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ExploratoryGitCredsCallbackHandlerDTO extends BaseCallbackHandlerDTO {
 
 	@JsonProperty("exploratory_name")
 	private String exploratoryName;
+
+	public ExploratoryGitCredsCallbackHandlerDTO withExploratoryName(String exploratoryName) {
+		setExploratoryName(exploratoryName);
+		return this;
+	}
 
 }
 

@@ -30,4 +30,5 @@ public class TransferData {
 
 	@JsonProperty("transfer_data")
 	private Object dto;
+
 }

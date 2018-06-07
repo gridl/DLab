@@ -126,7 +126,7 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 				callbackDto.getResource().getResourceId());
 	}
 
-	private <T extends BaseCallbackHandlerDTO> void selfServiceHandlerPost(T handlerDto) {
+	private void selfServiceHandlerPost(BaseCallbackHandlerDTO handlerDto) {
 		log.debug("Send post request to self service for storing callback handler data {} into database", handlerDto);
 		try {
 			selfService.post("/api/handler/create", handlerDto, Response.class);

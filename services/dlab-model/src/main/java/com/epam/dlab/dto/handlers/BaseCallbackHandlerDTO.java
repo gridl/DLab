@@ -18,14 +18,16 @@
 package com.epam.dlab.dto.handlers;
 
 import com.epam.dlab.dto.handlers.transferobjects.TransferData;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
 @Data
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class_name")
+@JsonSubTypes({@JsonSubTypes.Type(value = ReuploadKeyCallbackHandlerDTO.class)})
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("unchecked")
-public class BaseCallbackHandlerDTO<T extends BaseCallbackHandlerDTO> {
+public class BaseCallbackHandlerDTO {
 
 	@JsonProperty("_id")
 	private String id;
@@ -45,34 +47,34 @@ public class BaseCallbackHandlerDTO<T extends BaseCallbackHandlerDTO> {
 	@JsonProperty("data_transfer_object")
 	private TransferData transferData;
 
-	public T withId(String id) {
+	public BaseCallbackHandlerDTO withId(String id) {
 		setId(id);
-		return (T) this;
+		return this;
 	}
 
-	public T withHandlerType(String handlerType) {
+	public BaseCallbackHandlerDTO withHandlerType(String handlerType) {
 		setHandlerType(handlerType);
-		return (T) this;
+		return this;
 	}
 
-	public T withDockerAction(String dockerAction) {
+	public BaseCallbackHandlerDTO withDockerAction(String dockerAction) {
 		setDockerAction(dockerAction);
-		return (T) this;
+		return this;
 	}
 
-	public T withUuid(String uuid) {
+	public BaseCallbackHandlerDTO withUuid(String uuid) {
 		setUuid(uuid);
-		return (T) this;
+		return this;
 	}
 
-	public T withUser(String user) {
+	public BaseCallbackHandlerDTO withUser(String user) {
 		setUser(user);
-		return (T) this;
+		return this;
 	}
 
-	public T withTransferData(TransferData transferData) {
+	public BaseCallbackHandlerDTO withTransferData(TransferData transferData) {
 		setTransferData(transferData);
-		return (T) this;
+		return this;
 	}
 
 }

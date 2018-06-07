@@ -18,12 +18,14 @@
 package com.epam.dlab.dto.handlers;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EdgeCallbackHandlerDTO extends BaseCallbackHandlerDTO {
 
@@ -35,4 +37,20 @@ public class EdgeCallbackHandlerDTO extends BaseCallbackHandlerDTO {
 
 	@JsonProperty("enclosing_class")
 	private String enclosingClass;
+
+
+	public EdgeCallbackHandlerDTO withCallbackUri(String callbackUri) {
+		setCallbackUri(callbackUri);
+		return this;
+	}
+
+	public EdgeCallbackHandlerDTO withResponseClass(String responseClass) {
+		setResponseClass(responseClass);
+		return this;
+	}
+
+	public EdgeCallbackHandlerDTO withEnclosingClass(String enclosingClass) {
+		setEnclosingClass(enclosingClass);
+		return this;
+	}
 }
