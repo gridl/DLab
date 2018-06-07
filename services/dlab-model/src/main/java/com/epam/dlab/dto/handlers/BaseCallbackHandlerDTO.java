@@ -23,10 +23,16 @@ import lombok.Data;
 
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class_name")
-@JsonSubTypes({@JsonSubTypes.Type(value = ReuploadKeyCallbackHandlerDTO.class)})
+@JsonSubTypes({
+		@JsonSubTypes.Type(value = ReuploadKeyCallbackHandlerDTO.class),
+		@JsonSubTypes.Type(value = LibListCallbackHandlerDTO.class),
+		@JsonSubTypes.Type(value = ExploratoryGitCredsCallbackHandlerDTO.class),
+		@JsonSubTypes.Type(value = ExploratoryCallbackHandlerDTO.class),
+		@JsonSubTypes.Type(value = EdgeCallbackHandlerDTO.class),
+		@JsonSubTypes.Type(value = BackupCallbackHandlerDTO.class)
+})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@SuppressWarnings("unchecked")
 public class BaseCallbackHandlerDTO {
 
 	@JsonProperty("_id")
