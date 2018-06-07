@@ -39,7 +39,7 @@ public class CallBackHandlerDao extends BaseDAO {
 	 *
 	 * @param dto the info about callback handler
 	 */
-	public void insertCallbackHandler(BaseCallbackHandlerDTO dto) {
+	public <T extends BaseCallbackHandlerDTO> void insertCallbackHandler(T dto) {
 		insertOne(CALLBACK_HANDLERS, dto);
 	}
 

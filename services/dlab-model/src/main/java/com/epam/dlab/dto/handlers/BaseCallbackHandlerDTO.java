@@ -18,12 +18,12 @@
 package com.epam.dlab.dto.handlers;
 
 import com.epam.dlab.dto.handlers.transferobjects.TransferData;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @SuppressWarnings("unchecked")
 public class BaseCallbackHandlerDTO<T extends BaseCallbackHandlerDTO> {
 

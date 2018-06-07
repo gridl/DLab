@@ -40,7 +40,7 @@ public class HandlerResource {
 
 	@POST
 	@Path("/create")
-	public Response create(BaseCallbackHandlerDTO dto) {
+	public <T extends BaseCallbackHandlerDTO> Response create(T dto) {
 		dao.insertCallbackHandler(dto);
 		return Response.ok().build();
 	}
