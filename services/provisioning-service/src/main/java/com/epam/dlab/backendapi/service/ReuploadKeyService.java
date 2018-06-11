@@ -31,6 +31,7 @@ import com.epam.dlab.dto.reuploadkey.ReuploadKeyDTO;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.model.ResourceData;
 import com.epam.dlab.rest.contracts.ApiCallbacks;
+import com.epam.dlab.rest.contracts.HandlerAPI;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
@@ -129,7 +130,7 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 	private void selfServiceHandlerPost(BaseCallbackHandlerDTO handlerDto) {
 		log.debug("Send post request to self service for storing callback handler data {} into database", handlerDto);
 		try {
-			selfService.post("/api/handler/create", handlerDto, Response.class);
+			selfService.post(HandlerAPI.HANDLER_CREATE_SS, handlerDto, Response.class);
 		} catch (Exception e) {
 			log.error("Send request error for handler data: {}", handlerDto, e.getLocalizedMessage(), e);
 			throw new DlabException("Send request error for handler data: " + handlerDto + ": "

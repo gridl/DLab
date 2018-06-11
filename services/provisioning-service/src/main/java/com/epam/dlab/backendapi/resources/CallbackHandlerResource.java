@@ -17,36 +17,33 @@
  */
 package com.epam.dlab.backendapi.resources;
 
-import com.epam.dlab.backendapi.service.HandlerService;
+import com.epam.dlab.backendapi.service.CallbackHandlerService;
 import com.epam.dlab.dto.handlers.BaseCallbackHandlerDTO;
+import com.epam.dlab.rest.contracts.HandlerAPI;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
-@Path("handler")
+@Path(HandlerAPI.HANDLER_PS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
-public class HandlerResource {
+public class CallbackHandlerResource {
 
 	@Inject
-	private HandlerService handlerService;
+	private CallbackHandlerService callbackHandlerService;
 
 	@POST
-	@Path("/create")
-	public Response create(BaseCallbackHandlerDTO dto) {
-		handlerService.save(dto);
+	@SuppressWarnings("unchecked")
+	public Response receiveHandlers(Object handlerList) {
+		callbackHandlerService.startHandlers((List<BaseCallbackHandlerDTO>) handlerList);
 		return Response.ok().build();
 	}
-
-	@GET
-	public Response getHandlers() {
-		handlerService.sendAllHandlers();
-		return Response.ok().build();
-	}
-
-
 }

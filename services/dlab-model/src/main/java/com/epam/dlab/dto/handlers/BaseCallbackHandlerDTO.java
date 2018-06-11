@@ -22,14 +22,15 @@ import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
 @Data
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class_name")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "class_name")
 @JsonSubTypes({
-		@JsonSubTypes.Type(value = ReuploadKeyCallbackHandlerDTO.class),
-		@JsonSubTypes.Type(value = LibListCallbackHandlerDTO.class),
-		@JsonSubTypes.Type(value = ExploratoryGitCredsCallbackHandlerDTO.class),
-		@JsonSubTypes.Type(value = ExploratoryCallbackHandlerDTO.class),
-		@JsonSubTypes.Type(value = EdgeCallbackHandlerDTO.class),
-		@JsonSubTypes.Type(value = BackupCallbackHandlerDTO.class)
+		@JsonSubTypes.Type(value = ReuploadKeyCallbackHandlerDTO.class, name = "ReuploadKeyCallbackHandlerDTO"),
+		@JsonSubTypes.Type(value = LibListCallbackHandlerDTO.class, name = "LibListCallbackHandlerDTO"),
+		@JsonSubTypes.Type(value = ExploratoryGitCredsCallbackHandlerDTO.class, name =
+				"ExploratoryGitCredsCallbackHandlerDTO"),
+		@JsonSubTypes.Type(value = ExploratoryCallbackHandlerDTO.class, name = "ExploratoryCallbackHandlerDTO"),
+		@JsonSubTypes.Type(value = EdgeCallbackHandlerDTO.class, name = "EdgeCallbackHandlerDTO"),
+		@JsonSubTypes.Type(value = BackupCallbackHandlerDTO.class, name = "BackupCallbackHandlerDTO")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)

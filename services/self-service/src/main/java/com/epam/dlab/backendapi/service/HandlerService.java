@@ -15,38 +15,13 @@
  *  * limitations under the License.
  *
  */
-package com.epam.dlab.backendapi.resources;
+package com.epam.dlab.backendapi.service;
 
-import com.epam.dlab.backendapi.service.HandlerService;
 import com.epam.dlab.dto.handlers.BaseCallbackHandlerDTO;
-import com.google.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+public interface HandlerService {
 
-@Path("handler")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@Slf4j
-public class HandlerResource {
+	void save(BaseCallbackHandlerDTO dto);
 
-	@Inject
-	private HandlerService handlerService;
-
-	@POST
-	@Path("/create")
-	public Response create(BaseCallbackHandlerDTO dto) {
-		handlerService.save(dto);
-		return Response.ok().build();
-	}
-
-	@GET
-	public Response getHandlers() {
-		handlerService.sendAllHandlers();
-		return Response.ok().build();
-	}
-
-
+	void sendAllHandlers();
 }

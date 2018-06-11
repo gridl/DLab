@@ -21,6 +21,8 @@ import com.epam.dlab.dto.handlers.BaseCallbackHandlerDTO;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 import static com.epam.dlab.backendapi.dao.MongoCollections.CALLBACK_HANDLERS;
 
 @Slf4j
@@ -42,5 +44,14 @@ public class CallBackHandlerDao extends BaseDAO {
 	public void insertCallbackHandler(BaseCallbackHandlerDTO dto) {
 		insertOne(CALLBACK_HANDLERS, dto);
 	}
+
+	/**
+	 * Finds and returns all callback handlers from the collection.
+	 */
+	public List<BaseCallbackHandlerDTO> getCallbackHandlers() {
+		return find(CALLBACK_HANDLERS, BaseCallbackHandlerDTO.class);
+	}
+
+
 
 }

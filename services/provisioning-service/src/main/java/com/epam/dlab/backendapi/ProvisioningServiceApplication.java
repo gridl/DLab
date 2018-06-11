@@ -24,6 +24,7 @@ import com.epam.dlab.backendapi.modules.CloudModuleConfigurator;
 import com.epam.dlab.backendapi.modules.ModuleFactory;
 import com.epam.dlab.backendapi.resources.*;
 import com.epam.dlab.backendapi.resources.base.KeyResource;
+import com.epam.dlab.backendapi.service.CallbackHandlerService;
 import com.epam.dlab.cloud.CloudModule;
 import com.epam.dlab.process.model.DlabProcess;
 import com.epam.dlab.rest.mappers.JsonProcessingExceptionMapper;
@@ -81,6 +82,9 @@ public class ProvisioningServiceApplication extends Application<ProvisioningServ
 		jersey.register(injector.getInstance(ImageResource.class));
 		jersey.register(injector.getInstance(BackupResource.class));
 		jersey.register(injector.getInstance(KeyResource.class));
+		jersey.register(injector.getInstance(CallbackHandlerResource.class));
 
+		environment.lifecycle()
+				.addServerLifecycleListener(server -> injector.getInstance(CallbackHandlerService.class).run());
 	}
 }
