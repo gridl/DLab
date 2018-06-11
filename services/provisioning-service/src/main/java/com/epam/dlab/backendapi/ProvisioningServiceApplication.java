@@ -82,7 +82,6 @@ public class ProvisioningServiceApplication extends Application<ProvisioningServ
 		jersey.register(injector.getInstance(ImageResource.class));
 		jersey.register(injector.getInstance(BackupResource.class));
 		jersey.register(injector.getInstance(KeyResource.class));
-		jersey.register(injector.getInstance(CallbackHandlerResource.class));
 
 		environment.lifecycle()
 				.addServerLifecycleListener(server -> injector.getInstance(CallbackHandlerService.class).run());

@@ -84,6 +84,10 @@ public class ProvisioningServiceApplicationConfiguration extends ServiceConfigur
     @JsonProperty
     private String backupDirectory;
 
+	@NotEmpty
+	@JsonProperty
+	private String handlerDirectory;
+
     public String getKeyDirectory() {
         return keyDirectory;
     }
@@ -162,4 +166,8 @@ public class ProvisioningServiceApplicationConfiguration extends ServiceConfigur
     public String getBackupDirectory() {
         return backupDirectory;
     }
+
+	public String getHandlerDirectory() {
+		return handlerDirectory;
+	}
 }

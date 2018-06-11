@@ -20,6 +20,7 @@
 
 backupScriptPath: /opt/dlab/tmp/backup.py
 backupDirectory: /opt/dlab/tmp/result
+handlerDirectory: /opt/dlab/tmp/handlers
 keyDirectory: ${KEYS_DIR}
 responseDirectory: /opt/dlab/tmp
 dockerLogDirectory: ${LOG_ROOT_DIR}

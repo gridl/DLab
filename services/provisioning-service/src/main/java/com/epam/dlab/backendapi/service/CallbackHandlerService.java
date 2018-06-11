@@ -20,12 +20,10 @@ package com.epam.dlab.backendapi.service;
 import com.epam.dlab.backendapi.core.response.folderlistener.FolderListenerExecutor;
 import com.epam.dlab.dto.handlers.BaseCallbackHandlerDTO;
 import com.epam.dlab.rest.client.RESTService;
-import com.epam.dlab.rest.contracts.HandlerAPI;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.xml.ws.Response;
 import java.util.List;
 
 @Slf4j
@@ -39,7 +37,7 @@ public class CallbackHandlerService {
 
 	public void run() {
 		log.debug("Calling self-service for getting all callback handlers...");
-		selfService.get(HandlerAPI.HANDLER_SS, Response.class);
+
 	}
 
 	public void startHandlers(List<BaseCallbackHandlerDTO> handlerList) {
