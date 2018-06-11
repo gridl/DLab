@@ -17,6 +17,7 @@
  */
 package com.epam.dlab.backendapi.service;
 
+import com.epam.dlab.backendapi.core.response.folderlistener.FolderListenerExecutor;
 import com.epam.dlab.dto.handlers.BaseCallbackHandlerDTO;
 import com.epam.dlab.rest.client.RESTService;
 import com.epam.dlab.rest.contracts.HandlerAPI;
@@ -33,6 +34,8 @@ public class CallbackHandlerService {
 
 	@Inject
 	private RESTService selfService;
+	@Inject
+	private FolderListenerExecutor folderListenerExecutor;
 
 	public void run() {
 		log.debug("Calling self-service for getting all callback handlers...");

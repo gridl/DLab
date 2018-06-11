@@ -19,6 +19,9 @@ package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.ProvisioningServiceApplicationConfiguration;
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
+import com.epam.dlab.dto.DtoType;
+import com.epam.dlab.dto.ResourceSysBaseDTO;
+import com.epam.dlab.dto.handlers.BaseCallbackHandlerDTO;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +33,10 @@ public class CallbackHandlerBuilder {
 	@Inject
 	private ProvisioningServiceApplicationConfiguration configuration;
 
-	public FileHandlerCallback getHandler() {
+	public FileHandlerCallback getHandler(BaseCallbackHandlerDTO handlerInfo) {
+		CallBackHandlerType handlerType = CallBackHandlerType.of(handlerInfo.getHandlerType());
+		DtoType dtoType = DtoType.of(handlerInfo.getTransferData().getDtoType());
+		ResourceSysBaseDTO resourceSysBaseDTO = null;
 		return null;
 	}
 
