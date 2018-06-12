@@ -17,15 +17,16 @@
 package com.epam.dlab.backendapi.resources;
 
 import com.epam.dlab.auth.UserInfo;
+import com.epam.dlab.process.model.DlabProcess;
+import com.epam.dlab.process.model.ProcessId;
 import com.epam.dlab.rest.contracts.InfrasctructureAPI;
 import io.dropwizard.auth.Auth;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Path(InfrasctructureAPI.INFRASTRUCTURE)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -38,6 +39,19 @@ public class InfrastructureResource {
 	@GET
 	public Response status(@Auth UserInfo ui) {
 		return Response.status(Response.Status.OK).build();
+	}
+
+	@GET
+	@Path("/operations")
+	public Response operations(@Auth UserInfo ui){
+		return Response.ok(DlabProcess.getInstance().getActiveProcesses(ui.getName())).build();
+	}
+
+	@DELETE
+	@Path("/operations")
+	public Response kill(@Auth UserInfo ui, ProcessId processId) throws ExecutionException, InterruptedException {
+		DlabProcess.getInstance().kill(processId).get();
+		return Response.ok().build();
 	}
 
 }
