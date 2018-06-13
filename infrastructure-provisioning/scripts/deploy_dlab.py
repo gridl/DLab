@@ -72,7 +72,7 @@ parser.add_argument('--azure_oauth2_enabled', type=str, default='false', help='U
 parser.add_argument('--azure_region_info', type=str, default='', help='Azure region info')
 parser.add_argument('--gcp_project_id', type=str, default='', help='The project ID in Google Cloud Platform')
 parser.add_argument('--gcp_service_account_path', type=str, default='', help='The project ID in Google Cloud Platform')
-parser.add_argument('--dlab_id', type=str, default="'user:user:tag'", help='Column name in report file that contains dlab id tag')
+parser.add_argument('--dlab_id', type=str, default='user:user:tag', help='Column name in report file that contains dlab id tag')
 parser.add_argument('--usage_date', type=str, default='UsageStartDate', help='Column name in report file that contains usage date tag')
 parser.add_argument('--product', type=str, default='ProductName', help='Column name in report file that contains product name tag')
 parser.add_argument('--usage_type', type=str, default='UsageType', help='Column name in report file that contains usage type tag')

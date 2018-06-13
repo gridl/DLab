@@ -270,8 +270,7 @@ if __name__ == "__main__":
                  "--usage {} " \
                  "--cost {} " \
                  "--resource_id {} " \
-                 "--tags {}". \
-            format(instance_hostname,
+                 "--tags {}".format(instance_hostname,
                    "{}{}.pem".format(os.environ['conf_key_dir'], os.environ['conf_key_name']),
                    os.environ['ssn_dlab_path'],
                    dlab_ssh_user,
