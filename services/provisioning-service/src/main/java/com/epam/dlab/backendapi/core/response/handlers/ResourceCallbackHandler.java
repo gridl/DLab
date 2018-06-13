@@ -18,10 +18,10 @@
 
 package com.epam.dlab.backendapi.core.response.handlers;
 
-import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
 import com.epam.dlab.dto.StatusBaseDTO;
+import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.rest.client.RESTService;
 import com.fasterxml.jackson.core.JsonParser;
@@ -49,22 +49,27 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
     private final String user;
     private final String uuid;
     private final DockerAction action;
+	private final String handlerDirectory;
     private final Class<T> resultType;
 
     @SuppressWarnings("unchecked")
-    public ResourceCallbackHandler(RESTService selfService, String user, String uuid, DockerAction action) {
+	public ResourceCallbackHandler(RESTService selfService, String user, String uuid, DockerAction action,
+								   String handlerDirectory) {
         this.selfService = selfService;
         this.user = user;
         this.uuid = uuid;
         this.action = action;
+		this.handlerDirectory = handlerDirectory;
         this.resultType = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
-    public ResourceCallbackHandler(RESTService selfService, String user, String uuid, DockerAction action, Class<T> resultType) {
+	public ResourceCallbackHandler(RESTService selfService, String user, String uuid, DockerAction action, String
+			handlerDirectory, Class<T> resultType) {
         this.selfService = selfService;
         this.user = user;
         this.uuid = uuid;
         this.action = action;
+		this.handlerDirectory = handlerDirectory;
         this.resultType = resultType;
     }
 

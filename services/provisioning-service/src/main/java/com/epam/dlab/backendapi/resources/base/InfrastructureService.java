@@ -135,7 +135,8 @@ public abstract class InfrastructureService implements DockerCommands {
 	}
 
 	protected FileHandlerCallback getFileHandlerCallback(DockerAction action, String uuid, String user) {
-		return new ResourcesStatusCallbackHandler(selfService, action, uuid, user);
+		return new ResourcesStatusCallbackHandler(selfService, action, uuid, user, configuration.getHandlerDirectory
+				());
 	}
 
 	private String nameContainer(String user, DockerAction action, String name) {

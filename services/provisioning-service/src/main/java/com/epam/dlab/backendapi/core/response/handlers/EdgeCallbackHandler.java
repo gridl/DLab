@@ -18,8 +18,8 @@
 
 package com.epam.dlab.backendapi.core.response.handlers;
 
-import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.dto.base.edge.EdgeInfo;
 import com.epam.dlab.dto.base.keyload.UploadFileResult;
 import com.epam.dlab.exceptions.DlabException;
@@ -33,9 +33,10 @@ public class EdgeCallbackHandler<E extends EdgeInfo, T extends UploadFileResult<
     private final Class<E> responseType;
 
     public EdgeCallbackHandler(RESTService selfService, DockerAction action, String uuid, String user,
-                               String callbackURI, Class<E> responseType, Class<T> enclosingType) {
+							   String callbackURI, Class<E> responseType, Class<T> enclosingType, String
+									   handlerDirectory) {
 
-        super(selfService, user, uuid, action, enclosingType);
+		super(selfService, user, uuid, action, handlerDirectory, enclosingType);
         this.callbackURI = callbackURI;
         this.responseType = responseType;
     }

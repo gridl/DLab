@@ -16,8 +16,8 @@
 
 package com.epam.dlab.backendapi.core.response.handlers;
 
-import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.dto.base.computational.ComputationalBase;
 import com.epam.dlab.dto.computational.ComputationalStatusDTO;
 import com.epam.dlab.exceptions.DlabException;
@@ -32,18 +32,23 @@ public class ComputationalCallbackHandler extends ResourceCallbackHandler<Comput
     private static final String INSTANCE_ID_FIELD = "instance_id";
     private static final String COMPUTATIONAL_ID_FIELD = "hostname";
 
-    private final ComputationalBase<?> dto;
+	private ComputationalBase<?> dto;
     private ComputationalConfigure computationalConfigure;
 
     public ComputationalCallbackHandler(ComputationalConfigure computationalConfigure, RESTService selfService,
-                                        DockerAction action, String uuid, ComputationalBase<?> dto) {
+										DockerAction action, String uuid, String handlerDirectory,
+										ComputationalBase<?> dto) {
 
-        super(selfService, dto.getCloudSettings().getIamUser(), uuid, action);
+		super(selfService, dto.getCloudSettings().getIamUser(), uuid, action, handlerDirectory);
         this.computationalConfigure = computationalConfigure;
         this.dto = dto;
     }
 
-    protected ComputationalBase<?> getDto() {
+	public void setDto(ComputationalBase<?> dto) {
+		this.dto = dto;
+	}
+
+	protected ComputationalBase<?> getDto() {
         return dto;
     }
 

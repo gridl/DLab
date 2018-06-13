@@ -1,6 +1,7 @@
 package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
+import com.epam.dlab.dto.handlers.helper.HandlerHelper;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyCallbackDTO;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyStatus;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyStatusDTO;
@@ -18,19 +19,23 @@ public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
 	private static final ObjectMapper MAPPER = new ObjectMapper()
 			.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
 	private static final String STATUS_FIELD = "status";
+	private static final String REQUEST_ID_FIELD = "request_id";
 	private static final String ERROR_MESSAGE_FIELD = "error_message";
 	private final String uuid;
 	private final ReuploadKeyCallbackDTO dto;
 	private final RESTService selfService;
 	private final String callbackUrl;
 	private final String user;
+	private final String handlerDirectory;
 
-	public ReuploadKeyCallbackHandler(RESTService selfService, String callbackUrl, String user,
+	public ReuploadKeyCallbackHandler(RESTService selfService, String callbackUrl, String user, String
+			handlerDirectory,
 									  ReuploadKeyCallbackDTO dto) {
 		this.selfService = selfService;
 		this.uuid = dto.getId();
 		this.callbackUrl = callbackUrl;
 		this.user = user;
+		this.handlerDirectory = handlerDirectory;
 		this.dto = dto;
 	}
 
@@ -59,6 +64,7 @@ public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
 					.withErrorMessage(jsonNode.get(ERROR_MESSAGE_FIELD).textValue());
 		}
 		selfServicePost(reuploadKeyStatusDTO);
+		HandlerHelper.getInstance().deleteHandlerFile(jsonNode.get(REQUEST_ID_FIELD).textValue(), handlerDirectory);
 		return "ok".equals(status);
 	}
 
@@ -86,6 +92,5 @@ public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
 				.withReuploadKeyStatus(status)
 				.withUser(user);
 	}
-
 }
 

@@ -16,8 +16,8 @@
 
 package com.epam.dlab.backendapi.core.response.handlers;
 
-import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.dto.exploratory.LibListStatusDTO;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.rest.client.RESTService;
@@ -53,8 +53,9 @@ public class LibListCallbackHandler extends ResourceCallbackHandler<LibListStatu
      * @param user        the name of user.
      * @param imageName   the name of docker image.
      */
-    public LibListCallbackHandler(RESTService selfService, DockerAction action, String uuid, String user, String imageName) {
-        super(selfService, user, uuid, action);
+	public LibListCallbackHandler(RESTService selfService, DockerAction action, String uuid, String user,
+								  String imageName, String handlerDirectory) {
+		super(selfService, user, uuid, action, handlerDirectory);
         this.imageName = imageName;
     }
 

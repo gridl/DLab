@@ -229,21 +229,6 @@ public class BaseDAO {
 	}
 
 	/**
-	 * Finds and returns documents from the collection without any condition.
-	 *
-	 * @param collection    collection name.
-	 * @param resultedClass type of class for deserialization.
-	 */
-	protected <T> List<T> find(String collection, Class<T> resultedClass) {
-		return mongoService.getCollection(collection)
-				.find()
-				.into(new ArrayList<>())
-				.stream()
-				.map(d -> convertFromDocument(d, resultedClass))
-				.collect(Collectors.toList());
-	}
-
-	/**
 	 * Finds and returns documents with the specified fields from the collection by condition.
 	 *
 	 * @param collection collection name.

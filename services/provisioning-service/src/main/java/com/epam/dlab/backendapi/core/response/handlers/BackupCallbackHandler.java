@@ -41,12 +41,15 @@ public class BackupCallbackHandler implements FileHandlerCallback {
     private final RESTService selfService;
     private final String callbackUrl;
     private final String user;
+	private final String handlerDirectory;
 
-    public BackupCallbackHandler(RESTService selfService, String callbackUrl, String user, EnvBackupDTO dto) {
+	public BackupCallbackHandler(RESTService selfService, String callbackUrl, String user, String handlerDirectory,
+								 EnvBackupDTO dto) {
         this.selfService = selfService;
         this.uuid = dto.getId();
         this.callbackUrl = callbackUrl;
         this.user = user;
+		this.handlerDirectory = handlerDirectory;
         this.dto = dto;
     }
 

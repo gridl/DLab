@@ -21,12 +21,23 @@ import com.epam.dlab.backendapi.core.commands.DockerAction;
 import com.epam.dlab.backendapi.core.commands.DockerCommands;
 import com.epam.dlab.backendapi.core.commands.RunDockerCommand;
 import com.epam.dlab.backendapi.core.response.handlers.ReuploadKeyCallbackHandler;
+import com.epam.dlab.dto.DtoType;
+import com.epam.dlab.dto.handlers.BaseCallbackHandlerDTO;
+import com.epam.dlab.dto.handlers.CallBackHandlerType;
+import com.epam.dlab.dto.handlers.ReuploadKeyCallbackHandlerDTO;
+import com.epam.dlab.dto.handlers.transferobjects.TransferData;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyCallbackDTO;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyDTO;
+import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.model.ResourceData;
 import com.epam.dlab.rest.contracts.ApiCallbacks;
+import com.epam.dlab.util.FileUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+import java.io.IOException;
 
 @Slf4j
 @Singleton
@@ -65,19 +76,34 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 	}
 
 	private void startCallbackListener(String userName, ReuploadKeyCallbackDTO dto) {
-		folderListenerExecutor.start(configuration.getKeyLoaderDirectory(),
-				configuration.getKeyLoaderPollTimeout(),
-				new ReuploadKeyCallbackHandler(selfService, ApiCallbacks.REUPLOAD_KEY_URI, userName, dto));
+		folderListenerExecutor.start(configuration.getKeyLoaderDirectory(), configuration.getKeyLoaderPollTimeout(),
+				new ReuploadKeyCallbackHandler(selfService, ApiCallbacks.REUPLOAD_KEY_URI, userName,
+						configuration.getHandlerDirectory(), dto));
 
-//				new ReuploadKeyCallbackHandlerDTO()
-//						.withCallbackUri(ApiCallbacks.REUPLOAD_KEY_URI)
-//						.withUser(userName).withHandlerType(CallBackHandlerType.REUPLOAD_KEY_HANDLER.toString())
-//						.withTransferData(new TransferData(DtoType.REUPLOAD_KEY_CALLBACK.toString(), dto));
+		saveCallbackHandlerToFile(new ReuploadKeyCallbackHandlerDTO()
+				.withCallbackUri(ApiCallbacks.REUPLOAD_KEY_URI)
+				.withId(dto.getId())
+				.withUser(userName).withHandlerType(CallBackHandlerType.REUPLOAD_KEY_HANDLER.toString())
+				.withTransferData(new TransferData(DtoType.REUPLOAD_KEY_CALLBACK.toString(), dto)));
 	}
 
 	@Override
 	public String getResourceType() {
 		return Directories.EDGE_LOG_DIRECTORY;
+	}
+
+	private void saveCallbackHandlerToFile(BaseCallbackHandlerDTO dto) {
+		String fileName =
+				String.join("_", dto.getClass().getSimpleName(), dto.getId()) + FileUtils.TXT_FILE_EXT;
+		String absolutePath = configuration.getHandlerDirectory() + FileUtils.FILE_PATH_DELIM + fileName;
+		ObjectMapper mapper = new ObjectMapper();
+		log.debug("Saving callback handler info to file {}...", absolutePath);
+		try {
+			mapper.writerWithDefaultPrettyPrinter().writeValue(new File(absolutePath), dto);
+		} catch (IOException e) {
+			log.error("An exception occured during saving callback handler info to file {}: {}", absolutePath, e);
+			throw new DlabException("Couldn't save callback handler info to file " + absolutePath);
+		}
 	}
 
 	private RunDockerCommand buildRunDockerCommand(ReuploadKeyCallbackDTO callbackDto, DockerAction action) {

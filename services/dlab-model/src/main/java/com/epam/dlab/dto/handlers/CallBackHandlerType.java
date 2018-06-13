@@ -15,7 +15,7 @@
  *  * limitations under the License.
  *
  */
-package com.epam.dlab.backendapi.core.response.handlers;
+package com.epam.dlab.dto.handlers;
 
 public enum CallBackHandlerType {
 	BACKUP_HANDLER("backup_handler"),
@@ -42,9 +42,9 @@ public enum CallBackHandlerType {
 
 	public static CallBackHandlerType of(String type) {
 		if (type != null) {
-			for (CallBackHandlerType uis : CallBackHandlerType.values()) {
-				if (type.equalsIgnoreCase(uis.toString())) {
-					return uis;
+			for (CallBackHandlerType cbt : CallBackHandlerType.values()) {
+				if (type.equalsIgnoreCase(cbt.toString())) {
+					return cbt;
 				}
 			}
 		}

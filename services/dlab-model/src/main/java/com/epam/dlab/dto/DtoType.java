@@ -44,9 +44,9 @@ public enum DtoType {
 
 	public static DtoType of(String type) {
 		if (type != null) {
-			for (DtoType uis : DtoType.values()) {
-				if (type.equalsIgnoreCase(uis.toString())) {
-					return uis;
+			for (DtoType dt : DtoType.values()) {
+				if (type.equalsIgnoreCase(dt.toString())) {
+					return dt;
 				}
 			}
 		}

@@ -37,7 +37,7 @@ public abstract class EdgeService implements DockerCommands {
 	@Inject
 	protected RESTService selfService;
 	@Inject
-	private ProvisioningServiceApplicationConfiguration configuration;
+	protected ProvisioningServiceApplicationConfiguration configuration;
 	@Inject
 	private FolderListenerExecutor folderListenerExecutor;
 	@Inject

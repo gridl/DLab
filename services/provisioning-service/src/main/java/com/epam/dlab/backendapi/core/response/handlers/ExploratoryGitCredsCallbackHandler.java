@@ -16,8 +16,8 @@
 
 package com.epam.dlab.backendapi.core.response.handlers;
 
-import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.dto.exploratory.ExploratoryStatusDTO;
 import com.epam.dlab.rest.client.RESTService;
 import com.epam.dlab.rest.contracts.ApiCallbacks;
@@ -29,8 +29,9 @@ public class ExploratoryGitCredsCallbackHandler extends ResourceCallbackHandler<
 
     private final String exploratoryName;
 
-    public ExploratoryGitCredsCallbackHandler(RESTService selfService, DockerAction action, String uuid, String user, String exploratoryName) {
-        super(selfService, user, uuid, action);
+	public ExploratoryGitCredsCallbackHandler(RESTService selfService, DockerAction action, String uuid, String user,
+											  String exploratoryName, String handlerDirectory) {
+		super(selfService, user, uuid, action, handlerDirectory);
         this.exploratoryName = exploratoryName;
     }
 

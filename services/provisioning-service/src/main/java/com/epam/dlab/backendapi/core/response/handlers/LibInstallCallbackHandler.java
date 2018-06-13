@@ -16,11 +16,11 @@
 
 package com.epam.dlab.backendapi.core.response.handlers;
 
-import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
-import com.epam.dlab.dto.exploratory.LibraryInstallDTO;
-import com.epam.dlab.dto.exploratory.LibInstallStatusDTO;
+import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.dto.exploratory.LibInstallDTO;
+import com.epam.dlab.dto.exploratory.LibInstallStatusDTO;
+import com.epam.dlab.dto.exploratory.LibraryInstallDTO;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.rest.client.RESTService;
 import com.epam.dlab.rest.contracts.ApiCallbacks;
@@ -62,8 +62,9 @@ public class LibInstallCallbackHandler extends ResourceCallbackHandler<LibInstal
      * @param uuid        request UID.
      * @param dto         contains libraries to instal
      */
-    public LibInstallCallbackHandler(RESTService selfService, DockerAction action, String uuid, String user, LibraryInstallDTO dto) {
-        super(selfService, user, uuid, action);
+	public LibInstallCallbackHandler(RESTService selfService, DockerAction action, String uuid, String user,
+									 String handlerDirectory, LibraryInstallDTO dto) {
+		super(selfService, user, uuid, action, handlerDirectory);
         this.dto = dto;
     }
 

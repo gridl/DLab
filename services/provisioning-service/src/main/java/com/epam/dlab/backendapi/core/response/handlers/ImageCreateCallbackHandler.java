@@ -16,8 +16,8 @@
 
 package com.epam.dlab.backendapi.core.response.handlers;
 
-import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.dto.exploratory.ExploratoryImageDTO;
 import com.epam.dlab.dto.exploratory.ImageCreateStatusDTO;
 import com.epam.dlab.exceptions.DlabException;
@@ -33,8 +33,9 @@ public class ImageCreateCallbackHandler extends ResourceCallbackHandler<ImageCre
 	private final String imageName;
 	private final String exploratoryName;
 
-	public ImageCreateCallbackHandler(RESTService selfService, String uuid, DockerAction action, ExploratoryImageDTO image) {
-		super(selfService, image.getCloudSettings().getIamUser(), uuid, action);
+	public ImageCreateCallbackHandler(RESTService selfService, String uuid, DockerAction action,
+									  String handlerDirectory, ExploratoryImageDTO image) {
+		super(selfService, image.getCloudSettings().getIamUser(), uuid, action, handlerDirectory);
 		this.imageName = image.getImageName();
 		this.exploratoryName = image.getExploratoryName();
 	}

@@ -27,12 +27,15 @@ import java.nio.file.Paths;
 @Slf4j
 public class FileUtils {
 
+	public static final String FILE_PATH_DELIM = "/";
+	public static final String TXT_FILE_EXT = ".txt";
+
 	private FileUtils() {
 	}
 
 	public static void saveToFile(String filename, String directory, String content) throws IOException {
 		java.nio.file.Path filePath = Paths.get(directory, filename).toAbsolutePath();
-		log.debug("Saving content to {}", filePath.toString());
+		log.debug("Saving content to {}...", filePath.toString());
 		try {
 			com.google.common.io.Files.createParentDirs(new File(filePath.toString()));
 		} catch (IOException e) {
@@ -43,7 +46,18 @@ public class FileUtils {
 
 	public static void deleteFile(String filename, String directory) throws IOException {
 		java.nio.file.Path filePath = Paths.get(directory, filename).toAbsolutePath();
-		log.debug("Deleting file from {}", filePath.toString());
+		log.debug("Deleting file from {}...", filePath.toString());
 		Files.deleteIfExists(filePath);
+	}
+
+	public static void deleteFile(String path) {
+		java.nio.file.Path filePath = Paths.get(path).toAbsolutePath();
+		log.debug("Deleting file {}...", path);
+		try {
+			Files.deleteIfExists(filePath);
+		} catch (IOException e) {
+			log.error("An exception occured while deleting file {}: {}", path, e);
+			throw new DlabException("Occured problems with deleting file " + path);
+		}
 	}
 }

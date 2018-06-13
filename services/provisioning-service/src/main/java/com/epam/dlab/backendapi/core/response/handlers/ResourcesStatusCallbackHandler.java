@@ -35,8 +35,9 @@ import static com.epam.dlab.rest.contracts.ApiCallbacks.STATUS_URI;
 @Slf4j
 public class ResourcesStatusCallbackHandler extends ResourceCallbackHandler<EnvStatusDTO> {
 
-    public ResourcesStatusCallbackHandler(RESTService selfService, DockerAction action, String uuid, String user) {
-        super(selfService, user, uuid, action);
+	public ResourcesStatusCallbackHandler(RESTService selfService, DockerAction action, String uuid, String user,
+										  String handlerDirectory) {
+		super(selfService, user, uuid, action, handlerDirectory);
     }
 
     @Override
