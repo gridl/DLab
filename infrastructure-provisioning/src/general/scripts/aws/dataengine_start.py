@@ -22,6 +22,7 @@ import logging
 import json
 import os
 from dlab.actions_lib import *
+from dlab.meta_lib import get_instance_private_ip_address
 import sys
 
 
@@ -47,7 +48,6 @@ if __name__ == "__main__":
     create_aws_config_files()
     print('Generating infrastructure names and tags')
     data_engine_config = dict()
-    
     try:
         data_engine_config['exploratory_name'] = os.environ['exploratory_name']
     except:
@@ -56,13 +56,23 @@ if __name__ == "__main__":
         data_engine_config['computational_name'] = os.environ['computational_name']
     except:
         data_engine_config['computational_name'] = ''
+    data_engine_config['key_path'] = os.environ['conf_key_dir'] + '/' + \
+                                      os.environ['conf_key_name'] + '.pem'
+    data_engine_config['application'] = os.environ['application']
     data_engine_config['service_base_name'] = os.environ['conf_service_base_name']
     data_engine_config['user_name'] = os.environ['edge_user_name']
+    data_engine_config['dlab_ssh_user'] = os.environ['conf_os_user']
     data_engine_config['cluster_name'] = \
         data_engine_config['service_base_name'] + '-' + \
         data_engine_config['user_name'] + '-de-' + \
         data_engine_config['exploratory_name'] + '-' + \
         data_engine_config['computational_name']
+    data_engine_config['tag_name'] = data_engine_config['service_base_name'] + \
+                                     '-Tag'
+    data_engine_config['notebook_name'] = os.environ['notebook_instance_name']
+    data_engine_config['notebook_ip'] = get_instance_private_ip_address(
+        data_engine_config['tag_name'],
+        data_engine_config['notebook_name'])
 
     logging.info('[START DATA ENGINE CLUSTER]')
     print('[START DATA ENGINE CLUSTER]')
@@ -71,6 +81,27 @@ if __name__ == "__main__":
                                          data_engine_config['cluster_name']))
     except Exception as err:
         append_result("Failed to start Data Engine.", str(err))
+        sys.exit(1)
+    
+    logging.info('[ENABLE REMOTE KERNELS]')
+    print('[ENABLE REMOTE KERNELS FOR {}]'.format(
+        data_engine_config['application'].upper()))
+    params = "--cluster_name {} " \
+             "--notebook_ip {} " \
+             "--keyfile {} " \
+             "--os_user {} " \
+             "--kernel_action {}".\
+        format(data_engine_config['cluster_name'],
+               data_engine_config['notebook_ip'],
+               data_engine_config['key_path'],
+               data_engine_config['dlab_ssh_user'],
+               'enable')
+    try:
+        local("~/scripts/{}_{}.py {}".format(data_engine_config['application'],
+                                             'enable_disable_dataengine_kernels',
+                                             params))
+    except Exception as err:
+        append_result("Failed to disable Data Engine kernels", str(err))
         sys.exit(1)
 
     try:
