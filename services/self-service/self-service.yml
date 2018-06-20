@@ -108,3 +108,53 @@ logging:
       archive: true
       archivedLogFilenamePattern: ${LOG_ROOT_DIR}/ssn/selfservice-%d{yyyy-MM-dd}.log.gz
       archivedFileCount: 10
+
+notebookScheduler:
+   beginDate:
+   finishDate:
+   startTime:
+   endTime:
+   startDaysRepeat:
+   stopDaysRepeat:
+   terminateDateTime:
+   timeZoneOffset:
+   syncStartRequired:
+
+!com.epam.dlab.dto.SchedulerJobDTO
+sparkScheduler:
+   !java.time.LocalDate
+   beginDate: 2018:05:20
+   !java.time.LocalDate
+   finishDate: 2018:06:30
+   !java.time.LocalTime
+   startTime: 15:00
+   !java.time.LocalTime
+   endTime: 23:00
+   !java.util.ArrayList
+   startDaysRepeat: NULL
+   !java.util.ArrayList
+   stopDaysRepeat:
+     - MONDAY
+     - TUESDAY
+     - WEDNESDAY
+     - THURSDAY
+     - FRIDAY
+     - SATURDAY
+     - SUNDAY
+   !java.time.LocalDateTime
+   terminateDateTime: NULL
+   !java.time.ZoneOffset
+   timeZoneOffset: +03:00
+   syncStartRequired: false
+
+emrScheduler:
+   beginDate:
+   finishDate:
+   startTime:
+   endTime:
+   startDaysRepeat:
+   stopDaysRepeat:
+   terminateDateTime: 23:00
+   timeZoneOffset: +03:00
+   syncStartRequired: false
+

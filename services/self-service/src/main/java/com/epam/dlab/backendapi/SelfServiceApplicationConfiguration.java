@@ -20,6 +20,7 @@ package com.epam.dlab.backendapi;
 
 import com.epam.dlab.ServiceConfiguration;
 import com.epam.dlab.backendapi.validation.SelfServiceCloudConfigurationSequenceProvider;
+import com.epam.dlab.dto.SchedulerJobDTO;
 import com.epam.dlab.validation.AwsValidation;
 import com.epam.dlab.validation.AzureValidation;
 import com.epam.dlab.validation.GcpValidation;
@@ -100,6 +101,28 @@ public class SelfServiceApplicationConfiguration extends ServiceConfiguration {
 
 	@JsonProperty
 	private int privateKeySize = 2048;
+
+	@JsonProperty
+	private SchedulerJobDTO notebookScheduler;
+
+	@JsonProperty
+	private SchedulerJobDTO sparkScheduler;
+
+	@JsonProperty
+	private SchedulerJobDTO emrScheduler;
+
+
+	public SchedulerJobDTO getNotebookScheduler() {
+		return notebookScheduler;
+	}
+
+	public SchedulerJobDTO getSparkScheduler() {
+		return sparkScheduler;
+	}
+
+	public SchedulerJobDTO getEmrScheduler() {
+		return emrScheduler;
+	}
 
 	public boolean isGcpOuauth2AuthenticationEnabled() {
 		return gcpOuauth2AuthenticationEnabled;

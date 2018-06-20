@@ -25,6 +25,7 @@ import com.epam.dlab.backendapi.domain.RequestId;
 import com.epam.dlab.backendapi.resources.dto.ComputationalCreateFormDTO;
 import com.epam.dlab.backendapi.resources.dto.SparkStandaloneClusterCreateForm;
 import com.epam.dlab.backendapi.service.ComputationalService;
+import com.epam.dlab.backendapi.service.SchedulerJobService;
 import com.epam.dlab.backendapi.util.RequestBuilder;
 import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.dto.UserInstanceDTO;
@@ -44,6 +45,7 @@ import com.google.inject.name.Named;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.epam.dlab.dto.UserInstanceStatus.*;
@@ -76,6 +78,9 @@ public class ComputationalServiceImpl implements ComputationalService {
 	@Inject
 	private RequestId requestId;
 
+	@Inject
+	private SchedulerJobService schedulerJobService;
+
 
 	@Override
 	public boolean createSparkCluster(UserInfo userInfo, SparkStandaloneClusterCreateForm form) {
@@ -84,6 +89,11 @@ public class ComputationalServiceImpl implements ComputationalService {
 
 		if (computationalDAO.addComputational(userInfo.getName(), form.getNotebookName(),
 				createInitialComputationalResource(form))) {
+			log.debug("Spark cluster is creating with scheduler data: {}", configuration.getSparkScheduler());
+			if (Objects.nonNull(configuration.getSparkScheduler())) {
+				schedulerJobService.updateComputationalSchedulerData(userInfo.getName(), form.getNotebookName(),
+						form.getName(), configuration.getSparkScheduler());
+			}
 
 			try {
 				UserInstanceDTO instance =
