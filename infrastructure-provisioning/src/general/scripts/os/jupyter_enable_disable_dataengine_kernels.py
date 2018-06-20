@@ -23,7 +23,6 @@ from fabric.api import run
 from fabric.api import sudo
 from fabric.api import env
 import logging
-import traceback
 import os
 import sys
 
@@ -36,30 +35,27 @@ parser.add_argument('--kernel_action', type=str, default='')
 args = parser.parse_args()
 
 
-def list_directory(cluster_name, kernels_path):
+def list_directory(cluster_name, kernels_path, rstudio='true'):
     try:
-        kernels = list()
         list_dir = run('python -c "import os, sys; '
                        'print(os.listdir(\'{}\'))"'.format(kernels_path))
         kernels_list = list_dir.replace('[', '').\
             replace(']', '').replace('\'', '').\
             replace(',', '').split()
-        for dir_ in kernels_list:
-            if 'r_{}'.format(cluster_name) and kernels_config['r_enabled'] == 'true' in dir_:
-                kernels.append(dir_)
-            elif 'py3spark_{}'.format(cluster_name) in dir_:
-                kernels.append(dir_)
-            elif 'pyspark_{}'.format(cluster_name) in dir_:
-                kernels.append(dir_)
-            elif 'toree_{}'.format(cluster_name) in dir_:
-                kernels.append(dir_)
-            else:
-                pass
-        return kernels
+        
+        if rstudio == 'true':
+            kernels_ = ('r_{}', 'py3spark_{}', 'pyspark_{}', 'toree_{}')
+        else:
+            kernels_ = ('py3spark_{}', 'pyspark_{}', 'toree_{}')
+            
+        ker = (map(lambda kernel_name: kernel_name.format(cluster_name),
+                   [x for x in kernels_]))
+        
+        list_kernels = set(ker) & set(kernels_list)
+        return list(list_kernels)
     except Exception as err:
-        logging.error("Failed to build EMR cluster: " +
-                     str(err) + "\n Traceback: " +
-                     traceback.print_exc(file=sys.stdout))
+        logging.error("Failed to build EMR cluster: " + str(err))
+        sys.exit(1)
 
 
 def enable_data_engine_kernels(cluster_name, default_path, disabled_path):
@@ -69,9 +65,8 @@ def enable_data_engine_kernels(cluster_name, default_path, disabled_path):
         for kernel in list_kernels:
             sudo('mv {}/{} {}/'.format(disabled_path, kernel, default_path))
     except Exception as err:
-        logging.error("Failed to build EMR cluster: " +
-                     str(err) + "\n Traceback: " +
-                     traceback.print_exc(file=sys.stdout))
+        logging.error("Failed to enable data engine kernels: " + str(err))
+        sys.exit(1)
 
 
 def disable_data_engine_kernels(cluster_name, default_path, disabled_path):
@@ -80,9 +75,8 @@ def disable_data_engine_kernels(cluster_name, default_path, disabled_path):
         for kernel in list_kernels:
             sudo('mv {}/{} {}/'.format(default_path, kernel, disabled_path))
     except Exception as err:
-        logging.error("Failed to build EMR cluster: " +
-                     str(err) + "\n Traceback: " +
-                     traceback.print_exc(file=sys.stdout))
+        logging.error("Failed to disable data engine kernels: " + str(err))
+        sys.exit(1)
 
 
 if __name__ == "__main__":
