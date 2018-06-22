@@ -67,7 +67,7 @@ public class BackupResource {
 				.withRequestId(dto.getId())
 				.withSystemUser()
 				.withCertificates(dto.getCertificates()).toCMD();
-		commandExecutor.executeAsync(ui.getName(), dto.getId(), command);
+		commandExecutor.startAsync(ui.getName(), dto.getId(), command);
 		return Response.accepted(dto.getId()).build();
 	}
 }

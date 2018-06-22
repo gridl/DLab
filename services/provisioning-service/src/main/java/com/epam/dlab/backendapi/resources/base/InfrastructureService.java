@@ -65,7 +65,7 @@ public abstract class InfrastructureService implements DockerCommands {
 
 			if (!(dto.getResourceList().getHostList().isEmpty() && dto.getResourceList().getClusterList().isEmpty())) {
 				log.trace("Request the status of resources for user {} after filtering: {}", username, dto);
-				commandExecutor.executeAsync(
+				commandExecutor.startAsync(
 						username,
 						uuid,
 						commandBuilder.buildCommand(
@@ -96,7 +96,7 @@ public abstract class InfrastructureService implements DockerCommands {
 	private void removeResourcesWithRunningContainers(String username, UserEnvironmentResources dto)
 			throws Exception {
 
-		final ProcessInfo processInfo = commandExecutor.executeSync(username, DockerCommands.generateUUID(),
+		final ProcessInfo processInfo = commandExecutor.startSync(username, DockerCommands.generateUUID(),
 				String.format(DockerCommands
 						.GET_RUNNING_CONTAINERS_FOR_USER, dto.getEdgeUserName()));
 		final String processInfoStdOut = processInfo.getStdOut();

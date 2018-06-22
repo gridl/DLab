@@ -22,16 +22,30 @@ import com.epam.dlab.process.model.DlabProcess;
 import com.epam.dlab.process.model.ProcessId;
 import com.epam.dlab.process.model.ProcessInfo;
 import com.google.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.ExecutionException;
+
+@Slf4j
 @Singleton
 public class CommandExecutor implements ICommandExecutor {
 
-    public ProcessInfo executeSync(final String username, final String uuid, String command) throws Exception {
-        return DlabProcess.getInstance().start(new ProcessId(username, uuid), "bash", "-c", command).get();
+	public ProcessInfo startSync(final String username, final String uuid, String command) throws ExecutionException,
+			InterruptedException {
+		return DlabProcess.getInstance().start(new ProcessId(username, uuid), "bash", "-c", command).get();
+	}
 
-    }
+	public void startAsync(final String username, final String uuid, final String command) {
+		DlabProcess.getInstance().start(new ProcessId(username, uuid), "bash", "-c", command);
+	}
 
-    public void executeAsync(final String username, final String uuid, final String command) {
-        DlabProcess.getInstance().start(new ProcessId(username, uuid), "bash", "-c", command);
-    }
+	public Boolean cancelSync(final String username, final String uuid) throws ExecutionException,
+			InterruptedException {
+		return DlabProcess.getInstance().cancel(username, uuid).get();
+	}
+
+	public void cancelAsync(final String username, final String uuid) {
+		DlabProcess.getInstance().cancel(username, uuid);
+	}
+
 }

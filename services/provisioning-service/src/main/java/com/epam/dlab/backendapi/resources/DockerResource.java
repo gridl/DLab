@@ -65,7 +65,7 @@ public class DockerResource implements DockerCommands {
     public String run(@Auth UserInfo ui, String image) {
         LOGGER.debug("run docker image {}", image);
         String uuid = DockerCommands.generateUUID();
-        commandExecutor.executeAsync(
+		commandExecutor.startAsync(
                 ui.getName(),
                 uuid,
                 new RunDockerCommand()

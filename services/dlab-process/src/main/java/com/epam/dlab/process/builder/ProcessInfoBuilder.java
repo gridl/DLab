@@ -105,6 +105,16 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 		b.status = STOPPED;
 	}
 
+	public static void cancel(ProcessInfoBuilder b, Object dummy) {
+		if (b.p != null) {
+			b.p.destroy();
+		}
+		if (b.status != LAUNCHING && b.status != RUNNING) {
+			b.setReady();
+		}
+		b.status = CANCELLED;
+	}
+
 	public static void kill(ProcessInfoBuilder b, Object dummy) {
 		if (b.p != null) {
 			b.p.destroyForcibly();

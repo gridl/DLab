@@ -57,7 +57,7 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 		try {
 			final String command = commandBuilder.buildCommand(runDockerCommand, callbackDto);
 			log.trace("Docker command: {}", command);
-			commandExecutor.executeAsync(userName, uuid, command);
+			commandExecutor.startAsync(userName, uuid, command);
 		} catch (Exception e) {
 			log.error("Exception occured during reuploading key: {} for command {}", e.getLocalizedMessage(),
 					runDockerCommand.toCMD());

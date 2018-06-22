@@ -19,11 +19,12 @@ package com.epam.dlab.backendapi.resources;
 import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.core.Directories;
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
-import com.epam.dlab.backendapi.core.commands.*;
+import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.core.commands.DockerCommands;
+import com.epam.dlab.backendapi.core.commands.RunDockerCommand;
 import com.epam.dlab.backendapi.core.response.handlers.LibInstallCallbackHandler;
 import com.epam.dlab.backendapi.core.response.handlers.LibListCallbackHandler;
 import com.epam.dlab.backendapi.service.DockerService;
-import com.epam.dlab.backendapi.core.commands.DockerAction;
 import com.epam.dlab.dto.LibListComputationalDTO;
 import com.epam.dlab.dto.base.DataEngineType;
 import com.epam.dlab.dto.exploratory.ExploratoryActionDTO;
@@ -80,7 +81,7 @@ public class LibraryResource extends DockerService implements DockerCommands {
 
         RunDockerCommand runDockerCommand = getDockerCommandExploratory(dto, action, uuid);
 
-        commandExecutor.executeAsync(username, uuid, commandBuilder.buildCommand(runDockerCommand, dto));
+		commandExecutor.startAsync(username, uuid, commandBuilder.buildCommand(runDockerCommand, dto));
         return uuid;
     }
 
@@ -93,7 +94,7 @@ public class LibraryResource extends DockerService implements DockerCommands {
 
         RunDockerCommand runDockerCommand = getDockerCommandComputational(dto, action, uuid);
 
-        commandExecutor.executeAsync(username, uuid, commandBuilder.buildCommand(runDockerCommand, dto));
+		commandExecutor.startAsync(username, uuid, commandBuilder.buildCommand(runDockerCommand, dto));
         return uuid;
     }
 

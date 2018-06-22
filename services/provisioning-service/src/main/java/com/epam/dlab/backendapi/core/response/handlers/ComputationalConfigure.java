@@ -78,7 +78,7 @@ public class ComputationalConfigure implements DockerCommands {
 				configuration.getResourceStatusPollTimeout(),
 				getFileHandlerCallback(CONFIGURE, uuid, dto));
 		try {
-			commandExecutor.executeAsync(
+			commandExecutor.startAsync(
 					dto.getEdgeUserName(),
 					uuid,
 					commandBuilder.buildCommand(

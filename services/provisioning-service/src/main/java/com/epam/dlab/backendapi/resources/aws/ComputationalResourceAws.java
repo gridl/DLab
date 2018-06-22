@@ -71,7 +71,7 @@ public class ComputationalResourceAws extends DockerService implements DockerCom
 				getFileHandlerCallback(CREATE, uuid, dto));
 		try {
 			long timeout = configuration.getResourceStatusPollTimeout().toSeconds();
-			commandExecutor.executeAsync(
+			commandExecutor.startAsync(
 					ui.getName(),
 					uuid,
 					commandBuilder.buildCommand(
@@ -109,7 +109,7 @@ public class ComputationalResourceAws extends DockerService implements DockerCom
 				configuration.getResourceStatusPollTimeout(),
 				getFileHandlerCallback(TERMINATE, uuid, dto));
 		try {
-			commandExecutor.executeAsync(
+			commandExecutor.startAsync(
 					ui.getName(),
 					uuid,
 					commandBuilder.buildCommand(

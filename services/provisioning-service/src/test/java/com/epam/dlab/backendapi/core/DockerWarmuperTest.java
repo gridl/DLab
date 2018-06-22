@@ -119,7 +119,7 @@ public class DockerWarmuperTest {
 		try {
 			final ProcessInfo pi = mock(ProcessInfo.class);
 			when(pi.getStdOut()).thenReturn("executeResult");
-			when(result.executeSync(anyString(), anyString(), anyString())).thenReturn(pi);
+			when(result.startSync(anyString(), anyString(), anyString())).thenReturn(pi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -19,9 +19,9 @@
 package com.epam.dlab.backendapi.core.commands;
 
 import com.epam.dlab.cloud.CloudProvider;
+import com.epam.dlab.process.builder.ProcessInfoBuilder;
 import com.epam.dlab.process.model.ProcessId;
 import com.epam.dlab.process.model.ProcessInfo;
-import com.epam.dlab.process.builder.ProcessInfoBuilder;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,9 +70,9 @@ public class CommandExecutorMock implements ICommandExecutor {
     }
 
     @Override
-    public ProcessInfo executeSync(String user, String uuid, String command) {
+	public ProcessInfo startSync(String user, String uuid, String command) {
         LOGGER.debug("Run OS command for user {} with UUID {}: {}", user, uuid, command);
-        ProcessInfoBuilder builder = new ProcessInfoBuilder(new ProcessId(user, command), 1000l);
+		ProcessInfoBuilder builder = new ProcessInfoBuilder(new ProcessId(user, uuid), 1000l);
         if (command.startsWith("docker images |")) {
             List<String> list = Lists.newArrayList(
                     "docker.dlab-deeplearning:latest",
@@ -90,7 +90,7 @@ public class CommandExecutorMock implements ICommandExecutor {
     }
 
     @Override
-    public void executeAsync(String user, String uuid, String command) {
+	public void startAsync(String user, String uuid, String command) {
         execAsync = new CommandExecutorMockAsync(user, uuid, command, cloudProvider);
         future = CompletableFuture.supplyAsync(execAsync);
     }

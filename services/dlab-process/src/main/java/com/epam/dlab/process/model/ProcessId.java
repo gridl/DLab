@@ -18,15 +18,15 @@ package com.epam.dlab.process.model;
 public class ProcessId {
 
     private final String user;
-    private final String command;
+	private final String uuid;
 
-    public ProcessId(String user, String command) {
+	public ProcessId(String user, String uuid) {
         this.user = user;
-        this.command = command;
+		this.uuid = uuid;
     }
 
-    public String getCommand() {
-        return command;
+	public String getUuid() {
+		return uuid;
     }
 
     public String getUser() {
@@ -41,13 +41,13 @@ public class ProcessId {
         ProcessId processId = (ProcessId) o;
 
         if (user != null ? !user.equals(processId.user) : processId.user != null) return false;
-        return command != null ? command.equals(processId.command) : processId.command == null;
+		return uuid != null ? uuid.equals(processId.uuid) : processId.uuid == null;
     }
 
     @Override
     public int hashCode() {
         int result = user != null ? user.hashCode() : 0;
-        result = 31 * result + (command != null ? command.hashCode() : 0);
+		result = 31 * result + (uuid != null ? uuid.hashCode() : 0);
         return result;
     }
 
@@ -55,7 +55,7 @@ public class ProcessId {
     public String toString() {
         return "ProcessId{" +
                 "user='" + user + '\'' +
-                ", command='" + command + '\'' +
+				", uuid='" + uuid + '\'' +
                 '}';
     }
 }

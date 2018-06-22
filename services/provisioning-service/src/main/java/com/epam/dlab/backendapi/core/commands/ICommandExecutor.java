@@ -20,6 +20,7 @@ package com.epam.dlab.backendapi.core.commands;
 import com.epam.dlab.process.model.ProcessInfo;
 
 public interface ICommandExecutor {
-    ProcessInfo executeSync(String username, String uuid, String command) throws Exception;
-    void executeAsync(String username, String uuid, String command);
+	ProcessInfo startSync(String username, String uuid, String command) throws Exception;
+
+	void startAsync(String username, String uuid, String command);
 }

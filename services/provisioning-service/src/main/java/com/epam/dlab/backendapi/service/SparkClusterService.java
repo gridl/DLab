@@ -79,7 +79,7 @@ public class SparkClusterService extends DockerService implements DockerCommands
 					.withImage(DataEngineType.getDockerImageName(SPARK_ENGINE))
 					.withAction(action);
 
-			commandExecutor.executeAsync(ui.getName(), uuid, commandBuilder.buildCommand(dockerCommand, dto));
+			commandExecutor.startAsync(ui.getName(), uuid, commandBuilder.buildCommand(dockerCommand, dto));
 		} catch (JsonProcessingException e) {
 			throw new DlabException("Could not" + action.toString() + "computational resources cluster", e);
 		}

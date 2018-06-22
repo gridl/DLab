@@ -41,7 +41,7 @@ public class CommandExecutorMockTest {
     private CommandExecutorMock executeAsync(String cmd) throws IOException, InterruptedException, ExecutionException {
     	String uuid = UUID.randomUUID().toString();
     	CommandExecutorMock exec = new CommandExecutorMock(CloudProvider.AWS);
-    	exec.executeAsync("user", uuid, cmd);
+		exec.startAsync("user", uuid, cmd);
     	exec.getResultSync();
 
     	Files.deleteIfExists(Paths.get(exec.getResponseFileName()));
@@ -64,7 +64,7 @@ public class CommandExecutorMockTest {
     private void handleExploratory(String cmd, DockerAction action) throws Exception {
     	String uuid = UUID.randomUUID().toString();
     	CommandExecutorMock exec = getCommandExecutor();
-    	exec.executeAsync("user", uuid, cmd);
+		exec.startAsync("user", uuid, cmd);
     	exec.getResultSync();
 
     	RESTServiceMock selfService = new RESTServiceMock();
@@ -82,7 +82,7 @@ public class CommandExecutorMockTest {
 	private void handleExploratoryLibs(String cmd, DockerAction action) throws Exception {
 		String uuid = UUID.randomUUID().toString();
 		CommandExecutorMock exec = getCommandExecutor();
-		exec.executeAsync("user", uuid, cmd);
+		exec.startAsync("user", uuid, cmd);
 		exec.getResultSync();
 
 		RESTServiceMock selfService = new RESTServiceMock();

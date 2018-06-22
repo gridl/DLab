@@ -29,6 +29,7 @@ public enum ProcessStep implements SmartLabel<ProcessInfoBuilder> {
     STD_ERR(ProcessInfoBuilder::stdErr),
     FAILED(ProcessInfoBuilder::failed),
     FUTURE(ProcessInfoBuilder::future),
+	CANCEL(ProcessInfoBuilder::cancel)
 ;
     private BiConsumer<ProcessInfoBuilder, Object> consumer;
 

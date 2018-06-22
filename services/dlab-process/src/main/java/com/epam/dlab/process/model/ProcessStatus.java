@@ -25,5 +25,6 @@ public enum ProcessStatus {
     FINISHED,
     REJECTED,
     FAILED,
-    SCHEDULED
+	SCHEDULED,
+	CANCELLED
 }

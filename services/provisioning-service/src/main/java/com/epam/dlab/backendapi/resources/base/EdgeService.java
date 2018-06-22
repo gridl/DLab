@@ -71,7 +71,7 @@ public abstract class EdgeService implements DockerCommands {
 				.withImage(configuration.getEdgeImage())
 				.withAction(action);
 
-		commandExecutor.executeAsync(username, uuid, commandBuilder.buildCommand(runDockerCommand, dto));
+		commandExecutor.startAsync(username, uuid, commandBuilder.buildCommand(runDockerCommand, dto));
 		return uuid;
 	}
 

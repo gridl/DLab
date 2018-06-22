@@ -70,7 +70,7 @@ public class ComputationalResourceGcp extends DockerService implements DockerCom
 				configuration.getResourceStatusPollTimeout(),
 				getFileHandlerCallback(CREATE, uuid, dto));
 		try {
-			commandExecutor.executeAsync(
+			commandExecutor.startAsync(
 					ui.getName(),
 					uuid,
 					commandBuilder.buildCommand(
@@ -106,7 +106,7 @@ public class ComputationalResourceGcp extends DockerService implements DockerCom
 				configuration.getResourceStatusPollTimeout(),
 				getFileHandlerCallback(TERMINATE, uuid, dto));
 		try {
-			commandExecutor.executeAsync(
+			commandExecutor.startAsync(
 					ui.getName(),
 					uuid,
 					commandBuilder.buildCommand(
