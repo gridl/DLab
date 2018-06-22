@@ -18,12 +18,15 @@
 
 from pprint import pprint
 from googleapiclient.discovery import build
-from oauth2client.client import GoogleCredentials
-from oauth2client.service_account import ServiceAccountCredentials
+#from oauth2client.client import GoogleCredentials
+#from oauth2client.service_account import ServiceAccountCredentials
 from google.cloud import exceptions
 from google.cloud import storage
 from googleapiclient import errors
+#from google.oauth2 import service_account
+import google.auth
 from dlab.fab import *
+import google.auth
 import meta_lib
 import os
 import json
@@ -35,30 +38,41 @@ from fabric.api import *
 import urllib2
 import dlab.fab
 import dlab.common_lib
+import backoff
+
+@backoff.on_exception(backoff.expo, SystemExit, max_tries=10)
+def get_gcp_cred():
+    credentials, project = google.auth.default()
+    return(credentials, project)
+
 
 class GCPActions:
     def __init__(self, auth_type='service_account'):
-
         self.auth_type = auth_type
         self.project = os.environ['gcp_project_id']
+
         if os.environ['conf_resource'] == 'ssn':
-            self.key_file = '/root/service_account.json'
-            credentials = ServiceAccountCredentials.from_json_keyfile_name(
-                self.key_file, scopes=('https://www.googleapis.com/auth/compute', 'https://www.googleapis.com/auth/iam',
-                                       'https://www.googleapis.com/auth/cloud-platform'))
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/root/service_account.json"
+            credentials, project = google.auth.default()
+            if credentials.requires_scopes:
+                credentials = credentials.with_scopes(
+                    ['https://www.googleapis.com/auth/compute',
+                     'https://www.googleapis.com/auth/iam',
+                     'https://www.googleapis.com/auth/cloud-platform'])
             self.service = build('compute', 'v1', credentials=credentials)
             self.service_iam = build('iam', 'v1', credentials=credentials)
             self.dataproc = build('dataproc', 'v1', credentials=credentials)
             self.service_storage = build('storage', 'v1', credentials=credentials)
-            self.storage_client = storage.Client.from_service_account_json('/root/service_account.json')
+            self.storage_client = storage.Client(credentials=credentials)
             self.service_resource = build('cloudresourcemanager', 'v1', credentials=credentials)
         else:
-            self.service = build('compute', 'v1')
-            self.service_iam = build('iam', 'v1')
-            self.dataproc = build('dataproc', 'v1')
-            self.service_storage = build('storage', 'v1')
-            self.storage_client = storage.Client()
-            self.service_resource = build('cloudresourcemanager', 'v1')
+            credentials, project = get_gcp_cred()
+            self.service = build('compute', 'v1', credentials=credentials)
+            self.service_iam = build('iam', 'v1', credentials=credentials)
+            self.dataproc = build('dataproc', 'v1', credentials=credentials)
+            self.service_storage = build('storage', 'v1', credentials=credentials)
+            self.storage_client = storage.Client(credentials=credentials)
+            self.service_resource = build('cloudresourcemanager', 'v1', credentials=credentials)
 
     def create_vpc(self, vpc_name):
         network_params = {'name': vpc_name, 'autoCreateSubnetworks': False}
@@ -261,6 +275,8 @@ class GCPActions:
             GCPActions().create_disk(instance_name, zone, secondary_disk_size)
             disks = [
                 {
+                    "name": instance_name,
+                    "tag_name": instance_name + '-volume-primary',
                     "deviceName": instance_name + '-primary',
                     "autoDelete": "true",
                     "boot": "true",
@@ -272,6 +288,8 @@ class GCPActions:
                     }
                 },
                 {
+                    "name": instance_name + '-secondary',
+                    "tag_name": instance_name + '-volume-secondary',
                     "deviceName": instance_name + '-secondary',
                     "autoDelete": "true",
                     "boot": "false",
@@ -283,6 +301,8 @@ class GCPActions:
             ]
         else:
             disks = [{
+                "name": instance_name,
+                "tag_name": instance_name + '-volume-primary',
                 "deviceName": instance_name + '-primary',
                 "autoDelete": 'true',
                 "initializeParams": {
@@ -343,12 +363,37 @@ class GCPActions:
             instance_tag = {"items": [network_tag], "fingerprint": res['tags']['fingerprint']}
             request = self.service.instances().setTags(instance=instance_name, project=self.project, zone=zone,
                                                        body=instance_tag)
+            GCPActions().set_disks_tag(disks, zone, labels)
             request.execute()
             return result
         except Exception as err:
             logging.info(
                 "Unable to create Instance: " + str(err) + "\n Traceback: " + traceback.print_exc(file=sys.stdout))
             append_result(str({"error": "Unable to create Instance",
+                               "error_message": str(err) + "\n Traceback: " + traceback.print_exc(
+                                   file=sys.stdout)}))
+            traceback.print_exc(file=sys.stdout)
+
+    def set_disks_tag(self, disks, zone, labels):
+        try:
+            for disk in disks:
+                labels['name'] = disk['tag_name']
+                request = self.service.disks().get(disk=disk['name'], project=self.project,
+                                                   zone=zone)
+                finger_print = request.execute()['labelFingerprint']
+                label = {
+                    "labels": labels,
+                    "labelFingerprint": finger_print
+                }
+                request = self.service.disks().setLabels(resource=disk['name'],
+                                                         project=self.project,
+                                                         zone=zone,
+                                                         body=label)
+                request.execute()
+        except Exception as err:
+            logging.info(
+                "Unable to create add tags: " + str(err) + "\n Traceback: " + traceback.print_exc(file=sys.stdout))
+            append_result(str({"error": "Unable to add tags",
                                "error_message": str(err) + "\n Traceback: " + traceback.print_exc(
                                    file=sys.stdout)}))
             traceback.print_exc(file=sys.stdout)

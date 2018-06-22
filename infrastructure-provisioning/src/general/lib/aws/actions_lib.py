@@ -342,10 +342,7 @@ def create_instance(definitions, instance_tag, primary_disk_size=12):
             tag = {'Key': 'Name', 'Value': definitions.node_name}
             create_tag(instance.id, tag)
             create_tag(instance.id, instance_tag)
-            volume_tag = instance_tag
-            volume_tag['Value'] = volume_tag.get('Value') + '-volume'
-            volume_name = definitions.node_name + '-volume'
-            tag_intance_volume(instance.id, volume_name, volume_tag)
+            tag_intance_volume(instance.id, definitions.node_name, instance_tag)
             return instance.id
         return ''
     except Exception as err:
@@ -357,14 +354,31 @@ def create_instance(definitions, instance_tag, primary_disk_size=12):
         traceback.print_exc(file=sys.stdout)
 
 
-def tag_intance_volume(instance_id, volume_name, volume_tag):
-    tag1 = {'Key': os.environ['conf_tag_resource_id'],
-            'Value': os.environ['conf_service_base_name'] + ':' + volume_name}
-    volume_id_list = get_instance_attr(instance_id, 'block_device_mappings')
-    for volume in volume_id_list:
-        volume_id = volume.get('Ebs').get('VolumeId')
-        create_tag(volume_id, tag1)
-        create_tag(volume_id, volume_tag)
+def tag_intance_volume(instance_id, node_name, instance_tag):
+    try:
+        print('volume tagging')
+        volume_list = get_instance_attr(instance_id, 'block_device_mappings')
+        counter = 0
+        for volume in volume_list:
+            volume_postfix = '-volume-primary'
+            if counter == 1:
+                volume_postfix = '-volume-secondary'
+            tag = {'Key': 'Name',
+                   'Value': node_name + volume_postfix}
+            volume_tag = instance_tag
+            volume_tag['Value'] = instance_tag.get('Value') + volume_postfix
+            volume_id = volume.get('Ebs').get('VolumeId')
+            create_tag(volume_id, tag)
+            create_tag(volume_id, volume_tag)
+            counter += 1
+    except Exception as err:
+        logging.info(
+            "Unable to tag volumes: " + str(err) + "\n Traceback: " + traceback.print_exc(
+                file=sys.stdout))
+        append_result(str({"error": "Unable to tag volumes",
+                           "error_message": str(err) + "\n Traceback: " + traceback.print_exc(
+                               file=sys.stdout)}))
+        traceback.print_exc(file=sys.stdout)
 
 
 def create_iam_role(role_name, role_profile, region, service='ec2'):
