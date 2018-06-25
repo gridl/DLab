@@ -24,6 +24,7 @@ import com.epam.dlab.backendapi.core.commands.RunDockerCommand;
 import com.epam.dlab.backendapi.core.response.handlers.ExploratoryCallbackHandler;
 import com.epam.dlab.backendapi.service.DockerService;
 import com.epam.dlab.dto.exploratory.ExploratoryBaseDTO;
+import com.epam.dlab.process.model.ProcessType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,7 +50,9 @@ public class ExploratoryService extends DockerService implements DockerCommands 
                 .withImage(dto.getNotebookImage())
                 .withAction(action);
 
-		commandExecutor.startAsync(username, uuid, commandBuilder.buildCommand(runDockerCommand, dto));
+		final String processDescription = String.format("Exploratory_name: %s", dto.getExploratoryName());
+		commandExecutor.startAsync(username, uuid, getProcessType(action), processDescription,
+				commandBuilder.buildCommand(runDockerCommand, dto));
         return uuid;
     }
 
@@ -65,4 +68,16 @@ public class ExploratoryService extends DockerService implements DockerCommands 
     private String nameContainer(String user, DockerAction action, String name) {
         return nameContainer(user, action.toString(), "exploratory", name);
     }
+
+	private ProcessType getProcessType(DockerAction dockerAction) {
+		if (dockerAction == DockerAction.CREATE) {
+			return ProcessType.EXPLORATORY_CREATE;
+		} else if (dockerAction == DockerAction.START) {
+			return ProcessType.EXPLORATORY_START;
+		} else if (dockerAction == DockerAction.STOP) {
+			return ProcessType.EXPLORATORY_STOP;
+		} else if (dockerAction == DockerAction.TERMINATE) {
+			return ProcessType.EXPLORATORY_TERMINATE;
+		} else return null;
+	}
 }

@@ -23,12 +23,14 @@ import com.epam.dlab.backendapi.core.commands.PythonBackupCommand;
 import com.epam.dlab.backendapi.core.response.folderlistener.FolderListenerExecutor;
 import com.epam.dlab.backendapi.core.response.handlers.BackupCallbackHandler;
 import com.epam.dlab.dto.backup.EnvBackupDTO;
+import com.epam.dlab.process.model.ProcessType;
 import com.epam.dlab.rest.client.RESTService;
 import com.epam.dlab.rest.contracts.ApiCallbacks;
 import com.epam.dlab.rest.contracts.BackupAPI;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -67,7 +69,7 @@ public class BackupResource {
 				.withRequestId(dto.getId())
 				.withSystemUser()
 				.withCertificates(dto.getCertificates()).toCMD();
-		commandExecutor.startAsync(ui.getName(), dto.getId(), command);
+		commandExecutor.startAsync(ui.getName(), dto.getId(), ProcessType.BACKUP_CREATE, StringUtils.EMPTY, command);
 		return Response.accepted(dto.getId()).build();
 	}
 }

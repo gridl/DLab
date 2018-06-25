@@ -24,6 +24,7 @@ import com.epam.dlab.backendapi.core.commands.RunDockerCommand;
 import com.epam.dlab.backendapi.core.response.handlers.ImageCreateCallbackHandler;
 import com.epam.dlab.backendapi.service.DockerService;
 import com.epam.dlab.dto.exploratory.ExploratoryImageDTO;
+import com.epam.dlab.process.model.ProcessType;
 import com.epam.dlab.rest.contracts.ExploratoryAPI;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.dropwizard.auth.Auth;
@@ -50,7 +51,9 @@ public class ImageResource extends DockerService implements DockerCommands {
 				new ImageCreateCallbackHandler(selfService, uuid,
 						DockerAction.CREATE_IMAGE, image));
 		String command = commandBuilder.buildCommand(getDockerCommand(DockerAction.CREATE_IMAGE, uuid, image), image);
-		commandExecutor.startAsync(ui.getName(), uuid, command);
+		final String processDescription = String.format("Image %s creating from exploratory %s",
+				image.getImageName(), image.getExploratoryName());
+		commandExecutor.startAsync(ui.getName(), uuid, ProcessType.IMAGE_CREATE, processDescription, command);
 		log.debug("Docker command: " + command);
 		return Response.accepted(uuid).build();
 	}

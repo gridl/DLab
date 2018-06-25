@@ -28,6 +28,7 @@ import com.epam.dlab.backendapi.core.response.handlers.ExploratoryGitCredsCallba
 import com.epam.dlab.backendapi.service.DockerService;
 import com.epam.dlab.dto.exploratory.ExploratoryBaseDTO;
 import com.epam.dlab.dto.exploratory.ExploratoryGitCredsUpdateDTO;
+import com.epam.dlab.process.model.ProcessType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.dropwizard.auth.Auth;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +70,9 @@ public class GitExploratoryResource extends DockerService implements DockerComma
                 .withImage(dto.getNotebookImage())
                 .withAction(action);
 
-		commandExecutor.startAsync(username, uuid, commandBuilder.buildCommand(runDockerCommand, dto));
+		final String processDescription = String.format("Exploratory_name: %s", dto.getExploratoryName());
+		commandExecutor.startAsync(username, uuid, ProcessType.GIT_CREDS_UPDATE, processDescription,
+				commandBuilder.buildCommand(runDockerCommand, dto));
         return uuid;
     }
 

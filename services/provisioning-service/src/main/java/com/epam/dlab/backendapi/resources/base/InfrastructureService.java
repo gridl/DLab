@@ -26,6 +26,7 @@ import com.epam.dlab.dto.UserEnvironmentResources;
 import com.epam.dlab.dto.status.EnvResource;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.process.model.ProcessInfo;
+import com.epam.dlab.process.model.ProcessType;
 import com.epam.dlab.rest.client.RESTService;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +69,8 @@ public abstract class InfrastructureService implements DockerCommands {
 				commandExecutor.startAsync(
 						username,
 						uuid,
+						ProcessType.FETCH_RESOURCES_STATUS,
+						StringUtils.EMPTY,
 						commandBuilder.buildCommand(
 								new RunDockerCommand()
 										.withInteractive()
@@ -97,6 +100,7 @@ public abstract class InfrastructureService implements DockerCommands {
 			throws Exception {
 
 		final ProcessInfo processInfo = commandExecutor.startSync(username, DockerCommands.generateUUID(),
+				ProcessType.FETCH_DOCKER_RUNNING_CONTAINERS, StringUtils.EMPTY,
 				String.format(DockerCommands
 						.GET_RUNNING_CONTAINERS_FOR_USER, dto.getEdgeUserName()));
 		final String processInfoStdOut = processInfo.getStdOut();

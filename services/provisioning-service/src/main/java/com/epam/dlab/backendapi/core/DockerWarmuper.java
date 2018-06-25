@@ -28,12 +28,14 @@ import com.epam.dlab.dto.imagemetadata.ExploratoryMetadataDTO;
 import com.epam.dlab.dto.imagemetadata.ImageMetadataDTO;
 import com.epam.dlab.dto.imagemetadata.ImageType;
 import com.epam.dlab.process.model.ProcessInfo;
+import com.epam.dlab.process.model.ProcessType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.dropwizard.lifecycle.Managed;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +64,7 @@ public class DockerWarmuper implements Managed, DockerCommands, MetadataHolder {
 	public void start() throws Exception {
 		LOGGER.debug("warming up docker");
 		final ProcessInfo processInfo = commandExecutor.startSync("warmup", DockerCommands.generateUUID(),
-                GET_IMAGES);
+				ProcessType.FETCH_DOCKER_IMAGES, StringUtils.EMPTY, GET_IMAGES);
 		List<String> images = Arrays.asList(processInfo.getStdOut().split("\n"));
 		for (String image : images) {
 			String uuid = UUID.randomUUID().toString();
@@ -79,7 +81,7 @@ public class DockerWarmuper implements Managed, DockerCommands, MetadataHolder {
 					.withRequestId(uuid)
 					.withActionDescribe(image)
 					.toCMD();
-			commandExecutor.startAsync("warmup", uuid, command);
+			commandExecutor.startAsync("warmup", uuid, ProcessType.DOCKER_IMAGE_WARM_UP, StringUtils.EMPTY, command);
 		}
 	}
 

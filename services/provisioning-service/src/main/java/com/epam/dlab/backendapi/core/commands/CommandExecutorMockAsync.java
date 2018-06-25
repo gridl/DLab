@@ -25,6 +25,7 @@ import com.epam.dlab.dto.exploratory.LibStatus;
 import com.epam.dlab.dto.status.EnvResource;
 import com.epam.dlab.dto.status.EnvResourceList;
 import com.epam.dlab.exceptions.DlabException;
+import com.epam.dlab.process.model.ProcessType;
 import com.epam.dlab.util.ServiceUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -58,6 +59,8 @@ public class CommandExecutorMockAsync implements Supplier<Boolean> {
 
 	private String user;
 	private String uuid;
+	private ProcessType processType;
+	private String processDescription;
 	private String command;
 
 	private CommandParserMock parser = new CommandParserMock();
@@ -65,9 +68,12 @@ public class CommandExecutorMockAsync implements Supplier<Boolean> {
 
 	private CloudProvider cloudProvider;
 
-	public CommandExecutorMockAsync(String user, String uuid, String command, CloudProvider cloudProvider) {
+	public CommandExecutorMockAsync(String user, String uuid, ProcessType processType, String processDescription,
+									String command, CloudProvider cloudProvider) {
 		this.user = user;
 		this.uuid = uuid;
+		this.processType = processType;
+		this.processDescription = processDescription;
 		this.command = command;
 		this.cloudProvider = cloudProvider;
 	}

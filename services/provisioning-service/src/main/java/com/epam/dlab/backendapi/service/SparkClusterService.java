@@ -30,6 +30,7 @@ import com.epam.dlab.dto.computational.ComputationalStartDTO;
 import com.epam.dlab.dto.computational.ComputationalStopDTO;
 import com.epam.dlab.dto.computational.ComputationalTerminateDTO;
 import com.epam.dlab.exceptions.DlabException;
+import com.epam.dlab.process.model.ProcessType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -79,7 +80,10 @@ public class SparkClusterService extends DockerService implements DockerCommands
 					.withImage(DataEngineType.getDockerImageName(SPARK_ENGINE))
 					.withAction(action);
 
-			commandExecutor.startAsync(ui.getName(), uuid, commandBuilder.buildCommand(dockerCommand, dto));
+			final String processDescription = String.format("Cluster %s affiliated with exploratory %s",
+					dto.getComputationalName(), dto.getExploratoryName());
+			commandExecutor.startAsync(ui.getName(), uuid, getProcessType(action), processDescription,
+					commandBuilder.buildCommand(dockerCommand, dto));
 		} catch (JsonProcessingException e) {
 			throw new DlabException("Could not" + action.toString() + "computational resources cluster", e);
 		}
@@ -98,5 +102,17 @@ public class SparkClusterService extends DockerService implements DockerCommands
 	@Override
 	public String getResourceType() {
 		return Directories.DATA_ENGINE_LOG_DIRECTORY;
+	}
+
+	private ProcessType getProcessType(DockerAction dockerAction) {
+		if (dockerAction == DockerAction.CREATE) {
+			return ProcessType.SPARK_CLUSTER_CREATE;
+		} else if (dockerAction == DockerAction.START) {
+			return ProcessType.SPARK_CLUSTER_START;
+		} else if (dockerAction == DockerAction.STOP) {
+			return ProcessType.SPARK_CLUSTER_STOP;
+		} else if (dockerAction == DockerAction.TERMINATE) {
+			return ProcessType.SPARK_CLUSTER_TERMINATE;
+		} else return null;
 	}
 }

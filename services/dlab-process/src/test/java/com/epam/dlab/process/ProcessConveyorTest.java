@@ -15,11 +15,7 @@ limitations under the License.
 */
 package com.epam.dlab.process;
 
-import com.epam.dlab.process.model.DlabProcess;
-import com.epam.dlab.process.model.ProcessId;
-import com.epam.dlab.process.model.ProcessInfo;
-import com.epam.dlab.process.model.ProcessStatus;
-import org.junit.Test;
+import com.epam.dlab.process.model.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,8 +41,8 @@ public class ProcessConveyorTest {
 
     //@Test
     public void testLs() throws Exception {
-        ProcessId ls = new ProcessId(user, "ls");
-        CompletableFuture<ProcessInfo> cf = DlabProcess.getInstance().start(ls, (windows ? "cmd /c \"dir .\"" : "ls .").split(" "));
+		CompletableFuture<ProcessInfo> cf = DlabProcess.getInstance().start(user, "ls", ProcessType.MOCKED_PROCESS,
+				"", (windows ? "cmd /c \"dir " + ".\"" : "ls .").split(" "));
         ProcessInfo pi = cf.get();
         System.out.println("--- "+pi);
         assertEquals(ProcessStatus.FINISHED, pi.getStatus());
@@ -55,8 +51,9 @@ public class ProcessConveyorTest {
 
     //@Test
     public void testLsErr() throws Exception {
-        ProcessId ls = new ProcessId(user, "ls");
-        CompletableFuture<ProcessInfo> cf = DlabProcess.getInstance().start(ls,"l/");
+		ProcessData ls = new ProcessData(user, "ls");
+		CompletableFuture<ProcessInfo> cf = DlabProcess.getInstance().start(user, "ls", ProcessType.MOCKED_PROCESS,
+				"", "l/");
         ProcessInfo pi = cf.get();
         System.out.println("--- "+pi);
         assertEquals(ProcessStatus.FAILED, pi.getStatus());
@@ -77,15 +74,16 @@ public class ProcessConveyorTest {
         ArrayList<CompletableFuture<ProcessInfo>> cf = new ArrayList<>();
         DlabProcess.getInstance().setMaxProcessesPerBox(2);
         for(int i = 0; i < 5; i++) {
-            cf.add(DlabProcess.getInstance().start(new ProcessId(user, "ping "+i), pingCommand.split(" ")));
+			cf.add(DlabProcess.getInstance().start(user, "ping " + i, ProcessType.MOCKED_PROCESS, "",
+					pingCommand.split(" " + "")));
         }
         Thread.sleep(100);
-        Collection<ProcessId> pIds = DlabProcess.getInstance().getActiveProcesses();
+		Collection<ProcessData> pIds = DlabProcess.getInstance().getActiveProcesses();
         System.out.println(pIds);
         Thread.sleep(3000);
         for (CompletableFuture<ProcessInfo> f:cf){
             ProcessInfo pi = f.get();
-            System.out.println("RES: "+pi.getId()+" "+(pi.getStdOut().length()>0?"true":"false"));
+			System.out.println("RES: " + pi.getProcessData() + " " + (pi.getStdOut().length() > 0 ? "true" : "false"));
             assertTrue(pi.getStdOut().length() > 0);
             assertEquals(ProcessStatus.FINISHED, pi.getStatus());
         }
@@ -105,17 +103,19 @@ public class ProcessConveyorTest {
 
         ArrayList<CompletableFuture<ProcessInfo>> cf = new ArrayList<>();
         for(int i = 0; i < 5; i++) {
-            cf.add(DlabProcess.getInstance().start(new ProcessId(user, "ping"), pingCommand.split(" ")));
+			cf.add(DlabProcess.getInstance().start(user, "ping", ProcessType.MOCKED_PROCESS, "",
+					pingCommand.split(" ")));
         }
         Thread.sleep(100);
-        Collection<ProcessId> pIds = DlabProcess.getInstance().getActiveProcesses();
+		Collection<ProcessData> pIds = DlabProcess.getInstance().getActiveProcesses();
         System.out.println(pIds);
         Thread.sleep(5000);
         int errCount = 0;
         for (CompletableFuture<ProcessInfo> f:cf){
             try {
                 ProcessInfo pi = f.get();
-                System.out.println("RES: " + pi.getId() + " " + (pi.getStdOut().length() > 0 ? "true" : "false"));
+				System.out.println("RES: " + pi.getProcessData() + " " + (pi.getStdOut().length() > 0 ? "true" :
+						"false"));
                 assertTrue(pi.getStdOut().length() > 0);
                 assertEquals(ProcessStatus.FINISHED, pi.getStatus());
             } catch( CancellationException e) {
@@ -137,16 +137,17 @@ public class ProcessConveyorTest {
             pingCommand = "ping -c 5 localhost";
         }
 
-        ProcessId ping = new ProcessId(user, "ping");
+		ProcessData ping = new ProcessData(user, "ping");
         ArrayList<CompletableFuture<ProcessInfo>> cf = new ArrayList<>();
         for(int i = 0; i < 3; i++) {
             for(int ii=0; ii<3; ii++) {
-                ping = new ProcessId(user+i, "ping " + (i*10+ii));
-                cf.add(DlabProcess.getInstance().start(ping, pingCommand.split(" ")));
+				ping = new ProcessData(user + i, "ping " + (i * 10 + ii));
+				cf.add(DlabProcess.getInstance().start(user + i, "ping " + (i * 10 + ii),
+						ProcessType.MOCKED_PROCESS, "", pingCommand.split(" ")));
             }
         }
         Thread.sleep(3000);
-        Collection<ProcessId> pIds = DlabProcess.getInstance().getActiveProcesses();
+		Collection<ProcessData> pIds = DlabProcess.getInstance().getActiveProcesses();
         assertEquals(9, pIds.size());
 
         Supplier<? extends ProcessInfo> s = DlabProcess.getInstance().getProcessInfoSupplier(ping);
@@ -157,7 +158,7 @@ public class ProcessConveyorTest {
         System.out.println(processInfo);
         for (CompletableFuture<ProcessInfo> f:cf){
             ProcessInfo pi = f.get();
-            System.out.println("RES: "+pi.getId()+" "+(pi.getStdOut().length()>0?"true":"false"));
+			System.out.println("RES: " + pi.getProcessData() + " " + (pi.getStdOut().length() > 0 ? "true" : "false"));
             assertTrue(pi.getStdOut().length() > 0);
             assertEquals(ProcessStatus.FINISHED, pi.getStatus());
         }
@@ -174,10 +175,10 @@ public class ProcessConveyorTest {
         } else {
             pingCommand = "ping -c 50 localhost";
         }
-        ProcessId ping = new ProcessId(user, "ping");
-        CompletableFuture<ProcessInfo> cf = DlabProcess.getInstance().start(new ProcessId(user, "ping"), pingCommand.split(" "));
+		CompletableFuture<ProcessInfo> cf = DlabProcess.getInstance().start(user, "ping",
+				ProcessType.MOCKED_PROCESS, "", pingCommand.split(" "));
         Thread.sleep(3000);
-        DlabProcess.getInstance().stop(ping);
+		DlabProcess.getInstance().stop(user, "ping");
         ProcessInfo pi = cf.get();
         System.out.println("STOPPED: "+pi);
         assertEquals(ProcessStatus.STOPPED, pi.getStatus());
@@ -193,10 +194,10 @@ public class ProcessConveyorTest {
         } else {
             pingCommand = "ping -c 50 localhost";
         }
-        ProcessId ping = new ProcessId(user, "ping");
-        CompletableFuture<ProcessInfo> cf = DlabProcess.getInstance().start(new ProcessId(user, "ping"), pingCommand.split(" "));
+		CompletableFuture<ProcessInfo> cf = DlabProcess.getInstance().start(user, "ping", ProcessType.MOCKED_PROCESS,
+				"", pingCommand.split(" "));
         Thread.sleep(3000);
-        DlabProcess.getInstance().kill(ping);
+		DlabProcess.getInstance().kill(user, "ping");
         ProcessInfo pi = cf.get();
         System.out.println("KILLED: "+pi);
         assertEquals(ProcessStatus.KILLED, pi.getStatus());
@@ -213,7 +214,8 @@ public class ProcessConveyorTest {
             pingCommand = "ping localhost";
         }
         DlabProcess.getInstance().setProcessTimeout(5, TimeUnit.SECONDS);
-        CompletableFuture<ProcessInfo> cf = DlabProcess.getInstance().start(new ProcessId(user, "ping"), pingCommand.split(" "));
+		CompletableFuture<ProcessInfo> cf = DlabProcess.getInstance().start(user, "ping", ProcessType.MOCKED_PROCESS,
+				"", pingCommand.split(" "));
         ProcessInfo pi = cf.get();
         System.out.println("TIMEOUT: "+pi);
         assertEquals(ProcessStatus.TIMEOUT, pi.getStatus());

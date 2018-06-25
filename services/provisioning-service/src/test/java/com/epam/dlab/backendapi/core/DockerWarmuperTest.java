@@ -24,6 +24,7 @@ import com.epam.dlab.backendapi.core.response.folderlistener.FolderListenerExecu
 import com.epam.dlab.backendapi.core.response.handlers.dao.CallbackHandlerDao;
 import com.epam.dlab.dto.imagemetadata.*;
 import com.epam.dlab.process.model.ProcessInfo;
+import com.epam.dlab.process.model.ProcessType;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -37,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -119,7 +121,8 @@ public class DockerWarmuperTest {
 		try {
 			final ProcessInfo pi = mock(ProcessInfo.class);
 			when(pi.getStdOut()).thenReturn("executeResult");
-			when(result.startSync(anyString(), anyString(), anyString())).thenReturn(pi);
+			when(result.startSync(anyString(), anyString(), any(ProcessType.class), anyString(), anyString()))
+					.thenReturn(pi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

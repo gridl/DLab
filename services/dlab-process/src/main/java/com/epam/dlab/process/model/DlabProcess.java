@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -71,88 +72,90 @@ public class DlabProcess {
         return perUserService.get(user);
     }
 
-    public CompletableFuture<ProcessInfo> start(ProcessId id, String... command){
-		LOG.debug("Run OS command for user {} with UUID {}: {}", id.getUser(), id.getUuid(), command);
+	private CompletableFuture<ProcessInfo> start(ProcessData processData, String... command) {
+		LOG.debug("Run OS command for user {} with UUID {}: {}", processData.getUser(), processData.getUuid(),
+				command);
 		CompletableFuture<ProcessInfo> future =
-				processConveyor.createBuildFuture(id, () -> new ProcessInfoBuilder(id, expirationTime));
-        processConveyor.add(id, future, ProcessStep.FUTURE);
-        processConveyor.add(id, command, ProcessStep.START);
+				processConveyor.createBuildFuture(processData, () -> new ProcessInfoBuilder(processData,
+						expirationTime));
+		processConveyor.add(processData, future, ProcessStep.FUTURE);
+		processConveyor.add(processData, command, ProcessStep.START);
         return future;
     }
 
-    public CompletableFuture<ProcessInfo> start(String username, String uniqDescriptor, String... command){
-		return start(new ProcessId(username, uniqDescriptor), command);
+	public CompletableFuture<ProcessInfo> start(String username, String uuid, ProcessType processType,
+												String processDescription, String... command) {
+		return start(new ProcessData(username, uuid, processType, processDescription), command);
     }
 
-    public CompletableFuture<ProcessInfo> start(String username, String... command){
-		return start(new ProcessId(username, String.join(" ", command)), command);
-    }
-
-    public CompletableFuture<Boolean> stop(ProcessId id){
-		return processConveyor.add(id, "STOP", ProcessStep.STOP);
+	private CompletableFuture<Boolean> stop(ProcessData processData) {
+		return processConveyor.add(processData, "STOP", ProcessStep.STOP);
     }
 
 	public CompletableFuture<Boolean> stop(String username, String uuid) {
-		return stop(new ProcessId(username, uuid));
+		return stop(new ProcessData(username, uuid));
 	}
 
-    public CompletableFuture<Boolean> kill(ProcessId id){
-		return processConveyor.add(id, "KILL", ProcessStep.KILL);
+	private CompletableFuture<Boolean> kill(ProcessData processData) {
+		return processConveyor.add(processData, "KILL", ProcessStep.KILL);
     }
 
 	public CompletableFuture<Boolean> kill(String username, String uuid) {
-		return kill(new ProcessId(username, uuid));
+		return kill(new ProcessData(username, uuid));
 	}
 
-    public CompletableFuture<Boolean> failed(ProcessId id){
-		return processConveyor.add(id, "FAILED", ProcessStep.FAILED);
+	public CompletableFuture<Boolean> failed(ProcessData processData) {
+		return processConveyor.add(processData, "FAILED", ProcessStep.FAILED);
     }
 
-    public CompletableFuture<Boolean> finish(ProcessId id, Integer exitStatus){
-		return processConveyor.add(id, exitStatus, ProcessStep.FINISH);
+	public CompletableFuture<Boolean> finish(ProcessData processData, Integer exitStatus) {
+		return processConveyor.add(processData, exitStatus, ProcessStep.FINISH);
     }
 
-    public CompletableFuture<Boolean> toStdOut(ProcessId id, String msg){
-		return processConveyor.add(id, msg, ProcessStep.STD_OUT);
+	public CompletableFuture<Boolean> toStdOut(ProcessData processData, String msg) {
+		return processConveyor.add(processData, msg, ProcessStep.STD_OUT);
     }
 
-    public CompletableFuture<Boolean> toStdErr(ProcessId id, String msg){
-		return processConveyor.add(id, msg, ProcessStep.STD_ERR);
+	public CompletableFuture<Boolean> toStdErr(ProcessData processData, String msg) {
+		return processConveyor.add(processData, msg, ProcessStep.STD_ERR);
     }
 
-    public CompletableFuture<Boolean> toStdErr(ProcessId id, String msg, Exception err){
+	public CompletableFuture<Boolean> toStdErr(ProcessData processData, String msg, Exception err) {
         StringWriter sw = new StringWriter();
         sw.append(msg);
         sw.append("\n");
         PrintWriter pw = new PrintWriter(sw);
         err.printStackTrace(pw);
-		return processConveyor.add(id, sw.toString(), ProcessStep.STD_ERR);
+		return processConveyor.add(processData, sw.toString(), ProcessStep.STD_ERR);
     }
 
-	public CompletableFuture<Boolean> cancel(ProcessId id) {
-		return processConveyor.add(id, "CANCEL", ProcessStep.CANCEL);
-	}
-
 	public CompletableFuture<Boolean> cancel(String username, String uuid) {
-		return cancel(new ProcessId(username, uuid));
+		ProcessData processData = new ProcessData(username, uuid);
+		return processConveyor.add(processData, "CANCEL", ProcessStep.CANCEL);
 	}
 
-    public Collection<ProcessId> getActiveProcesses() {
-        Collection<ProcessId> pList = new ArrayList<>();
-        processConveyor.forEachKeyAndBuilder( (k,b)-> pList.add(k) );
+	public Collection<ProcessData> getActiveProcesses() {
+		Collection<ProcessData> pList = new ArrayList<>();
+		processConveyor.forEachKeyAndBuilder((k, b) -> pList.add(k));
         return pList;
     }
 
-    public Collection<ProcessId> getActiveProcesses(String username){
-		return getActiveProcesses().stream().filter(id -> id.getUser().equals(username)).collect(Collectors.toList());
+	private Collection<ProcessData> getActiveProcesses(String username) {
+		return getActiveProcesses().stream().filter(processData -> processData.getUser().equals(username))
+				.collect(Collectors.toList());
     }
 
-    public Supplier<? extends ProcessInfo> getProcessInfoSupplier(ProcessId id) {
-        return processConveyor.getInfoSupplier(id);
+	public List<ProcessInfo> getProcessInfoData(String username) {
+		return getActiveProcesses(username).stream()
+				.map(pd -> getProcessInfoSupplier(pd).get()).collect(Collectors.toList());
+	}
+
+	public Supplier<? extends ProcessInfo> getProcessInfoSupplier(ProcessData processData) {
+		return processConveyor.getInfoSupplier(processData);
     }
 
 	public Supplier<? extends ProcessInfo> getProcessInfoSupplier(String username, String uuid) {
-		return getProcessInfoSupplier(new ProcessId(username, uuid));
+		return getProcessInfoSupplier(new ProcessData(username, uuid));
     }
 
     public void setProcessTimeout(long time, TimeUnit unit) {

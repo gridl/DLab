@@ -15,103 +15,111 @@ limitations under the License.
 */
 package com.epam.dlab.process.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+@JsonIgnoreProperties({"command", "stdOut", "stdErr", "exitCode", "startTimeStamp", "infoTimeStamp", "pid",
+		"rejectedCommands"})
 public class ProcessInfo {
 
-    private final ProcessId id;
-    private final String[] command;
-    private final ProcessStatus status;
-    private final String stdOut;
-    private final String stdErr;
-    private final int exitCode;
-    private final long startTimeStamp;
-    private final long infoTimeStamp;
-    private final int pid;
+	@JsonUnwrapped
+	private final ProcessData processData;
+	private final String[] command;
 
-    private final Collection<ProcessInfo> rejectedCommands;
+	private final ProcessStatus status;
 
-    public ProcessInfo(ProcessId id, ProcessStatus status, String[] command, String stdOut, String stdErr, int exitCode,
-                 long startTimeStamp, long infoTimeStamp, Collection<ProcessInfo> rejected, int pid) {
-        this.id             = id;
-        this.status         = status;
-        this.command        = command;
-        this.stdOut         = stdOut;
-        this.stdErr         = stdErr;
-        this.exitCode       = exitCode;
-        this.startTimeStamp = startTimeStamp;
-        this.infoTimeStamp  = infoTimeStamp;
-        this.pid            = pid;
+	private final String stdOut;
+	private final String stdErr;
+	private final int exitCode;
+	private final long startTimeStamp;
+	private final long infoTimeStamp;
+	private final int pid;
 
-        if(rejected != null && rejected.size() > 0) {
-            Collection<ProcessInfo> r = new ArrayList<>();
-            for(ProcessInfo info:rejected) {
-                if(info != null) {
-                    r.add(info);
-                }
-            }
-            this.rejectedCommands = Collections.unmodifiableCollection(r);
-        } else {
-            this.rejectedCommands = null;
-        }
+	private final Collection<ProcessInfo> rejectedCommands;
 
-    }
+	public ProcessInfo(ProcessData processData, ProcessStatus status, String[] command, String stdOut, String stdErr,
+					   int exitCode,
+					   long startTimeStamp, long infoTimeStamp, Collection<ProcessInfo> rejected, int pid) {
+		this.processData = processData;
+		this.status = status;
+		this.command = command;
+		this.stdOut = stdOut;
+		this.stdErr = stdErr;
+		this.exitCode = exitCode;
+		this.startTimeStamp = startTimeStamp;
+		this.infoTimeStamp = infoTimeStamp;
+		this.pid = pid;
 
-    public String getCommand() {
-        return String.join(" ",command);
-    }
+		if (rejected != null && !rejected.isEmpty()) {
+			Collection<ProcessInfo> r = new ArrayList<>();
+			for (ProcessInfo info : rejected) {
+				if (info != null) {
+					r.add(info);
+				}
+			}
+			this.rejectedCommands = Collections.unmodifiableCollection(r);
+		} else {
+			this.rejectedCommands = null;
+		}
+	}
 
-    public ProcessStatus getStatus() {
-        return status;
-    }
+	public String getCommand() {
+		return String.join(" ", command);
+	}
 
-    public String getStdOut() {
-        return stdOut;
-    }
+	public ProcessStatus getStatus() {
+		return status;
+	}
 
-    public String getStdErr() {
-        return stdErr;
-    }
+	public String getStdOut() {
+		return stdOut;
+	}
 
-    public int getExitCode() {
-        return exitCode;
-    }
+	public String getStdErr() {
+		return stdErr;
+	}
 
-    public long getStartTimeStamp() {
-        return startTimeStamp;
-    }
+	public int getExitCode() {
+		return exitCode;
+	}
 
-    public long getInfoTimeStamp() {
-        return infoTimeStamp;
-    }
+	public long getStartTimeStamp() {
+		return startTimeStamp;
+	}
 
-    public ProcessId getId() {
-        return id;
-    }
+	public long getInfoTimeStamp() {
+		return infoTimeStamp;
+	}
 
-    public int getPid() {
-        return pid;
-    }
+	public ProcessData getProcessData() {
+		return processData;
+	}
 
-    public Collection<ProcessInfo> getRejectedCommands() {
-        return Collections.unmodifiableCollection(rejectedCommands);
-    }
+	public int getPid() {
+		return pid;
+	}
 
-    @Override
-    public String toString() {
-        return "ProcessInfo{" +
-                "id='" + id + '\'' +
-                ", command='" + getCommand() + '\'' +
-                ", pid=" + pid +
-                ", status=" + status +
-                ", stdOut='" + stdOut + '\'' +
-                ", stdErr='" + stdErr + '\'' +
-                ", exitCode=" + exitCode +
-                ", startTimeStamp=" + startTimeStamp +
-                ", infoTimeStamp=" + infoTimeStamp +
-                ", rejectedCommands=" + rejectedCommands +
-                '}';
-    }
+	public Collection<ProcessInfo> getRejectedCommands() {
+		return Collections.unmodifiableCollection(rejectedCommands);
+	}
+
+	@Override
+	public String toString() {
+		return "ProcessInfo{" +
+				"processData='" + processData + '\'' +
+				", command='" + getCommand() + '\'' +
+				", pid=" + pid +
+				", status=" + status +
+				", stdOut='" + stdOut + '\'' +
+				", stdErr='" + stdErr + '\'' +
+				", exitCode=" + exitCode +
+				", startTimeStamp=" + startTimeStamp +
+				", infoTimeStamp=" + infoTimeStamp +
+				", rejectedCommands=" + rejectedCommands +
+				'}';
+	}
 }

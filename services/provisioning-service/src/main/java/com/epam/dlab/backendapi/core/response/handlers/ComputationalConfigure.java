@@ -26,6 +26,7 @@ import com.epam.dlab.dto.base.DataEngineType;
 import com.epam.dlab.dto.base.computational.ComputationalBase;
 import com.epam.dlab.dto.gcp.computational.SparkComputationalCreateGcp;
 import com.epam.dlab.exceptions.DlabException;
+import com.epam.dlab.process.model.ProcessType;
 import com.epam.dlab.rest.client.RESTService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -77,10 +78,14 @@ public class ComputationalConfigure implements DockerCommands {
 				configuration.getImagesDirectory(),
 				configuration.getResourceStatusPollTimeout(),
 				getFileHandlerCallback(CONFIGURE, uuid, dto));
+		final String processDescription = String.format("Cluster %s affiliated with exploratory %s",
+				dto.getComputationalName(), dto.getExploratoryName());
 		try {
 			commandExecutor.startAsync(
 					dto.getEdgeUserName(),
 					uuid,
+					getProcessType(dataEngineType),
+					processDescription,
 					commandBuilder.buildCommand(
 							new RunDockerCommand()
 									.withInteractive()
@@ -119,6 +124,11 @@ public class ComputationalConfigure implements DockerCommands {
 		}
 		throw new DlabException("Could not describe the image name for computational resources from image " +
 				imageName + " and application " + application);
+	}
+
+	private ProcessType getProcessType(DataEngineType dataEngineType) {
+		return dataEngineType == DataEngineType.SPARK_STANDALONE ?
+				ProcessType.SPARK_CLUSTER_CONFIGURE : ProcessType.DATAENGINE_SERVICE_CONFIGURE;
 	}
 
 	public String getResourceType() {

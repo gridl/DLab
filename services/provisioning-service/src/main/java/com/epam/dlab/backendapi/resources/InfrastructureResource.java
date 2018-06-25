@@ -17,21 +17,22 @@
 package com.epam.dlab.backendapi.resources;
 
 import com.epam.dlab.auth.UserInfo;
-import com.epam.dlab.process.model.DlabProcess;
-import com.epam.dlab.process.model.ProcessId;
+import com.epam.dlab.backendapi.core.commands.ICommandExecutor;
 import com.epam.dlab.rest.contracts.InfrasctructureAPI;
+import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @Path(InfrasctructureAPI.INFRASTRUCTURE)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class InfrastructureResource {
+
+	@Inject
+	private ICommandExecutor commandExecutor;
 
 	/**
 	 * Return status of provisioning service.
@@ -43,14 +44,14 @@ public class InfrastructureResource {
 
 	@GET
 	@Path("/operations")
-	public Response operations(@Auth UserInfo ui){
-		return Response.ok(DlabProcess.getInstance().getActiveProcesses(ui.getName())).build();
+	public Response operations(@Auth UserInfo ui) {
+		return Response.ok(commandExecutor.getProcessInfo(ui.getName())).build();
 	}
 
 	@DELETE
-	@Path("/operations")
-	public Response kill(@Auth UserInfo ui, ProcessId processId) throws ExecutionException, InterruptedException {
-		DlabProcess.getInstance().kill(processId).get();
+	@Path("/operations/cancel/{uuid}")
+	public Response cancel(@Auth UserInfo ui, @PathParam("uuid") String uuid) {
+		commandExecutor.cancelAsync(ui.getName(), uuid);
 		return Response.ok().build();
 	}
 

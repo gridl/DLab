@@ -24,6 +24,7 @@ import com.epam.dlab.backendapi.core.response.handlers.ReuploadKeyCallbackHandle
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyCallbackDTO;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyDTO;
 import com.epam.dlab.model.ResourceData;
+import com.epam.dlab.process.model.ProcessType;
 import com.epam.dlab.rest.contracts.ApiCallbacks;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +58,8 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 		try {
 			final String command = commandBuilder.buildCommand(runDockerCommand, callbackDto);
 			log.trace("Docker command: {}", command);
-			commandExecutor.startAsync(userName, uuid, command);
+			commandExecutor.startAsync(userName, uuid, ProcessType.REUPLOAD_KEY, callbackDto.getResource().toString(),
+					command);
 		} catch (Exception e) {
 			log.error("Exception occured during reuploading key: {} for command {}", e.getLocalizedMessage(),
 					runDockerCommand.toCMD());

@@ -30,6 +30,7 @@ import com.epam.dlab.dto.base.DataEngineType;
 import com.epam.dlab.dto.exploratory.ExploratoryActionDTO;
 import com.epam.dlab.dto.exploratory.ExploratoryBaseDTO;
 import com.epam.dlab.dto.exploratory.LibraryInstallDTO;
+import com.epam.dlab.process.model.ProcessType;
 import com.epam.dlab.rest.contracts.ComputationalAPI;
 import com.epam.dlab.rest.contracts.ExploratoryAPI;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -47,6 +48,9 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
 public class LibraryResource extends DockerService implements DockerCommands {
+
+	private static final String EXPLORATORY_RESOURCE = "exploratory";
+	private static final String COMPUTATIONAL_RESOURCE = "computational";
 
     @POST
     @Path(ExploratoryAPI.EXPLORATORY + "/lib_list")
@@ -81,7 +85,9 @@ public class LibraryResource extends DockerService implements DockerCommands {
 
         RunDockerCommand runDockerCommand = getDockerCommandExploratory(dto, action, uuid);
 
-		commandExecutor.startAsync(username, uuid, commandBuilder.buildCommand(runDockerCommand, dto));
+		final String processDescription = String.format("Exploratory name: %s", dto.getExploratoryName());
+		commandExecutor.startAsync(username, uuid, getProcessType(EXPLORATORY_RESOURCE, action),
+				processDescription, commandBuilder.buildCommand(runDockerCommand, dto));
         return uuid;
     }
 
@@ -94,13 +100,17 @@ public class LibraryResource extends DockerService implements DockerCommands {
 
         RunDockerCommand runDockerCommand = getDockerCommandComputational(dto, action, uuid);
 
-		commandExecutor.startAsync(username, uuid, commandBuilder.buildCommand(runDockerCommand, dto));
+		final String processDescription = String.format("Cluster affiliated with exploratory %s",
+				dto.getExploratoryName());
+		commandExecutor.startAsync(username, uuid, getProcessType(COMPUTATIONAL_RESOURCE, action),
+				processDescription, commandBuilder.buildCommand(runDockerCommand, dto));
         return uuid;
     }
 
     private RunDockerCommand getDockerCommandExploratory(ExploratoryBaseDTO<?> dto, DockerAction action, String uuid) {
         return getDockerCommand(action, uuid)
-                .withName(nameContainer(dto.getEdgeUserName(), action.toString(), "exploratory", dto.getExploratoryName()))
+				.withName(nameContainer(dto.getEdgeUserName(), action.toString(), EXPLORATORY_RESOURCE,
+						dto.getExploratoryName()))
                 .withVolumeForLog(configuration.getDockerLogDirectory(), getResourceType())
                 .withResource(getResourceType())
                 .withImage(dto.getNotebookImage());
@@ -111,7 +121,7 @@ public class LibraryResource extends DockerService implements DockerCommands {
         if (dto instanceof LibraryInstallDTO) {
             LibraryInstallDTO newDTO = (LibraryInstallDTO) dto;
             runDockerCommand.withName(nameContainer(dto.getEdgeUserName(), action.toString(),
-                    "computational", newDTO.getComputationalId()))
+					COMPUTATIONAL_RESOURCE, newDTO.getComputationalId()))
                     .withVolumeForLog(configuration.getDockerLogDirectory(),
                             DataEngineType.fromDockerImageName(newDTO.getComputationalImage()).getName())
                     .withResource(DataEngineType.fromDockerImageName(newDTO.getComputationalImage()).getName())
@@ -122,7 +132,7 @@ public class LibraryResource extends DockerService implements DockerCommands {
             LibListComputationalDTO newDTO = (LibListComputationalDTO) dto;
 
             runDockerCommand.withName(nameContainer(dto.getEdgeUserName(), action.toString(),
-                    "computational", newDTO.getComputationalId()))
+					COMPUTATIONAL_RESOURCE, newDTO.getComputationalId()))
                     .withVolumeForLog(configuration.getDockerLogDirectory(),
                             DataEngineType.fromDockerImageName(newDTO.getComputationalImage()).getName())
                     .withResource(DataEngineType.fromDockerImageName(newDTO.getComputationalImage()).getName())
@@ -173,4 +183,16 @@ public class LibraryResource extends DockerService implements DockerCommands {
     public String getResourceType() {
         return Directories.NOTEBOOK_LOG_DIRECTORY;
     }
+
+	private ProcessType getProcessType(String resourceType, DockerAction dockerAction) {
+		if (resourceType.equals(EXPLORATORY_RESOURCE) && dockerAction == DockerAction.LIB_LIST) {
+			return ProcessType.FETCH_EXPLORATORY_LIB_LIST;
+		} else if (resourceType.equals(EXPLORATORY_RESOURCE) && dockerAction == DockerAction.LIB_INSTALL) {
+			return ProcessType.EXPLORATORY_LIBRARY_INSTALL;
+		} else if (resourceType.equals(COMPUTATIONAL_RESOURCE) && dockerAction == DockerAction.LIB_LIST) {
+			return ProcessType.FETCH_CLUSTER_LIB_LIST;
+		} else if (resourceType.equals(COMPUTATIONAL_RESOURCE) && dockerAction == DockerAction.LIB_INSTALL) {
+			return ProcessType.CLUSTER_LIBRARY_INSTALL;
+		} else return null;
+	}
 }

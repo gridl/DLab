@@ -22,7 +22,9 @@ import com.epam.dlab.backendapi.core.response.handlers.ExploratoryCallbackHandle
 import com.epam.dlab.backendapi.core.response.handlers.LibListCallbackHandler;
 import com.epam.dlab.backendapi.core.response.handlers.ResourceCallbackHandler;
 import com.epam.dlab.cloud.CloudProvider;
+import com.epam.dlab.process.model.ProcessType;
 import com.epam.dlab.rest.client.RESTServiceMock;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -41,7 +43,7 @@ public class CommandExecutorMockTest {
     private CommandExecutorMock executeAsync(String cmd) throws IOException, InterruptedException, ExecutionException {
     	String uuid = UUID.randomUUID().toString();
     	CommandExecutorMock exec = new CommandExecutorMock(CloudProvider.AWS);
-		exec.startAsync("user", uuid, cmd);
+		exec.startAsync("user", uuid, ProcessType.MOCKED_PROCESS, StringUtils.EMPTY, cmd);
     	exec.getResultSync();
 
     	Files.deleteIfExists(Paths.get(exec.getResponseFileName()));
@@ -64,7 +66,7 @@ public class CommandExecutorMockTest {
     private void handleExploratory(String cmd, DockerAction action) throws Exception {
     	String uuid = UUID.randomUUID().toString();
     	CommandExecutorMock exec = getCommandExecutor();
-		exec.startAsync("user", uuid, cmd);
+		exec.startAsync("user", uuid, ProcessType.MOCKED_PROCESS, StringUtils.EMPTY, cmd);
     	exec.getResultSync();
 
     	RESTServiceMock selfService = new RESTServiceMock();
@@ -82,7 +84,7 @@ public class CommandExecutorMockTest {
 	private void handleExploratoryLibs(String cmd, DockerAction action) throws Exception {
 		String uuid = UUID.randomUUID().toString();
 		CommandExecutorMock exec = getCommandExecutor();
-		exec.startAsync("user", uuid, cmd);
+		exec.startAsync("user", uuid, ProcessType.MOCKED_PROCESS, StringUtils.EMPTY, cmd);
 		exec.getResultSync();
 
 		RESTServiceMock selfService = new RESTServiceMock();

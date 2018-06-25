@@ -34,6 +34,7 @@ import com.epam.dlab.dto.base.computational.ComputationalBase;
 import com.epam.dlab.dto.computational.ComputationalStartDTO;
 import com.epam.dlab.dto.computational.ComputationalStopDTO;
 import com.epam.dlab.exceptions.DlabException;
+import com.epam.dlab.process.model.ProcessType;
 import com.epam.dlab.rest.contracts.ComputationalAPI;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.inject.Inject;
@@ -69,11 +70,15 @@ public class ComputationalResourceAws extends DockerService implements DockerCom
 		folderListenerExecutor.start(configuration.getImagesDirectory(),
 				configuration.getResourceStatusPollTimeout(),
 				getFileHandlerCallback(CREATE, uuid, dto));
+		final String processDescription = String.format("Cluster %s affiliated with exploratory %s",
+				dto.getComputationalName(), dto.getExploratoryName());
 		try {
 			long timeout = configuration.getResourceStatusPollTimeout().toSeconds();
 			commandExecutor.startAsync(
 					ui.getName(),
 					uuid,
+					ProcessType.DATAENGINE_SERVICE_CREATE,
+					processDescription,
 					commandBuilder.buildCommand(
 							new RunDockerCommand()
 									.withInteractive()
@@ -108,10 +113,14 @@ public class ComputationalResourceAws extends DockerService implements DockerCom
 		folderListenerExecutor.start(configuration.getImagesDirectory(),
 				configuration.getResourceStatusPollTimeout(),
 				getFileHandlerCallback(TERMINATE, uuid, dto));
+		final String processDescription = String.format("Cluster %s affiliated with exploratory %s",
+				dto.getComputationalName(), dto.getExploratoryName());
 		try {
 			commandExecutor.startAsync(
 					ui.getName(),
 					uuid,
+					ProcessType.DATAENGINE_SERVICE_TERMINATE,
+					processDescription,
 					commandBuilder.buildCommand(
 							new RunDockerCommand()
 									.withInteractive()

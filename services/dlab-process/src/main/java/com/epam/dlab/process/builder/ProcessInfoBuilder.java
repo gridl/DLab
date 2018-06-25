@@ -19,7 +19,7 @@ import com.aegisql.conveyor.Expireable;
 import com.aegisql.conveyor.Testing;
 import com.aegisql.conveyor.TimeoutAction;
 import com.epam.dlab.process.model.DlabProcess;
-import com.epam.dlab.process.model.ProcessId;
+import com.epam.dlab.process.model.ProcessData;
 import com.epam.dlab.process.model.ProcessInfo;
 import com.epam.dlab.process.model.ProcessStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ import static com.epam.dlab.process.model.ProcessStatus.*;
 @Slf4j
 public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, TimeoutAction, Expireable {
 
-	private final ProcessId processId;
+	private final ProcessData processData;
 	private final long startTimeStamp = System.currentTimeMillis();
 	private ProcessStatus status = CREATED;
 	private final StringBuilder stdOut = new StringBuilder();
@@ -58,8 +58,8 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 	private CompletableFuture<ProcessInfo> future;
 	private long expirationTime;
 
-	public ProcessInfoBuilder(ProcessId processId, long ttl) {
-		this.processId = processId;
+	public ProcessInfoBuilder(ProcessData processData, long ttl) {
+		this.processData = processData;
 		this.expirationTime = System.currentTimeMillis() + ttl;
 	}
 
@@ -79,7 +79,7 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 			}
 			long timeStamp = System.currentTimeMillis();
 			b.rejected.add(new ProcessInfo(
-					b.processId,
+					b.processData,
 					REJECTED,
 					command,
 					"",
@@ -150,7 +150,7 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 	}
 
 	private void launch() {
-		DlabProcess.getInstance().getUsersExecutorService(processId.getUser()).submit(() -> {
+		DlabProcess.getInstance().getUsersExecutorService(processData.getUser()).submit(() -> {
 			status = SCHEDULED;
 			DlabProcess.getInstance().getExecutorService().execute(() -> {
 				try {
@@ -162,13 +162,13 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 					DlabProcess.getInstance().getExecutorService().execute(() -> printError(stdErrStream));
 					status = RUNNING;
 					int exit = p.waitFor();
-					DlabProcess.getInstance().finish(processId, exit);
+					DlabProcess.getInstance().finish(processData, exit);
 				} catch (IOException e) {
-					DlabProcess.getInstance().toStdErr(processId, "Command launch failed. " + get().getCommand(), e);
-					DlabProcess.getInstance().failed(processId);
+					DlabProcess.getInstance().toStdErr(processData, "Command launch failed. " + get().getCommand(), e);
+					DlabProcess.getInstance().failed(processData);
 				} catch (InterruptedException e) {
-					DlabProcess.getInstance().toStdErr(processId, "Command interrupted. " + get().getCommand(), e);
-					DlabProcess.getInstance().failed(processId);
+					DlabProcess.getInstance().toStdErr(processData, "Command interrupted. " + get().getCommand(), e);
+					DlabProcess.getInstance().failed(processData);
 					Thread.currentThread().interrupt();
 				}
 			});
@@ -185,12 +185,12 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 		String line;
 		try {
 			while ((line = reader.readLine()) != null) {
-				DlabProcess.getInstance().toStdErr(processId, line);
+				DlabProcess.getInstance().toStdErr(processData, line);
 			}
-			DlabProcess.getInstance().toStdErr(processId, null);
+			DlabProcess.getInstance().toStdErr(processData, null);
 		} catch (IOException e) {
-			DlabProcess.getInstance().toStdErr(processId, "Failed process STDERR reader", e);
-			DlabProcess.getInstance().failed(processId);
+			DlabProcess.getInstance().toStdErr(processData, "Failed process STDERR reader", e);
+			DlabProcess.getInstance().failed(processData);
 		}
 	}
 
@@ -199,19 +199,19 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 		String line;
 		try {
 			while ((line = reader.readLine()) != null) {
-				DlabProcess.getInstance().toStdOut(processId, line);
+				DlabProcess.getInstance().toStdOut(processData, line);
 			}
-			DlabProcess.getInstance().toStdOut(processId, null);
+			DlabProcess.getInstance().toStdOut(processData, null);
 		} catch (IOException e) {
-			DlabProcess.getInstance().toStdErr(processId, "Failed process STDOUT reader", e);
-			DlabProcess.getInstance().failed(processId);
+			DlabProcess.getInstance().toStdErr(processData, "Failed process STDOUT reader", e);
+			DlabProcess.getInstance().failed(processData);
 		}
 	}
 
 	@Override
 	public ProcessInfo get() {
 		return new ProcessInfo(
-				processId,
+				processData,
 				status,
 				command,
 				stdOut.toString(),

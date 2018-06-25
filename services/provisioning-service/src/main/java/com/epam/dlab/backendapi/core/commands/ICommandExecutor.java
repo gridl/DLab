@@ -18,9 +18,28 @@
 package com.epam.dlab.backendapi.core.commands;
 
 import com.epam.dlab.process.model.ProcessInfo;
+import com.epam.dlab.process.model.ProcessType;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface ICommandExecutor {
-	ProcessInfo startSync(String username, String uuid, String command) throws Exception;
 
-	void startAsync(String username, String uuid, String command);
+	ProcessInfo startSync(String username, String uuid, ProcessType processType, String processDescription,
+						  String command) throws ExecutionException, InterruptedException;
+
+	void startAsync(String username, String uuid, ProcessType processType, String processDescription, String command);
+
+	default Boolean cancelSync(String username, String uuid) throws ExecutionException, InterruptedException {
+		return false;
+	}
+
+	default void cancelAsync(String username, String uuid) {
+	}
+
+	default List<ProcessInfo> getProcessInfo(String username) {
+		return Collections.emptyList();
+	}
+
 }

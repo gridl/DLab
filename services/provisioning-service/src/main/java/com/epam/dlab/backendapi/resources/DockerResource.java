@@ -28,6 +28,7 @@ import com.epam.dlab.backendapi.core.commands.ICommandExecutor;
 import com.epam.dlab.backendapi.core.commands.RunDockerCommand;
 import com.epam.dlab.dto.imagemetadata.ImageMetadataDTO;
 import com.epam.dlab.dto.imagemetadata.ImageType;
+import com.epam.dlab.process.model.ProcessType;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 import org.slf4j.Logger;
@@ -68,6 +69,8 @@ public class DockerResource implements DockerCommands {
 		commandExecutor.startAsync(
                 ui.getName(),
                 uuid,
+				ProcessType.DOCKER_IMAGE_RUN,
+				image,
                 new RunDockerCommand()
                         .withName(nameContainer("image", "runner"))
                         .withVolumeForRootKeys(configuration.getKeyDirectory())

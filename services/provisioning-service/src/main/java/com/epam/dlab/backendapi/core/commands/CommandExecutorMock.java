@@ -20,8 +20,9 @@ package com.epam.dlab.backendapi.core.commands;
 
 import com.epam.dlab.cloud.CloudProvider;
 import com.epam.dlab.process.builder.ProcessInfoBuilder;
-import com.epam.dlab.process.model.ProcessId;
+import com.epam.dlab.process.model.ProcessData;
 import com.epam.dlab.process.model.ProcessInfo;
+import com.epam.dlab.process.model.ProcessType;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,8 @@ import java.util.concurrent.ExecutionException;
 
 public class CommandExecutorMock implements ICommandExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandExecutorMock.class);
-    public static final String DOCKER_DLAB_DATAENGINE = "docker.dlab-dataengine:latest";
-    public static final String DOCKER_DLAB_DATAENGINE_SERVICE = "docker.dlab-dataengine-service:latest";
+	private static final String DOCKER_DLAB_DATAENGINE = "docker.dlab-dataengine:latest";
+	private static final String DOCKER_DLAB_DATAENGINE_SERVICE = "docker.dlab-dataengine-service:latest";
 
     private CommandExecutorMockAsync execAsync = null;
     private CompletableFuture<Boolean> future;
@@ -48,31 +49,33 @@ public class CommandExecutorMock implements ICommandExecutor {
     /**
      * Return result of execution.
      *
-     * @throws ExecutionException
-     * @throws InterruptedException
+	 * @throws ExecutionException can be thrown
+	 * @throws InterruptedException can be thrown
      */
-    public boolean getResultSync() throws InterruptedException, ExecutionException {
+	boolean getResultSync() throws InterruptedException, ExecutionException {
         return (future == null ? true : future.get());
     }
 
     /**
      * Return variables for substitution into Json response file.
      */
-    public Map<String, String> getVariables() {
+	Map<String, String> getVariables() {
         return (execAsync == null ? null : execAsync.getParser().getVariables());
     }
 
     /**
      * Response file name.
      */
-    public String getResponseFileName() {
+	String getResponseFileName() {
         return (execAsync == null ? null : execAsync.getResponseFileName());
     }
 
     @Override
-	public ProcessInfo startSync(String user, String uuid, String command) {
+	public ProcessInfo startSync(String user, String uuid, ProcessType processType, String processDescription,
+								 String command) {
         LOGGER.debug("Run OS command for user {} with UUID {}: {}", user, uuid, command);
-		ProcessInfoBuilder builder = new ProcessInfoBuilder(new ProcessId(user, uuid), 1000l);
+		ProcessInfoBuilder builder =
+				new ProcessInfoBuilder(new ProcessData(user, uuid, processType, processDescription), 1000L);
         if (command.startsWith("docker images |")) {
             List<String> list = Lists.newArrayList(
                     "docker.dlab-deeplearning:latest",
@@ -90,12 +93,13 @@ public class CommandExecutorMock implements ICommandExecutor {
     }
 
     @Override
-	public void startAsync(String user, String uuid, String command) {
-        execAsync = new CommandExecutorMockAsync(user, uuid, command, cloudProvider);
+	public void startAsync(String user, String uuid, ProcessType processType,
+						   String processDescription, String command) {
+		execAsync = new CommandExecutorMockAsync(user, uuid, processType, processDescription, command, cloudProvider);
         future = CompletableFuture.supplyAsync(execAsync);
     }
 
-    private List<String> getComputationalDockerImage() {
+	private List<String> getComputationalDockerImage() {
         switch (cloudProvider) {
             case AWS:
                 return Lists.newArrayList(DOCKER_DLAB_DATAENGINE_SERVICE, DOCKER_DLAB_DATAENGINE);

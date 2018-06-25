@@ -19,14 +19,14 @@ import com.aegisql.conveyor.AssemblingConveyor;
 import com.aegisql.conveyor.BuildingSite;
 import com.aegisql.conveyor.cart.Cart;
 import com.aegisql.conveyor.cart.FutureCart;
-import com.epam.dlab.process.model.ProcessId;
+import com.epam.dlab.process.model.ProcessData;
 import com.epam.dlab.process.model.ProcessInfo;
 import com.epam.dlab.process.model.ProcessStep;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-public class ProcessConveyor extends AssemblingConveyor<ProcessId,ProcessStep,ProcessInfo>{
+public class ProcessConveyor extends AssemblingConveyor<ProcessData, ProcessStep, ProcessInfo> {
 
     public ProcessConveyor() {
         super();
@@ -45,8 +45,9 @@ public class ProcessConveyor extends AssemblingConveyor<ProcessId,ProcessStep,Pr
 		this.setResultConsumer(bin -> LOG.debug("process finished: {}", bin));
     }
 
-    public Supplier<? extends ProcessInfo> getInfoSupplier(ProcessId id) {
-        BuildingSite<ProcessId, ProcessStep, Cart<ProcessId, ?, ProcessStep>, ? extends ProcessInfo> bs = this.collector.get(id);
+	public Supplier<? extends ProcessInfo> getInfoSupplier(ProcessData processData) {
+		BuildingSite<ProcessData, ProcessStep, Cart<ProcessData, ?, ProcessStep>, ? extends ProcessInfo> bs
+				= this.collector.get(processData);
         if(bs == null) {
             return () -> null;
         } else {

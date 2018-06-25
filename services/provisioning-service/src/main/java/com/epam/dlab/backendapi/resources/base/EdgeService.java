@@ -22,11 +22,13 @@ import com.epam.dlab.backendapi.core.FileHandlerCallback;
 import com.epam.dlab.backendapi.core.commands.*;
 import com.epam.dlab.backendapi.core.response.folderlistener.FolderListenerExecutor;
 import com.epam.dlab.dto.ResourceSysBaseDTO;
+import com.epam.dlab.process.model.ProcessType;
 import com.epam.dlab.rest.client.RESTService;
 import com.epam.dlab.rest.contracts.KeyAPI;
 import com.epam.dlab.util.UsernameUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.inject.Inject;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +73,8 @@ public abstract class EdgeService implements DockerCommands {
 				.withImage(configuration.getEdgeImage())
 				.withAction(action);
 
-		commandExecutor.startAsync(username, uuid, commandBuilder.buildCommand(runDockerCommand, dto));
+		commandExecutor.startAsync(username, uuid, getProcessType(action), StringUtils.EMPTY,
+				commandBuilder.buildCommand(runDockerCommand, dto));
 		return uuid;
 	}
 
@@ -88,6 +91,18 @@ public abstract class EdgeService implements DockerCommands {
 
 	protected String getKeyFilename(String edgeUserName) {
 		return UsernameUtils.replaceWhitespaces(edgeUserName) + KeyAPI.KEY_EXTENTION;
+	}
+
+	private ProcessType getProcessType(DockerAction dockerAction) {
+		if (dockerAction == DockerAction.CREATE) {
+			return ProcessType.EDGE_CREATE;
+		} else if (dockerAction == DockerAction.START) {
+			return ProcessType.EDGE_START;
+		} else if (dockerAction == DockerAction.STOP) {
+			return ProcessType.EDGE_STOP;
+		} else if (dockerAction == DockerAction.TERMINATE) {
+			return ProcessType.EDGE_TERMINATE;
+		} else return null;
 	}
 
 }
