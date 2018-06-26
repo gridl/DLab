@@ -194,6 +194,19 @@ def remove_emr_tag(emr_id, tag):
         traceback.print_exc(file=sys.stdout)
 
 
+def change_emr_volume_tag(emr_id, tag):
+    try:
+        emr = boto3.client('emr')
+        emr.describe_cluster(ResourceId=emr_id)
+    except Exception as err:
+        logging.info("Unable to remove Tag: " + str(err) + "\n Traceback: " + traceback.print_exc(
+            file=sys.stdout))
+        append_result(str({"error": "Unable to remove Tag",
+                           "error_message": str(err) + "\n Traceback: " + traceback.print_exc(
+                               file=sys.stdout)}))
+        traceback.print_exc(file=sys.stdout)
+
+
 def create_rt(vpc_id, infra_tag_name, infra_tag_value):
     try:
         tag = {"Key": infra_tag_name, "Value": infra_tag_value}
@@ -353,20 +366,21 @@ def create_instance(definitions, instance_tag, primary_disk_size=12):
                                file=sys.stdout)}))
         traceback.print_exc(file=sys.stdout)
 
-
 def tag_intance_volume(instance_id, node_name, instance_tag):
     try:
         print('volume tagging')
-        volume_list = get_instance_attr(instance_id, 'block_device_mappings')
+        volume_list = meta_lib.get_instance_attr(instance_id, 'block_device_mappings')
         counter = 0
+        instance_tag_value = instance_tag.get('Value')
         for volume in volume_list:
-            volume_postfix = '-volume-primary'
             if counter == 1:
                 volume_postfix = '-volume-secondary'
+            else:
+                volume_postfix = '-volume-primary'
             tag = {'Key': 'Name',
                    'Value': node_name + volume_postfix}
             volume_tag = instance_tag
-            volume_tag['Value'] = instance_tag.get('Value') + volume_postfix
+            volume_tag['Value'] = instance_tag_value + volume_postfix
             volume_id = volume.get('Ebs').get('VolumeId')
             create_tag(volume_id, tag)
             create_tag(volume_id, volume_tag)
@@ -379,6 +393,17 @@ def tag_intance_volume(instance_id, node_name, instance_tag):
                            "error_message": str(err) + "\n Traceback: " + traceback.print_exc(
                                file=sys.stdout)}))
         traceback.print_exc(file=sys.stdout)
+
+
+def tag_emr_volume(cluster_id, node_name, billing_tag):
+    client = boto3.client('emr')
+    cluster = client.list_instances(ClusterId=cluster_id)
+    instances = cluster['Instances']
+    for instance in instances:
+        instance_tag = {'Key': os.environ['conf_service_base_name'] + '-Tag',
+                        'Value': node_name}
+        #print instance['Ec2InstanceId']
+        tag_intance_volume(instance['Ec2InstanceId'], node_name, instance_tag)
 
 
 def create_iam_role(role_name, role_profile, region, service='ec2'):

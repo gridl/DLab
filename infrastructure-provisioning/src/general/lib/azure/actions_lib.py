@@ -464,6 +464,12 @@ class AzureActions:
                         network_interface_resource_id, resource_group_name, primary_disk_size, instance_type,
                         image_full_name, tags, user_name='', create_option='fromImage', disk_id='',
                         instance_storage_account_type='Premium_LRS', image_type='default'):
+        disk_tags1 = tags.copy()
+        disk_tags2 = tags.copy()
+        volume_postfix1 = '-volume-primary'
+        volume_postfix2 = '-volume-secondary'
+        disk_tags1['Name'] = disk_tags1['Name'] + volume_postfix1
+        disk_tags2['Name'] = disk_tags2['Name'] + volume_postfix2
         if image_type == 'pre-configured':
             image_id = meta_lib.AzureMeta().get_image(resource_group_name, image_full_name).id
         else:
@@ -491,7 +497,7 @@ class AzureActions:
                             'name': '{}-ssn-disk0'.format(service_base_name),
                             'create_option': 'fromImage',
                             'disk_size_gb': int(primary_disk_size),
-                            'tags': tags,
+                            'tags': disk_tags1,
                             'managed_disk': {
                                 'storage_account_type': instance_storage_account_type,
                             }
@@ -538,7 +544,7 @@ class AzureActions:
                                 'name': '{}-{}-edge-disk0'.format(service_base_name, user_name),
                                 'create_option': create_option,
                                 'disk_size_gb': int(primary_disk_size),
-                                'tags': tags,
+                                'tags': disk_tags1,
                                 'managed_disk': {
                                     'storage_account_type': instance_storage_account_type
                                 }
@@ -578,7 +584,7 @@ class AzureActions:
                                 'name': '{}-{}-edge-disk0'.format(service_base_name, user_name),
                                 'create_option': create_option,
                                 'disk_size_gb': int(primary_disk_size),
-                                'tags': tags,
+                                'tags': disk_tags2,
                                 'managed_disk': {
                                     'id': disk_id,
                                     'storage_account_type': instance_storage_account_type
@@ -607,7 +613,7 @@ class AzureActions:
                             'name': '{}-disk0'.format(instance_name),
                             'create_option': 'fromImage',
                             'disk_size_gb': int(primary_disk_size),
-                            'tags': tags,
+                            'tags': disk_tags1,
                             'managed_disk': {
                                 'storage_account_type': instance_storage_account_type
                             }
@@ -618,9 +624,7 @@ class AzureActions:
                                 'name': '{}-disk1'.format(instance_name),
                                 'create_option': 'empty',
                                 'disk_size_gb': 32,
-                                'tags': {
-                                    'Name': '{}-disk1'.format(instance_name)
-                                },
+                                'tags': disk_tags2,
                                 'managed_disk': {
                                     'storage_account_type': instance_storage_account_type
                                 }
@@ -637,7 +641,7 @@ class AzureActions:
                             'name': '{}-disk0'.format(instance_name),
                             'create_option': 'fromImage',
                             'disk_size_gb': int(primary_disk_size),
-                            'tags': tags,
+                            'tags': disk_tags1,
                             'managed_disk': {
                                 'storage_account_type': instance_storage_account_type
                             }
@@ -682,7 +686,7 @@ class AzureActions:
                             'name': '{}-disk0'.format(instance_name),
                             'create_option': 'fromImage',
                             'disk_size_gb': int(primary_disk_size),
-                            'tags': tags,
+                            'tags': disk_tags1,
                             'managed_disk': {
                                 'storage_account_type': instance_storage_account_type
                             }
@@ -701,7 +705,7 @@ class AzureActions:
                             'name': '{}-disk0'.format(instance_name),
                             'create_option': 'fromImage',
                             'disk_size_gb': int(primary_disk_size),
-                            'tags': tags,
+                            'tags': disk_tags1,
                             'managed_disk': {
                                 'storage_account_type': instance_storage_account_type
                             }

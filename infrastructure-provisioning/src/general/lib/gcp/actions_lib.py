@@ -750,6 +750,44 @@ class GCPActions:
             traceback.print_exc(file=sys.stdout)
             return ''
 
+    def set_cluster_volume_tag(self, clusteName, region, zone):
+        try:
+            print('Setting volume tags')
+            print clusteName + ':' + region + ':' + zone
+            result = self.dataproc.projects().regions().clusters().list(
+                projectId=self.project,
+                region=region).execute()
+            clusters = result.get('clusters')
+            dataproc_instances = []
+            labels = ''
+            for cluster in clusters:
+                if cluster['clusterName'] == clusteName:
+                    print cluster
+                    labels = cluster.get('labels')
+                    master_instances = cluster.get('config').get('masterConfig').get('instanceNames')
+                    slave_instances = cluster.get('config').get('workerConfig').get('instanceNames')
+                    for instance in master_instances:
+                        param = {}
+                        param['name'] = instance
+                        param['tag_name'] = instance + '-volume-primary'
+                        dataproc_instances.append(param)
+                    for instance in slave_instances:
+                        param = {}
+                        param['name'] = instance
+                        param['tag_name'] = instance + '-volume-primary'
+                        dataproc_instances.append(param)
+            GCPActions().set_disks_tag(dataproc_instances, zone, labels)
+        except Exception as err:
+            logging.info(
+                "Unable to tag volume dataproc cluster: " + str(
+                    err) + "\n Traceback: " + traceback.print_exc(
+                    file=sys.stdout))
+            append_result(str({"error": "Unable to tag volume dataproc cluster",
+                               "error_message": str(err) + "\n Traceback: " + traceback.print_exc(
+                                   file=sys.stdout)}))
+            traceback.print_exc(file=sys.stdout)
+            return ''
+
     def delete_dataproc_cluster(self, cluster_name, region):
         request = self.dataproc.projects().regions().clusters().delete(projectId=self.project, region=region, clusterName=cluster_name)
         try:
@@ -781,6 +819,9 @@ class GCPActions:
         try:
             result = request.execute()
             time.sleep(15)
+            GCPActions().set_cluster_volume_tag(cluster_name,
+                                                os.environ['gcp_region'],
+                                                os.environ['gcp_zone'])
             return result
         except Exception as err:
             logging.info(
