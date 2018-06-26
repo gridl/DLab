@@ -18,8 +18,10 @@
 
 package com.epam.dlab.backendapi.core.commands;
 
+import com.epam.dlab.process.exception.DlabProcessException;
 import com.epam.dlab.process.model.DlabProcess;
 import com.epam.dlab.process.model.ProcessInfo;
+import com.epam.dlab.process.model.ProcessStatus;
 import com.epam.dlab.process.model.ProcessType;
 import com.google.inject.Singleton;
 
@@ -46,12 +48,24 @@ public class CommandExecutor implements ICommandExecutor {
 	@Override
 	public Boolean cancelSync(final String username, final String uuid) throws ExecutionException,
 			InterruptedException {
-		return DlabProcess.getInstance().cancel(username, uuid).get();
+		ProcessStatus processStatus = DlabProcess.getInstance().getProcessStatus(username, uuid);
+		if (processStatus == ProcessStatus.SCHEDULED) {
+			return DlabProcess.getInstance().cancel(username, uuid).get();
+		} else {
+			throw new DlabProcessException("Couldn't cancel the process with " + uuid + " for user " + username +
+					" because it's current status is " + processStatus);
+		}
 	}
 
 	@Override
 	public void cancelAsync(final String username, final String uuid) {
-		DlabProcess.getInstance().cancel(username, uuid);
+		ProcessStatus processStatus = DlabProcess.getInstance().getProcessStatus(username, uuid);
+		if (processStatus == ProcessStatus.SCHEDULED) {
+			DlabProcess.getInstance().cancel(username, uuid);
+		} else {
+			throw new DlabProcessException("Couldn't cancel the process with " + uuid + " for user " + username +
+					" because it's current status is " + processStatus);
+		}
 	}
 
 	@Override

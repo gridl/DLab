@@ -17,16 +17,14 @@ package com.epam.dlab.process.model;
 
 import com.epam.dlab.process.ProcessConveyor;
 import com.epam.dlab.process.builder.ProcessInfoBuilder;
+import com.epam.dlab.process.exception.DlabProcessException;
 import io.dropwizard.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -154,7 +152,7 @@ public class DlabProcess {
 		return processConveyor.getInfoSupplier(processData);
     }
 
-	public Supplier<? extends ProcessInfo> getProcessInfoSupplier(String username, String uuid) {
+	private Supplier<? extends ProcessInfo> getProcessInfoSupplier(String username, String uuid) {
 		return getProcessInfoSupplier(new ProcessData(username, uuid));
     }
 
@@ -165,5 +163,12 @@ public class DlabProcess {
 	public void setProcessTimeout(Duration duration) {
         this.expirationTime = duration.toMilliseconds();
     }
+
+	public ProcessStatus getProcessStatus(String username, String uuid) {
+		return Optional.ofNullable(getProcessInfoSupplier(username, uuid).get())
+				.map(ProcessInfo::getStatus).orElseThrow(() ->
+						new DlabProcessException("Active process with id " + uuid + " for user " + username + " not " +
+								"found."));
+	}
 
 }
