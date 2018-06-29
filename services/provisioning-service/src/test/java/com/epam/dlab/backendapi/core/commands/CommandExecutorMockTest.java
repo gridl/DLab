@@ -21,6 +21,7 @@ package com.epam.dlab.backendapi.core.commands;
 import com.epam.dlab.backendapi.core.response.handlers.ExploratoryCallbackHandler;
 import com.epam.dlab.backendapi.core.response.handlers.LibListCallbackHandler;
 import com.epam.dlab.backendapi.core.response.handlers.ResourceCallbackHandler;
+import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerServiceMock;
 import com.epam.dlab.cloud.CloudProvider;
 import com.epam.dlab.rest.SelfServiceHelperMock;
 import com.epam.dlab.rest.client.RESTServiceMock;
@@ -70,7 +71,11 @@ public class CommandExecutorMockTest {
 
     	RESTServiceMock selfService = new RESTServiceMock();
 		SelfServiceHelperMock selfServiceHelper = new SelfServiceHelperMock(selfService);
-		ExploratoryCallbackHandler handler = new ExploratoryCallbackHandler(selfServiceHelper, action,
+		InfrastructureCallbackHandlerServiceMock infrastructureCallbackHandlerService =
+				new InfrastructureCallbackHandlerServiceMock();
+
+		ExploratoryCallbackHandler handler = new ExploratoryCallbackHandler(selfServiceHelper,
+				infrastructureCallbackHandlerService, action,
     			getRequestId(exec), getEdgeUserName(exec), getExploratoryName(exec));
     	handler.handle(exec.getResponseFileName(), Files.readAllBytes(Paths.get(exec.getResponseFileName())));
 
@@ -89,6 +94,8 @@ public class CommandExecutorMockTest {
 
 		RESTServiceMock selfService = new RESTServiceMock();
 		SelfServiceHelperMock selfServiceHelper = new SelfServiceHelperMock(selfService);
+		InfrastructureCallbackHandlerServiceMock infrastructureCallbackHandlerService =
+				new InfrastructureCallbackHandlerServiceMock();
 		if (action == DockerAction.LIB_INSTALL) {
 			throw new Exception("Unimplemented action " + action);
 		}
@@ -99,7 +106,8 @@ public class CommandExecutorMockTest {
 				new LibListCallbackHandler(selfService, action,
 				getRequestId(exec), getEdgeUserName(exec), getExploratoryName(exec));
 		*/
-		ResourceCallbackHandler<?> handler = new LibListCallbackHandler(selfServiceHelper, action, getRequestId(exec),
+		ResourceCallbackHandler<?> handler = new LibListCallbackHandler(selfServiceHelper,
+				infrastructureCallbackHandlerService, action, getRequestId(exec),
 				getEdgeUserName(exec), getExploratoryName(exec));
 
 		handler.handle(exec.getResponseFileName(), Files.readAllBytes(Paths.get(exec.getResponseFileName())));

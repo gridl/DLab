@@ -18,6 +18,7 @@
 package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.status.EnvResourceList;
 import com.epam.dlab.dto.status.EnvStatusDTO;
@@ -40,9 +41,11 @@ public class ResourcesStatusCallbackHandler extends ResourceCallbackHandler<EnvS
 
 	@JsonCreator
 	public ResourcesStatusCallbackHandler(@JacksonInject SelfServiceHelper selfServiceHelper,
+										  @JacksonInject InfrastructureCallbackHandlerService
+												  infrastructureCallbackHandlerService,
 										  @JsonProperty("action") DockerAction action,
 										  @JsonProperty("uuid") String uuid, @JsonProperty("user") String user) {
-		super(selfServiceHelper, user, uuid, action);
+		super(selfServiceHelper, infrastructureCallbackHandlerService, user, uuid, action);
 	}
 
 	@Override
@@ -60,8 +63,8 @@ public class ResourcesStatusCallbackHandler extends ResourceCallbackHandler<EnvS
 		try {
 			resourceList = mapper.readValue(resultNode.toString(), EnvResourceList.class);
 		} catch (IOException e) {
-			throw new DlabException("Docker response for UUID " + getUUID() + " not valid: " + e.getLocalizedMessage()
-                    , e);
+			throw new DlabException("Docker response for UUID " + getUUID() + " not valid: " +
+					e.getLocalizedMessage(), e);
 		}
 
 		baseStatus.withResourceList(resourceList)

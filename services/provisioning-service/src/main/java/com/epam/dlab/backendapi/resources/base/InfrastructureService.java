@@ -124,7 +124,8 @@ public abstract class InfrastructureService extends DockerService implements Doc
 	}
 
 	protected FileHandlerCallback getFileHandlerCallback(DockerAction action, String uuid, String user) {
-		return new ResourcesStatusCallbackHandler(selfServiceHelper, action, uuid, user);
+		return new ResourcesStatusCallbackHandler(selfServiceHelper, infrastructureCallbackHandlerService, action,
+				uuid, user);
 	}
 
 	private String nameContainer(String user, DockerAction action, String name) {

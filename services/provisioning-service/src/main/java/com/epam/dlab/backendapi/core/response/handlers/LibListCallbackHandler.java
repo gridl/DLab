@@ -17,6 +17,7 @@
 package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.dto.exploratory.LibListStatusDTO;
@@ -59,10 +60,12 @@ public class LibListCallbackHandler extends ResourceCallbackHandler<LibListStatu
 	 */
 	@JsonCreator
 	public LibListCallbackHandler(@JacksonInject SelfServiceHelper selfServiceHelper,
+								  @JacksonInject InfrastructureCallbackHandlerService
+										  infrastructureCallbackHandlerService,
 								  @JsonProperty("action") DockerAction action,
 								  @JsonProperty("uuid") String uuid, @JsonProperty("user") String user,
 								  @JsonProperty("imageName") String imageName) {
-		super(selfServiceHelper, user, uuid, action);
+		super(selfServiceHelper, infrastructureCallbackHandlerService, user, uuid, action);
 		this.imageName = imageName;
 	}
 

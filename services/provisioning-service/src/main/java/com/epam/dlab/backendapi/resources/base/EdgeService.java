@@ -16,34 +16,22 @@
 
 package com.epam.dlab.backendapi.resources.base;
 
-import com.epam.dlab.backendapi.ProvisioningServiceApplicationConfiguration;
 import com.epam.dlab.backendapi.core.Directories;
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
-import com.epam.dlab.backendapi.core.commands.*;
-import com.epam.dlab.backendapi.core.response.folderlistener.FolderListenerExecutor;
-import com.epam.dlab.backendapi.service.SelfServiceHelper;
+import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.core.commands.DockerCommands;
+import com.epam.dlab.backendapi.core.commands.RunDockerCommand;
+import com.epam.dlab.backendapi.service.DockerService;
 import com.epam.dlab.dto.ResourceSysBaseDTO;
 import com.epam.dlab.rest.contracts.KeyAPI;
 import com.epam.dlab.util.UsernameUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class EdgeService implements DockerCommands {
+public abstract class EdgeService extends DockerService implements DockerCommands {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-
-	@Inject
-	protected SelfServiceHelper selfServiceHelper;
-	@Inject
-	private ProvisioningServiceApplicationConfiguration configuration;
-	@Inject
-	private FolderListenerExecutor folderListenerExecutor;
-	@Inject
-	private ICommandExecutor commandExecutor;
-	@Inject
-	private CommandBuilder commandBuilder;
 
 	@Override
 	public String getResourceType() {

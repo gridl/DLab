@@ -104,4 +104,5 @@ public class SelfServiceHelper<T extends StatusBaseDTO<?>> {
 		} else throw new DlabException("Unknown type of connector factory: " + type);
 		return String.format("%s://%s:%d/healthcheck", type, host.orElse("localhost"), port);
 	}
+
 }

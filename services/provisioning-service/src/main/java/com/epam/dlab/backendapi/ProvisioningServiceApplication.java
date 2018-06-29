@@ -26,6 +26,7 @@ import com.epam.dlab.backendapi.modules.CloudModuleConfigurator;
 import com.epam.dlab.backendapi.modules.ModuleFactory;
 import com.epam.dlab.backendapi.resources.*;
 import com.epam.dlab.backendapi.resources.base.KeyResource;
+import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.RestoreCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.backendapi.service.SelfServiceReplier;
@@ -78,6 +79,8 @@ public class ProvisioningServiceApplication extends Application<ProvisioningServ
 		final InjectableValues.Std injectableValues = new InjectableValues.Std();
 		injectableValues.addValue(SelfServiceHelper.class, injector.getInstance(SelfServiceHelper.class));
 		injectableValues.addValue(ComputationalConfigure.class, injector.getInstance(ComputationalConfigure.class));
+		injectableValues.addValue(InfrastructureCallbackHandlerService.class,
+				injector.getInstance(InfrastructureCallbackHandlerService.class));
 		mapper.setInjectableValues(injectableValues);
 
 		environment.healthChecks().register(

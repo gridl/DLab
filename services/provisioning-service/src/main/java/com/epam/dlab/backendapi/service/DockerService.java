@@ -34,5 +34,7 @@ public abstract class DockerService {
     protected CommandBuilder commandBuilder;
     @Inject
 	protected SelfServiceHelper selfServiceHelper;
+	@Inject
+	protected InfrastructureCallbackHandlerService infrastructureCallbackHandlerService;
 
 }

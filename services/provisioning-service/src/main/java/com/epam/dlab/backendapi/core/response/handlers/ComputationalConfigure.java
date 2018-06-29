@@ -93,7 +93,8 @@ public class ComputationalConfigure extends DockerService implements DockerComma
 
 	private FileHandlerCallback getFileHandlerCallback(DockerAction action, String originalUuid, ComputationalBase<?>
 			dto) {
-		return new ComputationalConfigureCallbackHandler(selfServiceHelper, action, originalUuid, dto);
+		return new ComputationalConfigureCallbackHandler(selfServiceHelper, infrastructureCallbackHandlerService,
+				action, originalUuid, dto);
 	}
 
 	private String nameContainer(String user, DockerAction action, String exploratoryName, String name) {

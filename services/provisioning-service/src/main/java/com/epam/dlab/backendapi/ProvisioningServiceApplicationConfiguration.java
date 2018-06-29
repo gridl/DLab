@@ -44,6 +44,10 @@ public class ProvisioningServiceApplicationConfiguration extends ServiceConfigur
 	@JsonProperty
 	private String handlerDirectory;
 
+	@NotEmpty
+	@JsonProperty
+	private String handlerDaoDirectory;
+
 	@JsonProperty
 	private Duration warmupPollTimeout = Duration.seconds(3);
 
@@ -175,5 +179,9 @@ public class ProvisioningServiceApplicationConfiguration extends ServiceConfigur
 
 	public String getHandlerDirectory() {
 		return handlerDirectory;
+	}
+
+	public String getHandlerDaoDirectory() {
+		return handlerDaoDirectory;
 	}
 }

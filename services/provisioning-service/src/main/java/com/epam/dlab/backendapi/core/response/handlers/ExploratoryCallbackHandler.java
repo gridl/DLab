@@ -19,6 +19,7 @@ limitations under the License.
 package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.dto.exploratory.ExploratoryStatusDTO;
@@ -45,17 +46,19 @@ public class ExploratoryCallbackHandler extends ResourceCallbackHandler<Explorat
     private static final String EXPLORATORY_PRIVATE_IP_FIELD = "ip";
     private static final String EXPLORATORY_URL_FIELD = "exploratory_url";
     private static final String EXPLORATORY_USER_FIELD = "exploratory_user";
-    private static final String EXPLORATORY_PASSWORD_FIELD = "exploratory_pass";
+	private static final String EXPLORATORY_PASS_FIELD = "exploratory_pass";
 
     @JsonProperty
     private final String exploratoryName;
 
 	@JsonCreator
 	public ExploratoryCallbackHandler(@JacksonInject SelfServiceHelper selfServiceHelper,
+									  @JacksonInject InfrastructureCallbackHandlerService
+											  infrastructureCallbackHandlerService,
 									  @JsonProperty("action") DockerAction action,
 									  @JsonProperty("uuid")String uuid, @JsonProperty("user") String user,
 									  @JsonProperty("exploratoryName") String exploratoryName) {
-		super(selfServiceHelper, user, uuid, action);
+		super(selfServiceHelper, infrastructureCallbackHandlerService, user, uuid, action);
         this.exploratoryName = exploratoryName;
     }
 
@@ -90,7 +93,7 @@ public class ExploratoryCallbackHandler extends ResourceCallbackHandler<Explorat
                 .withExploratoryUrl(url)
                 .withPrivateIp(getTextValue(resultNode.get(EXPLORATORY_PRIVATE_IP_FIELD)))
                 .withExploratoryUser(getTextValue(resultNode.get(EXPLORATORY_USER_FIELD)))
-                .withExploratoryPassword(getTextValue(resultNode.get(EXPLORATORY_PASSWORD_FIELD)));
+				.withExploratoryPassword(getTextValue(resultNode.get(EXPLORATORY_PASS_FIELD)));
     }
 
     @Override

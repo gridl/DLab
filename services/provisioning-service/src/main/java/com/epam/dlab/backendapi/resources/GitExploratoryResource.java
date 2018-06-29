@@ -74,8 +74,8 @@ public class GitExploratoryResource extends DockerService implements DockerComma
     }
 
     private FileHandlerCallback getFileHandlerCallback(DockerAction action, String uuid, ExploratoryBaseDTO<?> dto) {
-		return new ExploratoryGitCredsCallbackHandler(selfServiceHelper, action, uuid,
-				dto.getCloudSettings().getIamUser(), dto.getExploratoryName());
+		return new ExploratoryGitCredsCallbackHandler(selfServiceHelper, infrastructureCallbackHandlerService, action,
+				uuid, dto.getCloudSettings().getIamUser(), dto.getExploratoryName());
     }
 
     private String nameContainer(String user, DockerAction action, String name) {

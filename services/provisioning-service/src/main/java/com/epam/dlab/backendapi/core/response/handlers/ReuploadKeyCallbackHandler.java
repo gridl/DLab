@@ -1,6 +1,7 @@
 package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
+import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyCallbackDTO;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyStatus;
@@ -24,6 +25,7 @@ public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
 	@JsonProperty
 	private final ReuploadKeyCallbackDTO dto;
 	private final SelfServiceHelper selfServiceHelper;
+	private final InfrastructureCallbackHandlerService infrastructureCallbackHandlerService;
 	@JsonProperty
 	private final String callbackUrl;
 	@JsonProperty
@@ -31,10 +33,13 @@ public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
 
 	@JsonCreator
 	public ReuploadKeyCallbackHandler(@JacksonInject SelfServiceHelper selfServiceHelper,
+									  @JacksonInject InfrastructureCallbackHandlerService
+											  infrastructureCallbackHandlerService,
 									  @JsonProperty("callbackUrl") String callbackUrl,
 									  @JsonProperty("user") String user,
 									  @JsonProperty("dto") ReuploadKeyCallbackDTO dto) {
 		this.selfServiceHelper = selfServiceHelper;
+		this.infrastructureCallbackHandlerService = infrastructureCallbackHandlerService;
 		this.uuid = dto.getId();
 		this.callbackUrl = callbackUrl;
 		this.user = user;
@@ -68,6 +73,8 @@ public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
 		}
 		if (selfServiceHelper.isSelfServiceAlive()) {
 			selfServiceHelper.post(callbackUrl, uuid, reuploadKeyStatusDTO);
+		} else {
+			infrastructureCallbackHandlerService.saveObjectData(uuid);
 		}
 		return "ok".equals(status);
 	}

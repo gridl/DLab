@@ -21,6 +21,7 @@
 package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.base.computational.ComputationalBase;
 import com.epam.dlab.dto.computational.ComputationalStatusDTO;
@@ -37,10 +38,13 @@ public class ComputationalConfigureCallbackHandler extends ResourceCallbackHandl
 
 	@JsonCreator
 	public ComputationalConfigureCallbackHandler(@JacksonInject SelfServiceHelper selfServiceHelper,
+												 @JacksonInject InfrastructureCallbackHandlerService
+														 infrastructureCallbackHandlerService,
 												 @JsonProperty("action") DockerAction action,
 												 @JsonProperty("uuid") String uuid,
 												 @JsonProperty("dto") ComputationalBase<?> dto) {
-		super(selfServiceHelper, dto.getCloudSettings().getIamUser(), uuid, action);
+		super(selfServiceHelper, infrastructureCallbackHandlerService, dto.getCloudSettings().getIamUser(), uuid,
+				action);
 		this.dto = dto;
 	}
 

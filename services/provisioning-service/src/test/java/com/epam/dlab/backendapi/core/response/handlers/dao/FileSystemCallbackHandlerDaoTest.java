@@ -76,7 +76,7 @@ public class FileSystemCallbackHandlerDaoTest {
 		when(configuration.getHandlerDirectory()).thenReturn(handlersFolders);
 		when(mapper.writeValueAsBytes(any())).thenReturn("{'test': 'test'}".getBytes());
 		final PersistentFileHandler persistentFileHandler = new PersistentFileHandler(new LibListCallbackHandler(null,
-				DockerAction.LIB_LIST, "uuid", "test", "das"), 1L, "/opt/test");
+				null, DockerAction.LIB_LIST, "uuid", "test", "das"), 1L, "/opt/test");
 
 		fileSystemCallbackHandlerDao.save(persistentFileHandler);
 

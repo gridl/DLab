@@ -146,11 +146,11 @@ public class LibraryResource extends DockerService implements DockerCommands {
                                                                   ExploratoryBaseDTO<?> dto) {
         switch (action) {
             case LIB_INSTALL:
-				return new LibInstallCallbackHandler(selfServiceHelper, action, uuid, dto.getCloudSettings()
-						.getIamUser(),
-                        (LibraryInstallDTO) dto);
+				return new LibInstallCallbackHandler(selfServiceHelper, infrastructureCallbackHandlerService, action,
+						uuid, dto.getCloudSettings().getIamUser(), (LibraryInstallDTO) dto);
             case LIB_LIST:
-				return new LibListCallbackHandler(selfServiceHelper, DockerAction.LIB_LIST, uuid,
+				return new LibListCallbackHandler(selfServiceHelper, infrastructureCallbackHandlerService,
+						DockerAction.LIB_LIST, uuid,
                         dto.getCloudSettings().getIamUser(), dto.getNotebookImage());
             default:
                 throw new IllegalArgumentException("Unknown action " + action);
@@ -160,11 +160,12 @@ public class LibraryResource extends DockerService implements DockerCommands {
     private FileHandlerCallback getFileHandlerCallbackComputational(DockerAction action, String uuid, ExploratoryBaseDTO<?> dto) {
         switch (action) {
             case LIB_LIST:
-				return new LibListCallbackHandler(selfServiceHelper, action, uuid,
+				return new LibListCallbackHandler(selfServiceHelper, infrastructureCallbackHandlerService, action,
+						uuid,
                         dto.getCloudSettings().getIamUser(), ((LibListComputationalDTO) dto).getLibCacheKey());
             case LIB_INSTALL:
-				return new LibInstallCallbackHandler(selfServiceHelper, action, uuid,
-                        dto.getCloudSettings().getIamUser(), ((LibraryInstallDTO) dto));
+				return new LibInstallCallbackHandler(selfServiceHelper, infrastructureCallbackHandlerService, action,
+						uuid, dto.getCloudSettings().getIamUser(), ((LibraryInstallDTO) dto));
 
             default:
                 throw new IllegalArgumentException("Unknown action " + action);

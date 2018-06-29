@@ -17,6 +17,7 @@
 package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
+import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.backup.EnvBackupDTO;
 import com.epam.dlab.dto.backup.EnvBackupStatus;
@@ -41,6 +42,7 @@ public class BackupCallbackHandler implements FileHandlerCallback {
 	@JsonProperty
 	private final EnvBackupDTO dto;
 	private final SelfServiceHelper selfServiceHelper;
+	private final InfrastructureCallbackHandlerService infrastructureCallbackHandlerService;
 	@JsonProperty
 	private final String callbackUrl;
 	@JsonProperty
@@ -48,9 +50,12 @@ public class BackupCallbackHandler implements FileHandlerCallback {
 
 	@JsonCreator
 	public BackupCallbackHandler(@JacksonInject SelfServiceHelper selfServiceHelper,
+								 @JacksonInject InfrastructureCallbackHandlerService
+										 infrastructureCallbackHandlerService,
 								 @JsonProperty("callbackUrl") String callbackUrl, @JsonProperty("user") String user,
 								 @JsonProperty("dto") EnvBackupDTO dto) {
 		this.selfServiceHelper = selfServiceHelper;
+		this.infrastructureCallbackHandlerService = infrastructureCallbackHandlerService;
 		this.uuid = dto.getId();
 		this.callbackUrl = callbackUrl;
 		this.user = user;
@@ -85,6 +90,8 @@ public class BackupCallbackHandler implements FileHandlerCallback {
 		}
 		if (selfServiceHelper.isSelfServiceAlive()) {
 			selfServiceHelper.post(callbackUrl, uuid, envBackupStatusDTO);
+		} else {
+			infrastructureCallbackHandlerService.saveObjectData(uuid);
 		}
 		return EnvBackupStatus.CREATED == status;
 	}

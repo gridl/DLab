@@ -17,5 +17,5 @@
  */
 package com.epam.dlab.backendapi.service;
 
-public class ReplierService {
+public class InfrastructureCallbackHandlerServiceMock extends InfrastructureCallbackHandlerService {
 }

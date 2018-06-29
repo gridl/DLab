@@ -20,6 +20,7 @@ package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.StatusBaseDTO;
 import com.epam.dlab.dto.UserInstanceStatus;
@@ -49,6 +50,8 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
 
     @JsonIgnore
 	private final SelfServiceHelper selfServiceHelper;
+	@JsonIgnore
+	private final InfrastructureCallbackHandlerService infrastructureCallbackHandlerService;
     @JsonProperty
     private final String user;
     @JsonProperty
@@ -60,9 +63,11 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
 
     @SuppressWarnings("unchecked")
 	public ResourceCallbackHandler(SelfServiceHelper selfServiceHelper,
+								   InfrastructureCallbackHandlerService infrastructureCallbackHandlerService,
 								   String user,
 								   String uuid, DockerAction action) {
 		this.selfServiceHelper = selfServiceHelper;
+		this.infrastructureCallbackHandlerService = infrastructureCallbackHandlerService;
         this.user = user;
         this.uuid = uuid;
         this.action = action;
@@ -70,9 +75,11 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
     }
 
 	public ResourceCallbackHandler(SelfServiceHelper selfServiceHelper,
+								   InfrastructureCallbackHandlerService infrastructureCallbackHandlerService,
 								   String user,
 								   String uuid, DockerAction action, Class<T> resultType) {
 		this.selfServiceHelper = selfServiceHelper;
+		this.infrastructureCallbackHandlerService = infrastructureCallbackHandlerService;
         this.user = user;
         this.uuid = uuid;
         this.action = action;
@@ -118,6 +125,8 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
 
 		if (selfServiceHelper.isSelfServiceAlive()) {
 			selfServiceHelper.post(getCallbackURI(), uuid, result);
+		} else {
+			infrastructureCallbackHandlerService.saveObjectData(uuid);
 		}
         return !UserInstanceStatus.FAILED.equals(status);
     }
