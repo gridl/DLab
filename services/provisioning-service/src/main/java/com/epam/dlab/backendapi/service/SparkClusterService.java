@@ -88,7 +88,7 @@ public class SparkClusterService extends DockerService implements DockerCommands
 	}
 
 	private FileHandlerCallback getFileHandlerCallback(DockerAction action, String uuid, ComputationalBase<?> dto) {
-		return new ComputationalCallbackHandler(computationalConfigure, selfService, action, uuid, dto);
+		return new ComputationalCallbackHandler(computationalConfigure, selfServiceHelper, action, uuid, dto);
 	}
 
 	private String nameContainer(String user, DockerAction action, String exploratoryName, String name) {

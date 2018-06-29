@@ -19,11 +19,11 @@
 package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.dto.base.edge.EdgeInfo;
 import com.epam.dlab.dto.base.keyload.UploadFileResult;
 import com.epam.dlab.exceptions.DlabException;
-import com.epam.dlab.rest.client.RESTService;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -38,13 +38,14 @@ public class EdgeCallbackHandler<E extends EdgeInfo, T extends UploadFileResult<
 	private final Class<E> responseType;
 
 	@JsonCreator
-	public EdgeCallbackHandler(@JacksonInject RESTService selfService, @JsonProperty("action") DockerAction action,
+	public EdgeCallbackHandler(@JacksonInject SelfServiceHelper selfServiceHelper,
+							   @JsonProperty("action") DockerAction action,
 							   @JsonProperty("uuid") String uuid, @JsonProperty("user") String user,
 							   @JsonProperty("callbackURI") String callbackURI,
 							   @JsonProperty("responseType") Class<E> responseType,
 							   @JsonProperty("resultType") Class<T> enclosingType) {
 
-		super(selfService, user, uuid, action, enclosingType);
+		super(selfServiceHelper, user, uuid, action, enclosingType);
 		this.callbackURI = callbackURI;
 		this.responseType = responseType;
 	}

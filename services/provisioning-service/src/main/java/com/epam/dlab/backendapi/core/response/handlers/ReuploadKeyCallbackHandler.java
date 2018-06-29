@@ -1,11 +1,10 @@
 package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
+import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyCallbackDTO;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyStatus;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyStatusDTO;
-import com.epam.dlab.exceptions.DlabException;
-import com.epam.dlab.rest.client.RESTService;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,8 +12,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.ws.rs.core.Response;
 
 @Slf4j
 public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
@@ -26,18 +23,18 @@ public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
 	private final String uuid;
 	@JsonProperty
 	private final ReuploadKeyCallbackDTO dto;
-	private final RESTService selfService;
+	private final SelfServiceHelper selfServiceHelper;
 	@JsonProperty
 	private final String callbackUrl;
 	@JsonProperty
 	private final String user;
 
 	@JsonCreator
-	public ReuploadKeyCallbackHandler(@JacksonInject RESTService selfService,
+	public ReuploadKeyCallbackHandler(@JacksonInject SelfServiceHelper selfServiceHelper,
 									  @JsonProperty("callbackUrl") String callbackUrl,
 									  @JsonProperty("user") String user,
 									  @JsonProperty("dto") ReuploadKeyCallbackDTO dto) {
-		this.selfService = selfService;
+		this.selfServiceHelper = selfServiceHelper;
 		this.uuid = dto.getId();
 		this.callbackUrl = callbackUrl;
 		this.user = user;
@@ -55,6 +52,7 @@ public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public boolean handle(String fileName, byte[] content) throws Exception {
 		final String fileContent = new String(content);
 		log.debug("Got file {} while waiting for UUID {}, reupload key response: {}", fileName, uuid, fileContent);
@@ -68,19 +66,10 @@ public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
 			reuploadKeyStatusDTO = buildReuploadKeyStatusDto(ReuploadKeyStatus.FAILED)
 					.withErrorMessage(jsonNode.get(ERROR_MESSAGE_FIELD).textValue());
 		}
-		selfServicePost(reuploadKeyStatusDTO);
-		return "ok".equals(status);
-	}
-
-	private void selfServicePost(ReuploadKeyStatusDTO statusDTO) {
-		log.debug("Send post request to self service for UUID {}, object is {}", uuid, statusDTO);
-		try {
-			selfService.post(callbackUrl, statusDTO, Response.class);
-		} catch (Exception e) {
-			log.error("Send request or response error for UUID {}: {}", uuid, e.getLocalizedMessage(), e);
-			throw new DlabException("Send request or response error for UUID " + uuid + ": "
-					+ e.getLocalizedMessage(), e);
+		if (selfServiceHelper.isSelfServiceAlive()) {
+			selfServiceHelper.post(callbackUrl, uuid, reuploadKeyStatusDTO);
 		}
+		return "ok".equals(status);
 	}
 
 	@Override

@@ -17,12 +17,12 @@
 package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.dto.exploratory.LibInstallDTO;
 import com.epam.dlab.dto.exploratory.LibInstallStatusDTO;
 import com.epam.dlab.dto.exploratory.LibraryInstallDTO;
 import com.epam.dlab.exceptions.DlabException;
-import com.epam.dlab.rest.client.RESTService;
 import com.epam.dlab.rest.contracts.ApiCallbacks;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -61,17 +61,17 @@ public class LibInstallCallbackHandler extends ResourceCallbackHandler<LibInstal
 	/**
 	 * Instantiate handler for process of docker response for libraries installation.
 	 *
-	 * @param selfService REST pointer for Self Service.
-	 * @param action      docker action.
-	 * @param uuid        request UID.
-	 * @param dto         contains libraries to instal
+	 * @param selfServiceHelper pointer for Self Service helper.
+	 * @param action            docker action.
+	 * @param uuid              request UID.
+	 * @param dto               contains libraries to instal
 	 */
 	@JsonCreator
-	public LibInstallCallbackHandler(@JacksonInject RESTService selfService,
+	public LibInstallCallbackHandler(@JacksonInject SelfServiceHelper selfServiceHelper,
 									 @JsonProperty("action") DockerAction action,
 									 @JsonProperty("uuid") String uuid, @JsonProperty("user") String user,
 									 @JsonProperty("dto") LibraryInstallDTO dto) {
-		super(selfService, user, uuid, action);
+		super(selfServiceHelper, user, uuid, action);
 		this.dto = dto;
 	}
 

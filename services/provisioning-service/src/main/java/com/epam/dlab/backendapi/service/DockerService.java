@@ -20,7 +20,6 @@ import com.epam.dlab.backendapi.ProvisioningServiceApplicationConfiguration;
 import com.epam.dlab.backendapi.core.commands.CommandBuilder;
 import com.epam.dlab.backendapi.core.commands.ICommandExecutor;
 import com.epam.dlab.backendapi.core.response.folderlistener.FolderListenerExecutor;
-import com.epam.dlab.rest.client.RESTService;
 import com.google.inject.Inject;
 
 public abstract class DockerService {
@@ -34,6 +33,6 @@ public abstract class DockerService {
     @Inject
     protected CommandBuilder commandBuilder;
     @Inject
-    protected RESTService selfService;
+	protected SelfServiceHelper selfServiceHelper;
 
 }

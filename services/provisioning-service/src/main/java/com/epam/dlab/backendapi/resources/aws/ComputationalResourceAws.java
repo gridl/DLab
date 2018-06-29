@@ -172,7 +172,7 @@ public class ComputationalResourceAws extends DockerService implements DockerCom
 	}
 
 	private FileHandlerCallback getFileHandlerCallback(DockerAction action, String uuid, ComputationalBase<?> dto) {
-		return new ComputationalCallbackHandler(computationalConfigure, selfService, action, uuid, dto);
+		return new ComputationalCallbackHandler(computationalConfigure, selfServiceHelper, action, uuid, dto);
 	}
 
 	private String nameContainer(String user, DockerAction action, String exploratoryName, String name) {

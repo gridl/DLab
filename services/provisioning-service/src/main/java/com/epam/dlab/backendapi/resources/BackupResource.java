@@ -22,8 +22,8 @@ import com.epam.dlab.backendapi.core.commands.ICommandExecutor;
 import com.epam.dlab.backendapi.core.commands.PythonBackupCommand;
 import com.epam.dlab.backendapi.core.response.folderlistener.FolderListenerExecutor;
 import com.epam.dlab.backendapi.core.response.handlers.BackupCallbackHandler;
+import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.backup.EnvBackupDTO;
-import com.epam.dlab.rest.client.RESTService;
 import com.epam.dlab.rest.contracts.ApiCallbacks;
 import com.epam.dlab.rest.contracts.BackupAPI;
 import com.google.inject.Inject;
@@ -50,13 +50,13 @@ public class BackupResource {
 	@Inject
 	protected ICommandExecutor commandExecutor;
 	@Inject
-	protected RESTService selfService;
+	protected SelfServiceHelper selfServiceHelper;
 
 
 	@POST
 	public Response createBackup(@Auth UserInfo ui, EnvBackupDTO dto) {
 		folderListenerExecutor.start(configuration.getBackupDirectory(), configuration.getProcessTimeout(),
-				new BackupCallbackHandler(selfService, ApiCallbacks.BACKUP_URI, ui.getName(), dto));
+				new BackupCallbackHandler(selfServiceHelper, ApiCallbacks.BACKUP_URI, ui.getName(), dto));
 		String command = new PythonBackupCommand(configuration.getBackupScriptPath())
 				.withConfig(dto.getConfigFiles())
 				.withJars(dto.getJars())

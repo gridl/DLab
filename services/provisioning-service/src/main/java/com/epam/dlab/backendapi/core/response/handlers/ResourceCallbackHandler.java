@@ -18,12 +18,12 @@
 
 package com.epam.dlab.backendapi.core.response.handlers;
 
-import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.StatusBaseDTO;
+import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.exceptions.DlabException;
-import com.epam.dlab.rest.client.RESTService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
@@ -48,7 +48,7 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
     private static final String OK_STATUS = "ok";
 
     @JsonIgnore
-    private final RESTService selfService;
+	private final SelfServiceHelper selfServiceHelper;
     @JsonProperty
     private final String user;
     @JsonProperty
@@ -59,16 +59,20 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
     private final Class<T> resultType;
 
     @SuppressWarnings("unchecked")
-    public ResourceCallbackHandler(RESTService selfService, String user, String uuid, DockerAction action) {
-        this.selfService = selfService;
+	public ResourceCallbackHandler(SelfServiceHelper selfServiceHelper,
+								   String user,
+								   String uuid, DockerAction action) {
+		this.selfServiceHelper = selfServiceHelper;
         this.user = user;
         this.uuid = uuid;
         this.action = action;
         this.resultType = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
-    public ResourceCallbackHandler(RESTService selfService, String user, String uuid, DockerAction action, Class<T> resultType) {
-        this.selfService = selfService;
+	public ResourceCallbackHandler(SelfServiceHelper selfServiceHelper,
+								   String user,
+								   String uuid, DockerAction action, Class<T> resultType) {
+		this.selfServiceHelper = selfServiceHelper;
         this.user = user;
         this.uuid = uuid;
         this.action = action;
@@ -93,18 +97,8 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
         return action;
     }
 
-    private void selfServicePost(T object) {
-        debugMessage("Send post request to self service {} for UUID {}, object is {}",
-                getCallbackURI(), uuid, object);
-        try {
-            selfService.post(getCallbackURI(), object, resultType);
-        } catch (Exception e) {
-            log.error("Send request or response error for UUID {}: {}", uuid, e.getLocalizedMessage(), e);
-            throw new DlabException("Send request or responce error for UUID " + uuid + ": " + e.getLocalizedMessage(), e);
-        }
-    }
-
     @Override
+	@SuppressWarnings("unchecked")
     public boolean handle(String fileName, byte[] content) throws Exception {
         debugMessage("Got file {} while waiting for UUID {}, for action {}, docker response: {}",
                 fileName, uuid, action.name(), new String(content));
@@ -122,7 +116,9 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
         }
         result = parseOutResponse(resultNode, result);
 
-        selfServicePost(result);
+		if (selfServiceHelper.isSelfServiceAlive()) {
+			selfServiceHelper.post(getCallbackURI(), uuid, result);
+		}
         return !UserInstanceStatus.FAILED.equals(status);
     }
 
@@ -130,10 +126,11 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
     @Override
     public void handleError(String errorMessage) {
         try {
-            selfServicePost((T) getBaseStatusDTO(UserInstanceStatus.FAILED)
-                    .withErrorMessage(errorMessage));
+			selfServiceHelper.post(getCallbackURI(), uuid,
+					getBaseStatusDTO(UserInstanceStatus.FAILED).withErrorMessage(errorMessage));
         } catch (Exception t) {
-            throw new DlabException("Could not send error message to Self Service for UUID " + uuid + ", user " + user + ": " + errorMessage, t);
+			throw new DlabException("Could not send error message to Self Service for UUID " + uuid + ", user " +
+					user + ": " + errorMessage, t);
         }
     }
 

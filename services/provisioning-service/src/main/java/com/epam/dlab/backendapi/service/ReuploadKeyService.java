@@ -67,7 +67,7 @@ public class ReuploadKeyService extends DockerService implements DockerCommands 
 	private void startCallbackListener(String userName, ReuploadKeyCallbackDTO dto) {
 		folderListenerExecutor.start(configuration.getKeyLoaderDirectory(),
 				configuration.getKeyLoaderPollTimeout(),
-				new ReuploadKeyCallbackHandler(selfService, ApiCallbacks.REUPLOAD_KEY_URI, userName, dto));
+				new ReuploadKeyCallbackHandler(selfServiceHelper, ApiCallbacks.REUPLOAD_KEY_URI, userName, dto));
 	}
 
 	@Override

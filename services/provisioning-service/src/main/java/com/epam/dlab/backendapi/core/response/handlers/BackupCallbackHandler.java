@@ -17,11 +17,10 @@
 package com.epam.dlab.backendapi.core.response.handlers;
 
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
+import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.backup.EnvBackupDTO;
 import com.epam.dlab.dto.backup.EnvBackupStatus;
 import com.epam.dlab.dto.backup.EnvBackupStatusDTO;
-import com.epam.dlab.exceptions.DlabException;
-import com.epam.dlab.rest.client.RESTService;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,8 +28,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.ws.rs.core.Response;
 
 @Slf4j
 public class BackupCallbackHandler implements FileHandlerCallback {
@@ -43,17 +40,17 @@ public class BackupCallbackHandler implements FileHandlerCallback {
 	private final String uuid;
 	@JsonProperty
 	private final EnvBackupDTO dto;
-	private final RESTService selfService;
+	private final SelfServiceHelper selfServiceHelper;
 	@JsonProperty
 	private final String callbackUrl;
 	@JsonProperty
 	private final String user;
 
 	@JsonCreator
-	public BackupCallbackHandler(@JacksonInject RESTService selfService,
+	public BackupCallbackHandler(@JacksonInject SelfServiceHelper selfServiceHelper,
 								 @JsonProperty("callbackUrl") String callbackUrl, @JsonProperty("user") String user,
 								 @JsonProperty("dto") EnvBackupDTO dto) {
-		this.selfService = selfService;
+		this.selfServiceHelper = selfServiceHelper;
 		this.uuid = dto.getId();
 		this.callbackUrl = callbackUrl;
 		this.user = user;
@@ -71,6 +68,7 @@ public class BackupCallbackHandler implements FileHandlerCallback {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public boolean handle(String fileName, byte[] content) throws Exception {
 		final String fileContent = new String(content);
 		log.debug("Got file {} while waiting for UUID {}, backup response: {}", fileName, uuid, fileContent);
@@ -85,19 +83,10 @@ public class BackupCallbackHandler implements FileHandlerCallback {
 			envBackupStatusDTO = buildBackupStatusDto(EnvBackupStatus.FAILED)
 					.withErrorMessage(jsonNode.get(ERROR_MESSAGE_FIELD).textValue());
 		}
-		selfServicePost(envBackupStatusDTO);
-		return EnvBackupStatus.CREATED == status;
-	}
-
-	private void selfServicePost(EnvBackupStatusDTO statusDTO) {
-		log.debug("Send post request to self service {} for UUID {}, object is {}", uuid, statusDTO);
-		try {
-			selfService.post(callbackUrl, statusDTO, Response.class);
-		} catch (Exception e) {
-			log.error("Send request or response error for UUID {}: {}", uuid, e.getLocalizedMessage(), e);
-			throw new DlabException("Send request or response error for UUID " + uuid + ": " + e.getLocalizedMessage()
-					, e);
+		if (selfServiceHelper.isSelfServiceAlive()) {
+			selfServiceHelper.post(callbackUrl, uuid, envBackupStatusDTO);
 		}
+		return EnvBackupStatus.CREATED == status;
 	}
 
 	@Override

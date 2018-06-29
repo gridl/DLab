@@ -22,6 +22,7 @@ import com.epam.dlab.backendapi.core.response.handlers.ExploratoryCallbackHandle
 import com.epam.dlab.backendapi.core.response.handlers.LibListCallbackHandler;
 import com.epam.dlab.backendapi.core.response.handlers.ResourceCallbackHandler;
 import com.epam.dlab.cloud.CloudProvider;
+import com.epam.dlab.rest.SelfServiceHelperMock;
 import com.epam.dlab.rest.client.RESTServiceMock;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -68,7 +69,8 @@ public class CommandExecutorMockTest {
     	exec.getResultSync();
 
     	RESTServiceMock selfService = new RESTServiceMock();
-    	ExploratoryCallbackHandler handler = new ExploratoryCallbackHandler(selfService, action,
+		SelfServiceHelperMock selfServiceHelper = new SelfServiceHelperMock(selfService);
+		ExploratoryCallbackHandler handler = new ExploratoryCallbackHandler(selfServiceHelper, action,
     			getRequestId(exec), getEdgeUserName(exec), getExploratoryName(exec));
     	handler.handle(exec.getResponseFileName(), Files.readAllBytes(Paths.get(exec.getResponseFileName())));
 
@@ -86,6 +88,7 @@ public class CommandExecutorMockTest {
 		exec.getResultSync();
 
 		RESTServiceMock selfService = new RESTServiceMock();
+		SelfServiceHelperMock selfServiceHelper = new SelfServiceHelperMock(selfService);
 		if (action == DockerAction.LIB_INSTALL) {
 			throw new Exception("Unimplemented action " + action);
 		}
@@ -96,7 +99,8 @@ public class CommandExecutorMockTest {
 				new LibListCallbackHandler(selfService, action,
 				getRequestId(exec), getEdgeUserName(exec), getExploratoryName(exec));
 		*/
-		ResourceCallbackHandler<?> handler = new LibListCallbackHandler(selfService, action, getRequestId(exec), getEdgeUserName(exec), getExploratoryName(exec));
+		ResourceCallbackHandler<?> handler = new LibListCallbackHandler(selfServiceHelper, action, getRequestId(exec),
+				getEdgeUserName(exec), getExploratoryName(exec));
 
 		handler.handle(exec.getResponseFileName(), Files.readAllBytes(Paths.get(exec.getResponseFileName())));
 

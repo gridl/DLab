@@ -21,8 +21,8 @@ import com.epam.dlab.backendapi.core.Directories;
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
 import com.epam.dlab.backendapi.core.commands.*;
 import com.epam.dlab.backendapi.core.response.folderlistener.FolderListenerExecutor;
+import com.epam.dlab.backendapi.service.SelfServiceHelper;
 import com.epam.dlab.dto.ResourceSysBaseDTO;
-import com.epam.dlab.rest.client.RESTService;
 import com.epam.dlab.rest.contracts.KeyAPI;
 import com.epam.dlab.util.UsernameUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,7 +35,7 @@ public abstract class EdgeService implements DockerCommands {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Inject
-	protected RESTService selfService;
+	protected SelfServiceHelper selfServiceHelper;
 	@Inject
 	private ProvisioningServiceApplicationConfiguration configuration;
 	@Inject

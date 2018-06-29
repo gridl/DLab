@@ -16,18 +16,17 @@
 
 package com.epam.dlab.backendapi.core.response.handlers;
 
-import com.epam.dlab.backendapi.ProvisioningServiceApplicationConfiguration;
 import com.epam.dlab.backendapi.core.Directories;
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
-import com.epam.dlab.backendapi.core.commands.*;
-import com.epam.dlab.backendapi.core.response.folderlistener.FolderListenerExecutor;
+import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.core.commands.DockerCommands;
+import com.epam.dlab.backendapi.core.commands.RunDockerCommand;
+import com.epam.dlab.backendapi.service.DockerService;
 import com.epam.dlab.dto.aws.computational.SparkComputationalCreateAws;
 import com.epam.dlab.dto.base.DataEngineType;
 import com.epam.dlab.dto.base.computational.ComputationalBase;
 import com.epam.dlab.dto.gcp.computational.SparkComputationalCreateGcp;
 import com.epam.dlab.exceptions.DlabException;
-import com.epam.dlab.rest.client.RESTService;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,17 +34,7 @@ import static com.epam.dlab.backendapi.core.commands.DockerAction.CONFIGURE;
 
 @Slf4j
 @Singleton
-public class ComputationalConfigure implements DockerCommands {
-	@Inject
-	private ProvisioningServiceApplicationConfiguration configuration;
-	@Inject
-	private FolderListenerExecutor folderListenerExecutor;
-	@Inject
-	private ICommandExecutor commandExecutor;
-	@Inject
-	private CommandBuilder commandBuilder;
-	@Inject
-	private RESTService selfService;
+public class ComputationalConfigure extends DockerService implements DockerCommands {
 
 	public String configure(String uuid, ComputationalBase<?> dto) {
 		switch (configuration.getCloudProvider()) {
@@ -104,7 +93,7 @@ public class ComputationalConfigure implements DockerCommands {
 
 	private FileHandlerCallback getFileHandlerCallback(DockerAction action, String originalUuid, ComputationalBase<?>
 			dto) {
-		return new ComputationalConfigureCallbackHandler(selfService, action, originalUuid, dto);
+		return new ComputationalConfigureCallbackHandler(selfServiceHelper, action, originalUuid, dto);
 	}
 
 	private String nameContainer(String user, DockerAction action, String exploratoryName, String name) {

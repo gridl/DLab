@@ -18,23 +18,24 @@ limitations under the License.
 
 package com.epam.dlab.backendapi.core.response.handlers;
 
-import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.service.SelfServiceHelper;
+import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.dto.exploratory.ExploratoryStatusDTO;
 import com.epam.dlab.dto.exploratory.ExploratoryURL;
-import com.epam.dlab.rest.client.RESTService;
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import static com.epam.dlab.rest.contracts.ApiCallbacks.EXPLORATORY;
-import static com.epam.dlab.rest.contracts.ApiCallbacks.STATUS_URI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.epam.dlab.rest.contracts.ApiCallbacks.EXPLORATORY;
+import static com.epam.dlab.rest.contracts.ApiCallbacks.STATUS_URI;
 
 public class ExploratoryCallbackHandler extends ResourceCallbackHandler<ExploratoryStatusDTO> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExploratoryCallbackHandler.class);
@@ -50,10 +51,11 @@ public class ExploratoryCallbackHandler extends ResourceCallbackHandler<Explorat
     private final String exploratoryName;
 
 	@JsonCreator
-    public ExploratoryCallbackHandler(@JacksonInject RESTService selfService, @JsonProperty("action") DockerAction action,
+	public ExploratoryCallbackHandler(@JacksonInject SelfServiceHelper selfServiceHelper,
+									  @JsonProperty("action") DockerAction action,
 									  @JsonProperty("uuid")String uuid, @JsonProperty("user") String user,
 									  @JsonProperty("exploratoryName") String exploratoryName) {
-        super(selfService, user, uuid, action);
+		super(selfServiceHelper, user, uuid, action);
         this.exploratoryName = exploratoryName;
     }
 

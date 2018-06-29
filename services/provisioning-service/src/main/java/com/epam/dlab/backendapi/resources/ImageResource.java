@@ -47,7 +47,7 @@ public class ImageResource extends DockerService implements DockerCommands {
 		final String uuid = DockerCommands.generateUUID();
 
 		folderListenerExecutor.start(configuration.getImagesDirectory(), configuration.getResourceStatusPollTimeout(),
-				new ImageCreateCallbackHandler(selfService, uuid,
+				new ImageCreateCallbackHandler(selfServiceHelper, uuid,
 						DockerAction.CREATE_IMAGE, image));
 		String command = commandBuilder.buildCommand(getDockerCommand(DockerAction.CREATE_IMAGE, uuid, image), image);
 		commandExecutor.executeAsync(ui.getName(), uuid, command);

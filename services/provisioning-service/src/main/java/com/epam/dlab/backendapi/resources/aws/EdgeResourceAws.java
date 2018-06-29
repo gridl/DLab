@@ -38,9 +38,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
-import static com.epam.dlab.rest.contracts.ApiCallbacks.EDGE;
-import static com.epam.dlab.rest.contracts.ApiCallbacks.KEY_LOADER;
-import static com.epam.dlab.rest.contracts.ApiCallbacks.STATUS_URI;
+import static com.epam.dlab.rest.contracts.ApiCallbacks.*;
 
 /**
  * Provides API to manage Edge node on AWS
@@ -85,7 +83,7 @@ public class EdgeResourceAws extends EdgeService {
 	@SuppressWarnings("unchecked")
 	protected FileHandlerCallback getFileHandlerCallback(DockerAction action, String uuid, String user, String
 			callbackURI) {
-		return new EdgeCallbackHandler(selfService, action, uuid, user, callbackURI, EdgeInfoAws.class,
+		return new EdgeCallbackHandler(selfServiceHelper, action, uuid, user, callbackURI, EdgeInfoAws.class,
 				UploadFileResult.class);
 	}
 }

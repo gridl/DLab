@@ -89,7 +89,8 @@ public class FileSystemCallbackHandlerDao implements CallbackHandlerDao {
 	private void saveToFile(PersistentFileHandler handlerCallback, String fileName, String absolutePath) {
 		try {
 			log.trace("Persisting callback handler to file {}", absolutePath);
-			Files.write(Paths.get(absolutePath), mapper.writeValueAsBytes(handlerCallback), StandardOpenOption.CREATE);
+			Files.write(Paths.get(absolutePath), mapper.writerWithDefaultPrettyPrinter()
+					.writeValueAsBytes(handlerCallback), StandardOpenOption.CREATE);
 		} catch (Exception e) {
 			log.warn("Can not persist file handler {} due to {}", fileName, e.getMessage());
 		}
@@ -101,6 +102,7 @@ public class FileSystemCallbackHandlerDao implements CallbackHandlerDao {
 
 	private Optional<PersistentFileHandler> toPersistentFileHandler(Path path) {
 		try {
+			log.debug("In persistent method...");
 			return Optional.of(mapper.readValue(path.toFile(), PersistentFileHandler.class));
 		} catch (Exception e) {
 			log.warn("Can not deserialize file handler from file: {}", path.toString());

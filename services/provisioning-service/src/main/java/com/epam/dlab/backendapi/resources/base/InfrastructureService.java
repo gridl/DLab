@@ -16,18 +16,17 @@
 
 package com.epam.dlab.backendapi.resources.base;
 
-import com.epam.dlab.backendapi.ProvisioningServiceApplicationConfiguration;
 import com.epam.dlab.backendapi.core.Directories;
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
-import com.epam.dlab.backendapi.core.commands.*;
-import com.epam.dlab.backendapi.core.response.folderlistener.FolderListenerExecutor;
+import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.core.commands.DockerCommands;
+import com.epam.dlab.backendapi.core.commands.RunDockerCommand;
 import com.epam.dlab.backendapi.core.response.handlers.ResourcesStatusCallbackHandler;
+import com.epam.dlab.backendapi.service.DockerService;
 import com.epam.dlab.dto.UserEnvironmentResources;
 import com.epam.dlab.dto.status.EnvResource;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.process.model.ProcessInfo;
-import com.epam.dlab.rest.client.RESTService;
-import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,17 +38,7 @@ import static com.epam.dlab.backendapi.core.commands.DockerAction.STATUS;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
-public abstract class InfrastructureService implements DockerCommands {
-	@Inject
-	private RESTService selfService;
-	@Inject
-	private ProvisioningServiceApplicationConfiguration configuration;
-	@Inject
-	private FolderListenerExecutor folderListenerExecutor;
-	@Inject
-	private ICommandExecutor commandExecutor;
-	@Inject
-	private CommandBuilder commandBuilder;
+public abstract class InfrastructureService extends DockerService implements DockerCommands {
 
 	private static final String CONTAINER_NAME_REGEX_FORMAT = "%s_[^_\\W]+_%s(|_%s)_\\d+";
 
@@ -135,7 +124,7 @@ public abstract class InfrastructureService implements DockerCommands {
 	}
 
 	protected FileHandlerCallback getFileHandlerCallback(DockerAction action, String uuid, String user) {
-		return new ResourcesStatusCallbackHandler(selfService, action, uuid, user);
+		return new ResourcesStatusCallbackHandler(selfServiceHelper, action, uuid, user);
 	}
 
 	private String nameContainer(String user, DockerAction action, String name) {

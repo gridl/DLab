@@ -19,11 +19,12 @@ package com.epam.dlab.backendapi.resources;
 import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.core.Directories;
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
-import com.epam.dlab.backendapi.core.commands.*;
+import com.epam.dlab.backendapi.core.commands.DockerAction;
+import com.epam.dlab.backendapi.core.commands.DockerCommands;
+import com.epam.dlab.backendapi.core.commands.RunDockerCommand;
 import com.epam.dlab.backendapi.core.response.handlers.LibInstallCallbackHandler;
 import com.epam.dlab.backendapi.core.response.handlers.LibListCallbackHandler;
 import com.epam.dlab.backendapi.service.DockerService;
-import com.epam.dlab.backendapi.core.commands.DockerAction;
 import com.epam.dlab.dto.LibListComputationalDTO;
 import com.epam.dlab.dto.base.DataEngineType;
 import com.epam.dlab.dto.exploratory.ExploratoryActionDTO;
@@ -145,10 +146,11 @@ public class LibraryResource extends DockerService implements DockerCommands {
                                                                   ExploratoryBaseDTO<?> dto) {
         switch (action) {
             case LIB_INSTALL:
-                return new LibInstallCallbackHandler(selfService, action, uuid, dto.getCloudSettings().getIamUser(),
+				return new LibInstallCallbackHandler(selfServiceHelper, action, uuid, dto.getCloudSettings()
+						.getIamUser(),
                         (LibraryInstallDTO) dto);
             case LIB_LIST:
-                return new LibListCallbackHandler(selfService, DockerAction.LIB_LIST, uuid,
+				return new LibListCallbackHandler(selfServiceHelper, DockerAction.LIB_LIST, uuid,
                         dto.getCloudSettings().getIamUser(), dto.getNotebookImage());
             default:
                 throw new IllegalArgumentException("Unknown action " + action);
@@ -158,10 +160,10 @@ public class LibraryResource extends DockerService implements DockerCommands {
     private FileHandlerCallback getFileHandlerCallbackComputational(DockerAction action, String uuid, ExploratoryBaseDTO<?> dto) {
         switch (action) {
             case LIB_LIST:
-                return new LibListCallbackHandler(selfService, action, uuid,
+				return new LibListCallbackHandler(selfServiceHelper, action, uuid,
                         dto.getCloudSettings().getIamUser(), ((LibListComputationalDTO) dto).getLibCacheKey());
             case LIB_INSTALL:
-                return new LibInstallCallbackHandler(selfService, action, uuid,
+				return new LibInstallCallbackHandler(selfServiceHelper, action, uuid,
                         dto.getCloudSettings().getIamUser(), ((LibraryInstallDTO) dto));
 
             default:
