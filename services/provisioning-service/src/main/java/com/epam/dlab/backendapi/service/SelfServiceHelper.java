@@ -51,13 +51,14 @@ public class SelfServiceHelper<T extends StatusBaseDTO<?>> {
 	private ProvisioningServiceApplicationConfiguration configuration;
 	@Inject
 	private RESTService selfService;
+	@Inject
+	private ObjectMapper mapper;
 
 	public boolean isSelfServiceAlive() {
 		if (Objects.isNull(healthCheckUrl)) {
 			healthCheckUrl = getHealthCheckUrl();
 		}
 		HttpClient client = HttpClientBuilder.create().build();
-		ObjectMapper mapper = new ObjectMapper();
 		HttpGet request = new HttpGet(healthCheckUrl);
 		HttpResponse response;
 		try {
@@ -82,16 +83,15 @@ public class SelfServiceHelper<T extends StatusBaseDTO<?>> {
 			selfService.post(url, object, Response.class);
 		} catch (Exception e) {
 			log.error("Send request or response error for UUID {}: {}", uuid, e.getLocalizedMessage(), e);
-			throw new DlabException("Send request or responce error for UUID " + uuid + ": " + e.getLocalizedMessage()
-					, e);
+			throw new DlabException("Send request or responce error for UUID " + uuid + ": " +
+					e.getLocalizedMessage(), e);
 		}
 	}
 
 	private String getHealthCheckUrl() {
-		ConnectorFactory connectorFactory =
-				((DefaultServerFactory) configuration.getServerFactory()).getAdminConnectors().stream().findAny()
-						.orElseThrow(() -> new DlabException("Admin connector is not defined in current configuration" +
-								"."));
+		ConnectorFactory connectorFactory = ((DefaultServerFactory) configuration.getServerFactory())
+				.getAdminConnectors().stream().findAny().orElseThrow(() ->
+						new DlabException("Admin connector is not defined in current configuration."));
 		Class<? extends ConnectorFactory> clazz = connectorFactory.getClass();
 		String type = clazz.isAnnotationPresent(JsonTypeName.class) ?
 				clazz.getAnnotation(JsonTypeName.class).value() : clazz.getName();

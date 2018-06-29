@@ -46,9 +46,9 @@ import java.util.concurrent.TimeUnit;
 public class SelfServiceReplier implements Managed {
 
 	private static final String EXCEPTION_MSG = "An exception occured: {}";
-	private HttpClient client = HttpClientBuilder.create().build();
-	private final ObjectMapper mapper = new ObjectMapper();
 
+	@Inject
+	private ObjectMapper mapper;
 	@Inject
 	private ProvisioningServiceApplicationConfiguration configuration;
 
@@ -97,6 +97,7 @@ public class SelfServiceReplier implements Managed {
 
 	private boolean isSelfServiceAlive() {
 		final String healthCheckUrl = getHealthCheckUrl();
+		HttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(healthCheckUrl);
 		HttpResponse response;
 		try {

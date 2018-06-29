@@ -102,7 +102,6 @@ public class FileSystemCallbackHandlerDao implements CallbackHandlerDao {
 
 	private Optional<PersistentFileHandler> toPersistentFileHandler(Path path) {
 		try {
-			log.debug("In persistent method...");
 			return Optional.of(mapper.readValue(path.toFile(), PersistentFileHandler.class));
 		} catch (Exception e) {
 			log.warn("Can not deserialize file handler from file: {}", path.toString());
