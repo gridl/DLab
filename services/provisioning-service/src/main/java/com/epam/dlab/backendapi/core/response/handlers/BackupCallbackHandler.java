@@ -19,6 +19,7 @@ package com.epam.dlab.backendapi.core.response.handlers;
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
 import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
+import com.epam.dlab.dto.PersistentStatusDto;
 import com.epam.dlab.dto.backup.EnvBackupDTO;
 import com.epam.dlab.dto.backup.EnvBackupStatus;
 import com.epam.dlab.dto.backup.EnvBackupStatusDTO;
@@ -91,7 +92,7 @@ public class BackupCallbackHandler implements FileHandlerCallback {
 		if (selfServiceHelper.isSelfServiceAlive()) {
 			selfServiceHelper.post(callbackUrl, uuid, envBackupStatusDTO);
 		} else {
-			infrastructureCallbackHandlerService.saveObjectData(uuid);
+			infrastructureCallbackHandlerService.save(new PersistentStatusDto(envBackupStatusDTO, callbackUrl, uuid));
 		}
 		return EnvBackupStatus.CREATED == status;
 	}

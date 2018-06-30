@@ -1,0 +1,48 @@
+/*
+ *
+ *  * Copyright (c) 2018, EPAM SYSTEMS INC
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+package com.epam.dlab.dto;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class PersistentStatusDto {
+
+	private final StatusBaseDTO statusDto;
+	private final String callbackUrl;
+	private final String uuid;
+
+	@JsonCreator
+	public PersistentStatusDto(@JsonProperty("statusDto") StatusBaseDTO statusDto, @JsonProperty("callbackUrl")
+			String callbackUrl, @JsonProperty("uuid") String uuid) {
+		this.statusDto = statusDto;
+		this.callbackUrl = callbackUrl;
+		this.uuid = uuid;
+	}
+
+	public StatusBaseDTO getDto() {
+		return statusDto;
+	}
+
+	public String getCallbackUrl() {
+		return callbackUrl;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+}

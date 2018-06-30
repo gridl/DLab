@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 @Slf4j
 public class FileUtils {
@@ -48,24 +46,5 @@ public class FileUtils {
 		Path filePath = Paths.get(directory, filename).toAbsolutePath();
 		log.debug("Deleting file from {}", filePath.toString());
 		Files.deleteIfExists(filePath);
-	}
-
-	public static Optional<String> getIfExistsSimilar(String filename, String directory) {
-		try (final Stream<String> pathStream = Files.lines(Paths.get(directory))) {
-			return pathStream.filter(path -> path.contains(filename)).findAny();
-		} catch (IOException e) {
-			log.error("Problems occured with accessing directory {} due to: {}", directory, e.getLocalizedMessage());
-		}
-		return Optional.empty();
-	}
-
-	public static void copyFile(String sourcePath, String destPath) {
-		try {
-			log.debug("Copying file {} into directory {}...", sourcePath, destPath);
-			Files.copy(Paths.get(sourcePath), Paths.get(destPath));
-		} catch (IOException e) {
-			log.error("Problems occured with copying file {} into directory {} due to: {}", sourcePath, destPath,
-					e.getLocalizedMessage());
-		}
 	}
 }

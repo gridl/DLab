@@ -62,7 +62,8 @@ public class FileSystemCallbackHandlerDao implements CallbackHandlerDao {
 	@Override
 	public List<PersistentFileHandler> findAll() {
 		try (final Stream<Path> pathStream = Files.list(Paths.get(configuration.getHandlerDirectory()))) {
-			return pathStream.map(this::toPersistentFileHandler)
+			return pathStream.filter(Files::isRegularFile)
+					.map(this::toPersistentFileHandler)
 					.filter(Optional::isPresent)
 					.map(Optional::get)
 					.collect(toList());

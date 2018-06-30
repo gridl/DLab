@@ -3,6 +3,7 @@ package com.epam.dlab.backendapi.core.response.handlers;
 import com.epam.dlab.backendapi.core.FileHandlerCallback;
 import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
+import com.epam.dlab.dto.PersistentStatusDto;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyCallbackDTO;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyStatus;
 import com.epam.dlab.dto.reuploadkey.ReuploadKeyStatusDTO;
@@ -74,7 +75,8 @@ public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
 		if (selfServiceHelper.isSelfServiceAlive()) {
 			selfServiceHelper.post(callbackUrl, uuid, reuploadKeyStatusDTO);
 		} else {
-			infrastructureCallbackHandlerService.saveObjectData(uuid);
+			infrastructureCallbackHandlerService.save(new PersistentStatusDto(reuploadKeyStatusDTO, callbackUrl,
+					uuid));
 		}
 		return "ok".equals(status);
 	}

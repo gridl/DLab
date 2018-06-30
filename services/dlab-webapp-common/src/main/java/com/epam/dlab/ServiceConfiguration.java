@@ -24,6 +24,7 @@ import com.epam.dlab.mongo.MongoServiceFactory;
 import com.epam.dlab.rest.client.RESTServiceFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -41,7 +42,15 @@ public class ServiceConfiguration extends Configuration {
     @JsonProperty
     private boolean devMode = false;
 
-    @Valid
+	@NotEmpty
+	@JsonProperty
+	private String statusDtoDirectory;
+
+	@NotEmpty
+	@JsonProperty
+	private String handlerDirectory;
+
+	@Valid
     @NotNull
     @JsonProperty(ServiceConsts.MONGO_NAME)
     private MongoServiceFactory mongoFactory = new MongoServiceFactory();
@@ -68,6 +77,14 @@ public class ServiceConfiguration extends Configuration {
     public long getInactiveUserTimeoutMillSec() {
         return inactiveUserTimeoutMillSec;
     }
+
+	public String getHandlerDirectory() {
+		return handlerDirectory;
+	}
+
+	public String getStatusDtoDirectory() {
+		return statusDtoDirectory;
+	}
 
     /**
      * Returns <b>true</b> if service is a mock.

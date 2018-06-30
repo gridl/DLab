@@ -29,7 +29,6 @@ import com.epam.dlab.backendapi.resources.base.KeyResource;
 import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.RestoreCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
-import com.epam.dlab.backendapi.service.SelfServiceReplier;
 import com.epam.dlab.cloud.CloudModule;
 import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.process.model.DlabProcess;
@@ -91,7 +90,6 @@ public class ProvisioningServiceApplication extends Application<ProvisioningServ
 			environment.lifecycle().manage(injector.getInstance(RestoreCallbackHandlerService.class));
 		}
 		environment.lifecycle().manage(injector.getInstance(DockerWarmuper.class));
-		environment.lifecycle().manage(injector.getInstance(SelfServiceReplier.class));
 
 		JerseyEnvironment jersey = environment.jersey();
 		jersey.register(configuration.getCloudProvider());

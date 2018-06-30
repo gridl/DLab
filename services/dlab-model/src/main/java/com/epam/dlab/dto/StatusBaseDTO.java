@@ -20,11 +20,13 @@
 package com.epam.dlab.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 
 import java.util.Date;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 public abstract class StatusBaseDTO<T extends StatusBaseDTO<?>> {
 	@JsonProperty("request_id")
 	private String requestId;

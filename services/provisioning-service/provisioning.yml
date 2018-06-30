@@ -22,8 +22,6 @@ backupScriptPath: /opt/dlab/tmp/backup.py
 backupDirectory: /opt/dlab/tmp/result
 keyDirectory: ${KEYS_DIR}
 responseDirectory: /opt/dlab/tmp
-handlerDirectory: /opt/dlab/handlers
-handlerDaoDirectory: /opt/dlab/handlers/dao
 dockerLogDirectory: ${LOG_ROOT_DIR}
 warmupPollTimeout: 25s
 resourceStatusPollTimeout: 300m

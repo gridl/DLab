@@ -64,3 +64,6 @@ provisioningService:
 
 # Log out user on inactivity
 inactiveUserTimeoutMillSec: 7200000
+
+handlerDirectory: /opt/dlab/handlers
+statusDtoDirectory: /opt/dlab/handlers/dto

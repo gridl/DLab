@@ -22,6 +22,7 @@ import com.epam.dlab.backendapi.core.FileHandlerCallback;
 import com.epam.dlab.backendapi.core.commands.DockerAction;
 import com.epam.dlab.backendapi.service.InfrastructureCallbackHandlerService;
 import com.epam.dlab.backendapi.service.SelfServiceHelper;
+import com.epam.dlab.dto.PersistentStatusDto;
 import com.epam.dlab.dto.StatusBaseDTO;
 import com.epam.dlab.dto.UserInstanceStatus;
 import com.epam.dlab.exceptions.DlabException;
@@ -126,7 +127,7 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
 		if (selfServiceHelper.isSelfServiceAlive()) {
 			selfServiceHelper.post(getCallbackURI(), uuid, result);
 		} else {
-			infrastructureCallbackHandlerService.saveObjectData(uuid);
+			infrastructureCallbackHandlerService.save(new PersistentStatusDto(result, getCallbackURI(), uuid));
 		}
         return !UserInstanceStatus.FAILED.equals(status);
     }

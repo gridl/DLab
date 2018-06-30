@@ -36,7 +36,7 @@ public class DirectoriesCreator implements Managed {
 		createDirectory(configuration.getImagesDirectory());
 		createDirectory(configuration.getKeyLoaderDirectory());
 		createDirectory(configuration.getHandlerDirectory());
-		createDirectory(configuration.getHandlerDaoDirectory());
+		createDirectory(configuration.getStatusDtoDirectory());
 	}
 
 	private boolean createDirectory(String directory) {

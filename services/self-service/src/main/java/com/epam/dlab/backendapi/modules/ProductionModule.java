@@ -21,10 +21,7 @@ import com.epam.dlab.auth.SystemUserInfoService;
 import com.epam.dlab.auth.SystemUserInfoServiceImpl;
 import com.epam.dlab.backendapi.SelfServiceApplicationConfiguration;
 import com.epam.dlab.backendapi.auth.SelfServiceSecurityAuthorizer;
-import com.epam.dlab.backendapi.dao.BackupDao;
-import com.epam.dlab.backendapi.dao.BackupDaoImpl;
-import com.epam.dlab.backendapi.dao.ImageExploratoryDao;
-import com.epam.dlab.backendapi.dao.ImageExploratoryDaoImpl;
+import com.epam.dlab.backendapi.dao.*;
 import com.epam.dlab.backendapi.domain.EnvStatusListener;
 import com.epam.dlab.backendapi.domain.RequestId;
 import com.epam.dlab.backendapi.service.*;
@@ -79,5 +76,6 @@ public class ProductionModule extends ModuleBase<SelfServiceApplicationConfigura
 		bind(EdgeService.class).to(EdgeServiceImpl.class);
 		bind(ReuploadKeyService.class).to(ReuploadKeyServiceImpl.class);
 		bind(UserResourceService.class).to(UserResourceServiceImpl.class);
+		bind(StatusObjectDao.class).to(FileSystemStatusObjectDao.class);
 	}
 }

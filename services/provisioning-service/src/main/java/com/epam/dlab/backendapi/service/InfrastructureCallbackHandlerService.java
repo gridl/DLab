@@ -18,23 +18,48 @@
 package com.epam.dlab.backendapi.service;
 
 import com.epam.dlab.backendapi.ProvisioningServiceApplicationConfiguration;
-import com.epam.dlab.exceptions.ResourceNotFoundException;
-import com.epam.dlab.util.FileUtils;
+import com.epam.dlab.dto.PersistentStatusDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
+@Slf4j
 @Singleton
 public class InfrastructureCallbackHandlerService {
 
 	@Inject
 	private ProvisioningServiceApplicationConfiguration configuration;
+	@Inject
+	private ObjectMapper mapper;
 
-	public void saveObjectData(String uuid) {
-		String handlerDirectory = configuration.getHandlerDirectory();
-		String sourcePath = FileUtils.getIfExistsSimilar(uuid, handlerDirectory).orElseThrow(() ->
-				new ResourceNotFoundException("File with name which contains " + uuid + " not found in directory " +
-						handlerDirectory));
-		FileUtils.copyFile(sourcePath, configuration.getHandlerDaoDirectory());
+	public void save(PersistentStatusDto object) {
+		final String fileName = fileName(object);
+		final String absolutePath = getAbsolutePath(fileName);
+		saveToFile(object, fileName, absolutePath);
+	}
+
+	private void saveToFile(PersistentStatusDto object, String fileName, String absolutePath) {
+		try {
+			log.trace("Persisting status dto object to file {}", absolutePath);
+			Files.write(Paths.get(absolutePath), mapper.writerWithDefaultPrettyPrinter()
+					.writeValueAsBytes(object), StandardOpenOption.CREATE);
+		} catch (Exception e) {
+			log.warn("Can not save status dto object {} due to {}", fileName, e.getMessage());
+		}
+	}
+
+	private String fileName(PersistentStatusDto object) {
+		return object.getDto().getClass().getSimpleName() + "_" + object.getUuid() + ".json";
+	}
+
+	private String getAbsolutePath(String fileName) {
+		return configuration.getStatusDtoDirectory() + File.separator + fileName;
 	}
 
 }
