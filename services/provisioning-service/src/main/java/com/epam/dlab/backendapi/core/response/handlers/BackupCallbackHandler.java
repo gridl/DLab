@@ -92,7 +92,7 @@ public class BackupCallbackHandler implements FileHandlerCallback {
 		if (selfServiceHelper.isSelfServiceAlive()) {
 			selfServiceHelper.post(callbackUrl, uuid, envBackupStatusDTO);
 		} else {
-			infrastructureCallbackHandlerService.save(new PersistentStatusDto(envBackupStatusDTO, callbackUrl, uuid));
+			infrastructureCallbackHandlerService.save(new PersistentStatusDto(envBackupStatusDTO, callbackUrl));
 		}
 		return EnvBackupStatus.CREATED == status;
 	}

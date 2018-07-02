@@ -60,6 +60,8 @@ public class ProductionModule extends ModuleBase<SelfServiceApplicationConfigura
 		bind(RESTService.class).annotatedWith(Names.named(ServiceConsts.PROVISIONING_SERVICE_NAME))
 				.toInstance(configuration.getProvisioningFactory().build(environment, ServiceConsts
 						.PROVISIONING_SERVICE_NAME));
+		bind(RESTService.class).annotatedWith(Names.named(ServiceConsts.SELF_SERVICE_NAME))
+				.toInstance(configuration.getSelfFactory().build(environment, ServiceConsts.SELF_SERVICE_NAME));
 		bind(ImageExploratoryService.class).to(ImageExploratoryServiceImpl.class);
 		bind(ImageExploratoryDao.class).to(ImageExploratoryDaoImpl.class);
 		bind(BackupService.class).to(BackupServiceImpl.class);

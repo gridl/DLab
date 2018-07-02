@@ -18,10 +18,12 @@
 package com.epam.dlab.backendapi.service;
 
 import com.epam.dlab.backendapi.dao.StatusObjectDao;
+import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.dto.PersistentStatusDto;
 import com.epam.dlab.rest.client.RESTService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import io.dropwizard.lifecycle.Managed;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,6 +40,7 @@ public class RestoreResourceStatusService implements Managed {
 	private static final long TIMEOUT_SEC = 10L;
 
 	@Inject
+	@Named(ServiceConsts.SELF_SERVICE_NAME)
 	private RESTService selfService;
 	@Inject
 	private StatusObjectDao statusObjectDao;
@@ -72,8 +75,8 @@ public class RestoreResourceStatusService implements Managed {
 
 	private void repostAll(List<PersistentStatusDto> objects) {
 		log.info("Reposting all status dto objects to self-service...");
-		objects.forEach(persistentStatusDto ->
-				selfService.post(persistentStatusDto.getCallbackUrl(), persistentStatusDto.getDto(), Response.class));
+		objects.forEach(persistentStatusDto -> selfService.post(persistentStatusDto.getCallbackUrl(),
+				persistentStatusDto.getStatusDto(), Response.class));
 	}
 
 	private void removeAll(List<PersistentStatusDto> objects) {

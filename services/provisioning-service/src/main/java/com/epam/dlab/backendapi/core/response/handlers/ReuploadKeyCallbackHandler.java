@@ -75,8 +75,7 @@ public class ReuploadKeyCallbackHandler implements FileHandlerCallback {
 		if (selfServiceHelper.isSelfServiceAlive()) {
 			selfServiceHelper.post(callbackUrl, uuid, reuploadKeyStatusDTO);
 		} else {
-			infrastructureCallbackHandlerService.save(new PersistentStatusDto(reuploadKeyStatusDTO, callbackUrl,
-					uuid));
+			infrastructureCallbackHandlerService.save(new PersistentStatusDto(reuploadKeyStatusDTO, callbackUrl));
 		}
 		return "ok".equals(status);
 	}

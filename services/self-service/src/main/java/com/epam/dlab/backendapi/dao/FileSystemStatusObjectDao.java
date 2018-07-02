@@ -61,7 +61,8 @@ public class FileSystemStatusObjectDao implements StatusObjectDao {
 
 	@Override
 	public void remove(PersistentStatusDto object) {
-		String filename = object.getDto().getClass().getSimpleName() + "_" + object.getUuid() + ".json";
+		String filename = object.getStatusDto().getClass().getSimpleName() + "_" + object.getStatusDto().getRequestId()
+				+ ".json";
 		try {
 			Files.delete(Paths.get(getAbsolutePath(filename)));
 		} catch (Exception e) {

@@ -24,25 +24,19 @@ public class PersistentStatusDto {
 
 	private final StatusBaseDTO statusDto;
 	private final String callbackUrl;
-	private final String uuid;
 
 	@JsonCreator
 	public PersistentStatusDto(@JsonProperty("statusDto") StatusBaseDTO statusDto, @JsonProperty("callbackUrl")
-			String callbackUrl, @JsonProperty("uuid") String uuid) {
+			String callbackUrl) {
 		this.statusDto = statusDto;
 		this.callbackUrl = callbackUrl;
-		this.uuid = uuid;
 	}
 
-	public StatusBaseDTO getDto() {
+	public StatusBaseDTO getStatusDto() {
 		return statusDto;
 	}
 
 	public String getCallbackUrl() {
 		return callbackUrl;
-	}
-
-	public String getUuid() {
-		return uuid;
 	}
 }

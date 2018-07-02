@@ -55,7 +55,7 @@ public class InfrastructureCallbackHandlerService {
 	}
 
 	private String fileName(PersistentStatusDto object) {
-		return object.getDto().getClass().getSimpleName() + "_" + object.getUuid() + ".json";
+		return object.getStatusDto().getClass().getSimpleName() + "_" + object.getStatusDto().getRequestId() + ".json";
 	}
 
 	private String getAbsolutePath(String fileName) {

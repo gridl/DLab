@@ -127,7 +127,7 @@ public abstract class ResourceCallbackHandler<T extends StatusBaseDTO<?>> implem
 		if (selfServiceHelper.isSelfServiceAlive()) {
 			selfServiceHelper.post(getCallbackURI(), uuid, result);
 		} else {
-			infrastructureCallbackHandlerService.save(new PersistentStatusDto(result, getCallbackURI(), uuid));
+			infrastructureCallbackHandlerService.save(new PersistentStatusDto(result, getCallbackURI()));
 		}
         return !UserInstanceStatus.FAILED.equals(status);
     }
