@@ -36,7 +36,7 @@ def get_gcp_cred():
     credentials, project = google.auth.default()
     return(credentials, project)
 
-class GCPActions:
+class GCPMeta:
     def __init__(self, auth_type='service_account'):
         self.auth_type = auth_type
         self.project = os.environ['gcp_project_id']
