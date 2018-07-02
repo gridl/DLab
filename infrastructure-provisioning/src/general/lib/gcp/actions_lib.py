@@ -18,12 +18,9 @@
 
 from pprint import pprint
 from googleapiclient.discovery import build
-#from oauth2client.client import GoogleCredentials
-#from oauth2client.service_account import ServiceAccountCredentials
 from google.cloud import exceptions
 from google.cloud import storage
 from googleapiclient import errors
-#from google.oauth2 import service_account
 import google.auth
 from dlab.fab import *
 import google.auth
@@ -40,11 +37,11 @@ import dlab.fab
 import dlab.common_lib
 import backoff
 
+
 @backoff.on_exception(backoff.expo, SystemExit, max_tries=10)
 def get_gcp_cred():
     credentials, project = google.auth.default()
     return(credentials, project)
-
 
 class GCPActions:
     def __init__(self, auth_type='service_account'):
