@@ -464,12 +464,6 @@ class AzureActions:
                         network_interface_resource_id, resource_group_name, primary_disk_size, instance_type,
                         image_full_name, tags, user_name='', create_option='fromImage', disk_id='',
                         instance_storage_account_type='Premium_LRS', image_type='default'):
-        disk_tags1 = tags.copy()
-        disk_tags2 = tags.copy()
-        volume_postfix1 = '-volume-primary'
-        volume_postfix2 = '-volume-secondary'
-        disk_tags1['Name'] = disk_tags1['Name'] + volume_postfix1
-        disk_tags2['Name'] = disk_tags2['Name'] + volume_postfix2
         if image_type == 'pre-configured':
             image_id = meta_lib.AzureMeta().get_image(resource_group_name, image_full_name).id
         else:
@@ -497,7 +491,7 @@ class AzureActions:
                             'name': '{}-ssn-disk0'.format(service_base_name),
                             'create_option': 'fromImage',
                             'disk_size_gb': int(primary_disk_size),
-                            'tags': disk_tags1,
+                            'tags': tags,
                             'managed_disk': {
                                 'storage_account_type': instance_storage_account_type,
                             }
@@ -544,7 +538,7 @@ class AzureActions:
                                 'name': '{}-{}-edge-disk0'.format(service_base_name, user_name),
                                 'create_option': create_option,
                                 'disk_size_gb': int(primary_disk_size),
-                                'tags': disk_tags1,
+                                'tags': tags,
                                 'managed_disk': {
                                     'storage_account_type': instance_storage_account_type
                                 }
@@ -584,7 +578,7 @@ class AzureActions:
                                 'name': '{}-{}-edge-disk0'.format(service_base_name, user_name),
                                 'create_option': create_option,
                                 'disk_size_gb': int(primary_disk_size),
-                                'tags': disk_tags2,
+                                'tags': tags,
                                 'managed_disk': {
                                     'id': disk_id,
                                     'storage_account_type': instance_storage_account_type
@@ -613,7 +607,7 @@ class AzureActions:
                             'name': '{}-disk0'.format(instance_name),
                             'create_option': 'fromImage',
                             'disk_size_gb': int(primary_disk_size),
-                            'tags': disk_tags1,
+                            'tags': tags,
                             'managed_disk': {
                                 'storage_account_type': instance_storage_account_type
                             }
@@ -624,7 +618,9 @@ class AzureActions:
                                 'name': '{}-disk1'.format(instance_name),
                                 'create_option': 'empty',
                                 'disk_size_gb': 32,
-                                'tags': disk_tags2,
+                                'tags': {
+                                    'Name': '{}-disk1'.format(instance_name)
+                                },
                                 'managed_disk': {
                                     'storage_account_type': instance_storage_account_type
                                 }
@@ -641,7 +637,7 @@ class AzureActions:
                             'name': '{}-disk0'.format(instance_name),
                             'create_option': 'fromImage',
                             'disk_size_gb': int(primary_disk_size),
-                            'tags': disk_tags1,
+                            'tags': tags,
                             'managed_disk': {
                                 'storage_account_type': instance_storage_account_type
                             }
@@ -686,7 +682,7 @@ class AzureActions:
                             'name': '{}-disk0'.format(instance_name),
                             'create_option': 'fromImage',
                             'disk_size_gb': int(primary_disk_size),
-                            'tags': disk_tags1,
+                            'tags': tags,
                             'managed_disk': {
                                 'storage_account_type': instance_storage_account_type
                             }
@@ -705,7 +701,7 @@ class AzureActions:
                             'name': '{}-disk0'.format(instance_name),
                             'create_option': 'fromImage',
                             'disk_size_gb': int(primary_disk_size),
-                            'tags': disk_tags1,
+                            'tags': tags,
                             'managed_disk': {
                                 'storage_account_type': instance_storage_account_type
                             }
@@ -744,6 +740,7 @@ class AzureActions:
             result = self.compute_client.virtual_machines.create_or_update(
                 resource_group_name, instance_name, parameters
             ).wait()
+            AzureActions().tag_disks(resource_group_name, instance_name)
             return result
         except Exception as err:
             logging.info(
@@ -752,6 +749,15 @@ class AzureActions:
                                "error_message": str(err) + "\n Traceback: " + traceback.print_exc(
                                    file=sys.stdout)}))
             traceback.print_exc(file=sys.stdout)
+
+    def tag_disks(self, resource_group_name, instance_name):
+        postfix_list = ['-volume-primary', '-volume-secondary', '-volume-tertiary']
+        disk_list = meta_lib.AzureMeta().get_vm_disks(resource_group_name, instance_name)
+        for inx, disk in enumerate(disk_list):
+            tags_copy = disk.tags.copy()
+            tags_copy['Name'] = tags_copy['Name'] + postfix_list[inx]
+            disk.tags = tags_copy
+            self.compute_client.disks.create_or_update(resource_group_name, disk.name, disk)
 
     def stop_instance(self, resource_group_name, instance_name):
         try:
