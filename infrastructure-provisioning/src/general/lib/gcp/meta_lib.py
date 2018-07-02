@@ -20,6 +20,7 @@ from pprint import pprint
 from googleapiclient.discovery import build
 from google.cloud import storage
 from google.cloud import exceptions
+import google.auth
 from dlab.fab import *
 import actions_lib
 import os, re
