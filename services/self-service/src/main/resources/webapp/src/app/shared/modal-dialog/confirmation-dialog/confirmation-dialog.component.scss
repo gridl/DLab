@@ -16,8 +16,33 @@ limitations under the License.
 
 ****************************************************************************/
 
-export * from './keys-pipe';
-export * from './underscoreless-pipe';
-export * from './lib-sort-pipe';
-export * from './replace-breaks-pipe';
-export * from './highlight.pipe';
+.confirmation-dialog {
+  color: #718ba6;
+  p {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    margin-bottom: 10px;
+    &.info {
+      font-weight: 500;
+    }
+  }
+  .resources {
+    .cluster {
+      width: 45%;
+    }
+    .status {
+      width: 30%;
+    }
+    .scrolling-content {
+      max-height: 200px;
+    }
+  }
+  .empty-list {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    color: #35afd5;
+    padding: 15px;
+  }
+}
