@@ -65,5 +65,7 @@ provisioningService:
 # Log out user on inactivity
 inactiveUserTimeoutMillSec: 7200000
 
+# Switch on/off option for persisting/restoring callback handlers
+handlersPersistenceEnabled: true
 handlerDirectory: /opt/dlab/handlers
 statusDtoDirectory: /opt/dlab/handlers/dto

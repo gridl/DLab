@@ -15,7 +15,7 @@
  *  * limitations under the License.
  *
  */
-package com.epam.dlab.backendapi.service;
+package com.epam.dlab.backendapi.service.impl;
 
 import com.epam.dlab.backendapi.dao.StatusObjectDao;
 import com.epam.dlab.constants.ServiceConsts;
@@ -56,6 +56,7 @@ public class RestoreResourceStatusService implements Managed {
 				removeAll(objects);
 				log.info("Successfully reposted to self-service {} status dto objects.", objects.size());
 			});
+			executorService.shutdown();
 		}
 	}
 

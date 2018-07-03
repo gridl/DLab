@@ -24,7 +24,7 @@ import com.epam.dlab.backendapi.healthcheck.ProvisioningServiceHealthCheck;
 import com.epam.dlab.backendapi.modules.ModuleFactory;
 import com.epam.dlab.backendapi.resources.*;
 import com.epam.dlab.backendapi.resources.callback.*;
-import com.epam.dlab.backendapi.service.RestoreResourceStatusService;
+import com.epam.dlab.backendapi.service.impl.RestoreResourceStatusService;
 import com.epam.dlab.cloud.CloudModule;
 import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.migration.mongo.DlabMongoMigration;

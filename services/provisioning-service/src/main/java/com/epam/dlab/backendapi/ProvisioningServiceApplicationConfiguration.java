@@ -83,12 +83,7 @@ public class ProvisioningServiceApplicationConfiguration extends ServiceConfigur
 	private String backupScriptPath;
 	@JsonProperty
 	private String backupDirectory;
-	@JsonProperty
-	private boolean handlersPersistenceEnabled;
 
-	public boolean isHandlersPersistenceEnabled() {
-		return handlersPersistenceEnabled;
-	}
 
 	public String getKeyDirectory() {
 		return keyDirectory;

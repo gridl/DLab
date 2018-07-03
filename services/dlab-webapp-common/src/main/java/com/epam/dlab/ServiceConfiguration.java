@@ -44,6 +44,10 @@ public class ServiceConfiguration extends Configuration {
 
 	@NotEmpty
 	@JsonProperty
+	private boolean handlersPersistenceEnabled;
+
+	@NotEmpty
+	@JsonProperty
 	private String statusDtoDirectory;
 
 	@NotEmpty
@@ -70,13 +74,18 @@ public class ServiceConfiguration extends Configuration {
     @JsonProperty(ServiceConsts.SELF_SERVICE_NAME)
     private RESTServiceFactory selfFactory = new RESTServiceFactory();
 
-    public CloudProvider getCloudProvider() {
+
+	public CloudProvider getCloudProvider() {
         return cloudProvider;
     }
 
     public long getInactiveUserTimeoutMillSec() {
         return inactiveUserTimeoutMillSec;
     }
+
+	public boolean isHandlersPersistenceEnabled() {
+		return handlersPersistenceEnabled;
+	}
 
 	public String getHandlerDirectory() {
 		return handlerDirectory;
