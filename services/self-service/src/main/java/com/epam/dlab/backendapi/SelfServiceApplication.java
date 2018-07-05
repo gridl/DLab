@@ -24,6 +24,7 @@ import com.epam.dlab.backendapi.healthcheck.ProvisioningServiceHealthCheck;
 import com.epam.dlab.backendapi.modules.ModuleFactory;
 import com.epam.dlab.backendapi.resources.*;
 import com.epam.dlab.backendapi.resources.callback.*;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.cloud.CloudModule;
 import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.migration.mongo.DlabMongoMigration;
@@ -73,6 +74,7 @@ public class SelfServiceApplication extends Application<SelfServiceApplicationCo
 		bootstrap.addBundle(new TemplateConfigBundle(
 				new TemplateConfigBundleConfiguration().fileIncludePath(ServiceUtils.getConfPath())
 		));
+		bootstrap.addBundle(SwaggerConfigurator.getInstance());
 	}
 
 	@Override

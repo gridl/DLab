@@ -101,6 +101,13 @@ public class SelfServiceApplicationConfiguration extends ServiceConfiguration {
 	@JsonProperty
 	private int privateKeySize = 2048;
 
+	@JsonProperty
+	private String swaggerResourcePackages;
+
+	public String getSwaggerResourcePackages() {
+		return swaggerResourcePackages;
+	}
+
 	public boolean isGcpOuauth2AuthenticationEnabled() {
 		return gcpOuauth2AuthenticationEnabled;
 	}

@@ -24,12 +24,14 @@ import com.epam.dlab.backendapi.resources.dto.aws.AwsComputationalCreateForm;
 import com.epam.dlab.backendapi.roles.RoleType;
 import com.epam.dlab.backendapi.roles.UserRoles;
 import com.epam.dlab.backendapi.service.ComputationalService;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.dto.aws.computational.AwsComputationalResource;
 import com.epam.dlab.dto.base.DataEngineType;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.rest.contracts.ComputationalAPI;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Valid;
@@ -47,6 +49,9 @@ import static com.epam.dlab.dto.UserInstanceStatus.CREATING;
 @Path("/infrastructure_provision/computational_resources")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = "Service for computational resources on AWS",
+		authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+				@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 @Slf4j
 public class ComputationalResourceAws implements ComputationalAPI {
 
@@ -66,7 +71,10 @@ public class ComputationalResourceAws implements ComputationalAPI {
 	 */
 	@PUT
 	@Path("dataengine-service")
-	public Response createDataEngineService(@Auth UserInfo userInfo, @Valid @NotNull AwsComputationalCreateForm form) {
+	@ApiOperation(value = "Creates EMR cluster on AWS")
+	@ApiResponses(value = @ApiResponse(code = 302, message = "EMR cluster on AWS has not been created"))
+	public Response createDataEngineService(@Auth UserInfo userInfo,
+											@Valid @NotNull AwsComputationalCreateForm form) {
 
 		log.debug("Create computational resources for {} | form is {}", userInfo.getName(), form);
 
@@ -103,6 +111,8 @@ public class ComputationalResourceAws implements ComputationalAPI {
 
 	@PUT
 	@Path("dataengine")
+	@ApiOperation(value = "Creates Spark cluster on AWS")
+	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on AWS has not been created"))
 	public Response createDataEngine(@Auth UserInfo userInfo, @Valid @NotNull SparkStandaloneClusterCreateForm form) {
 		log.debug("Create computational resources for {} | form is {}", userInfo.getName(), form);
 
@@ -126,8 +136,12 @@ public class ComputationalResourceAws implements ComputationalAPI {
 	 */
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/terminate")
+	@ApiOperation(value = "Terminates computational resource (EMR/Spark cluster) on AWS")
 	public Response terminate(@Auth UserInfo userInfo,
+							  @ApiParam(value = "Notebook's name corresponding to computational resource",
+									  required = true)
 							  @PathParam("exploratoryName") String exploratoryName,
+							  @ApiParam(value = "Computational resource's name for terminating", required = true)
 							  @PathParam("computationalName") String computationalName) {
 		log.debug("Terminating computational resource {} for user {}", computationalName, userInfo.getName());
 
@@ -146,8 +160,11 @@ public class ComputationalResourceAws implements ComputationalAPI {
 	 */
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/stop")
+	@ApiOperation(value = "Stops Spark cluster on AWS")
 	public Response stop(@Auth UserInfo userInfo,
+						 @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						 @PathParam("exploratoryName") String exploratoryName,
+						 @ApiParam(value = "Spark cluster's name for stopping", required = true)
 						 @PathParam("computationalName") String computationalName) {
 		log.debug("Stopping computational resource {} for user {}", computationalName, userInfo.getName());
 
@@ -166,8 +183,11 @@ public class ComputationalResourceAws implements ComputationalAPI {
 	 */
 	@PUT
 	@Path("/{exploratoryName}/{computationalName}/start")
+	@ApiOperation(value = "Starts Spark cluster on AWS")
 	public Response start(@Auth UserInfo userInfo,
+						  @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						  @PathParam("exploratoryName") String exploratoryName,
+						  @ApiParam(value = "Spark cluster's name for starting", required = true)
 						  @PathParam("computationalName") String computationalName) {
 		log.debug("Starting computational resource {} for user {}", computationalName, userInfo.getName());
 
