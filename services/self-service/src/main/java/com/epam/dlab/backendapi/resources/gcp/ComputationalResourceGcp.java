@@ -23,12 +23,14 @@ import com.epam.dlab.backendapi.resources.dto.gcp.GcpComputationalCreateForm;
 import com.epam.dlab.backendapi.roles.RoleType;
 import com.epam.dlab.backendapi.roles.UserRoles;
 import com.epam.dlab.backendapi.service.ComputationalService;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.dto.base.DataEngineType;
 import com.epam.dlab.dto.gcp.computational.GcpComputationalResource;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.rest.contracts.ComputationalAPI;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Valid;
@@ -46,6 +48,9 @@ import static com.epam.dlab.dto.UserInstanceStatus.CREATING;
 @Path("/infrastructure_provision/computational_resources")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = "Service for computational resources on GCP",
+		authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+				@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 @Slf4j
 public class ComputationalResourceGcp implements ComputationalAPI {
 
@@ -65,6 +70,8 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	 */
 	@PUT
 	@Path("dataengine-service")
+	@ApiOperation(value = "Creates Dataproc cluster on GCP")
+	@ApiResponses(value = @ApiResponse(code = 302, message = "Dataproc cluster on GCP has not been created"))
 	public Response createDataEngineService(@Auth UserInfo userInfo, @Valid @NotNull GcpComputationalCreateForm
 			formDTO) {
 
@@ -101,6 +108,8 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	 */
 	@PUT
 	@Path("dataengine")
+	@ApiOperation(value = "Creates Spark cluster on GCP")
+	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on GCP has not been created"))
 	public Response createDataEngine(@Auth UserInfo userInfo, @Valid @NotNull SparkStandaloneClusterCreateForm form) {
 		log.debug("Create computational resources for {} | form is {}", userInfo.getName(), form);
 
@@ -125,8 +134,12 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	 */
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/terminate")
+	@ApiOperation(value = "Terminates computational resource (Dataproc/Spark cluster) on GCP")
 	public Response terminate(@Auth UserInfo userInfo,
+							  @ApiParam(value = "Notebook's name corresponding to computational resource",
+									  required = true)
 							  @PathParam("exploratoryName") String exploratoryName,
+							  @ApiParam(value = "Computational resource's name for terminating", required = true)
 							  @PathParam("computationalName") String computationalName) {
 		log.debug("Terminating computational resource {} for user {}", computationalName, userInfo.getName());
 
@@ -145,8 +158,11 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	 */
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/stop")
+	@ApiOperation(value = "Stops Spark cluster on GCP")
 	public Response stop(@Auth UserInfo userInfo,
+						 @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						 @PathParam("exploratoryName") String exploratoryName,
+						 @ApiParam(value = "Spark cluster's name for stopping", required = true)
 						 @PathParam("computationalName") String computationalName) {
 		log.debug("Stopping computational resource {} for user {}", computationalName, userInfo.getName());
 
@@ -165,8 +181,11 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	 */
 	@PUT
 	@Path("/{exploratoryName}/{computationalName}/start")
+	@ApiOperation(value = "Starts Spark cluster on GCP")
 	public Response start(@Auth UserInfo userInfo,
+						  @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						  @PathParam("exploratoryName") String exploratoryName,
+						  @ApiParam(value = "Spark cluster's name for starting", required = true)
 						  @PathParam("computationalName") String computationalName) {
 		log.debug("Starting computational resource {} for user {}", computationalName, userInfo.getName());
 

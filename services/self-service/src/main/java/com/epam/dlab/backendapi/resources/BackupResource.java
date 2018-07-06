@@ -20,10 +20,12 @@ import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.domain.RequestId;
 import com.epam.dlab.backendapi.resources.dto.BackupFormDTO;
 import com.epam.dlab.backendapi.service.BackupService;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.backendapi.util.RequestBuilder;
 import com.epam.dlab.dto.backup.EnvBackupDTO;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.security.RolesAllowed;
@@ -37,6 +39,8 @@ import java.util.UUID;
 @Slf4j
 @Path("/infrastructure/backup")
 @RolesAllowed("/api/infrastructure/backup")
+@Api(value = "Backup service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 public class BackupResource {
 
 	private final BackupService backupService;
@@ -53,6 +57,8 @@ public class BackupResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
+	@ApiOperation(value = "Creates backup")
+	@ApiResponses(value = @ApiResponse(code = 202, message = "Backup has been created"))
 	public Response createBackup(@Auth UserInfo userInfo, @Valid BackupFormDTO backupFormDTO) {
 		log.debug("Creating backup for user {} with parameters {}", userInfo.getName(), backupFormDTO);
 		final EnvBackupDTO dto = requestBuilder.newBackupCreate(backupFormDTO, UUID.randomUUID().toString());
@@ -64,6 +70,8 @@ public class BackupResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Fetches all backups")
+	@ApiResponses(value = @ApiResponse(code = 400, message = "Invalid user's name"))
 	public Response getBackups(@Auth UserInfo userInfo) {
 		log.debug("Getting backups for user {}", userInfo.getName());
 		return Response.ok(backupService.getBackups(userInfo.getName())).build();
@@ -72,7 +80,11 @@ public class BackupResource {
 	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getBackup(@Auth UserInfo userInfo, @PathParam("id") String id) {
+	@ApiOperation(value = "Fetches backup by ID")
+	@ApiResponses(value = @ApiResponse(code = 400, message = "Invalid user's name or ID"))
+	public Response getBackup(@Auth UserInfo userInfo,
+							  @ApiParam(value = "Backup's ID", required = true)
+							  @PathParam("id") String id) {
 		log.debug("Getting backup with id {} for user {}", id, userInfo.getName());
 		return Response.ok(backupService.getBackup(userInfo.getName(), id)).build();
 	}

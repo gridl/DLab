@@ -25,12 +25,14 @@ import com.epam.dlab.backendapi.resources.dto.SparkStandaloneClusterCreateForm;
 import com.epam.dlab.backendapi.roles.RoleType;
 import com.epam.dlab.backendapi.roles.UserRoles;
 import com.epam.dlab.backendapi.service.ComputationalService;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.rest.client.RESTService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.security.RolesAllowed;
@@ -46,6 +48,9 @@ import javax.ws.rs.core.Response;
 @Path("/infrastructure_provision/computational_resources")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = "Service for computational resources on Azure",
+		authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+				@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 @Slf4j
 public class ComputationalResourceAzure {
 
@@ -76,6 +81,8 @@ public class ComputationalResourceAzure {
 	@PUT
 	@Path("dataengine")
 	@RolesAllowed(UserSessionDurationAuthorizer.SHORT_USER_SESSION_DURATION)
+	@ApiOperation(value = "Creates Spark cluster on Azure")
+	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on Azure has not been created"))
 	public Response createDataEngine(@Auth UserInfo userInfo, @Valid @NotNull SparkStandaloneClusterCreateForm form) {
 		log.debug("Create computational resources for {} | form is {}", userInfo.getName(), form);
 
@@ -100,8 +107,12 @@ public class ComputationalResourceAzure {
 	 */
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/terminate")
+	@ApiOperation(value = "Terminates computational Spark cluster on Azure")
 	public Response terminate(@Auth UserInfo userInfo,
+							  @ApiParam(value = "Notebook's name corresponding to computational resource",
+									  required = true)
 							  @PathParam("exploratoryName") String exploratoryName,
+							  @ApiParam(value = "Spark cluster's name for terminating", required = true)
 							  @PathParam("computationalName") String computationalName) {
 
 		log.debug("Terminating computational resource {} for user {}", computationalName, userInfo.getName());
@@ -121,8 +132,11 @@ public class ComputationalResourceAzure {
 	 */
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/stop")
+	@ApiOperation(value = "Stops Spark cluster on Azure")
 	public Response stop(@Auth UserInfo userInfo,
+						 @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						 @PathParam("exploratoryName") String exploratoryName,
+						 @ApiParam(value = "Spark cluster's name for stopping", required = true)
 						 @PathParam("computationalName") String computationalName) {
 		log.debug("Stopping computational resource {} for user {}", computationalName, userInfo.getName());
 
@@ -141,8 +155,11 @@ public class ComputationalResourceAzure {
 	 */
 	@PUT
 	@Path("/{exploratoryName}/{computationalName}/start")
+	@ApiOperation(value = "Starts Spark cluster on Azure")
 	public Response start(@Auth UserInfo userInfo,
+						  @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						  @PathParam("exploratoryName") String exploratoryName,
+						  @ApiParam(value = "Spark cluster's name for starting", required = true)
 						  @PathParam("computationalName") String computationalName) {
 		log.debug("Starting computational resource {} for user {}", computationalName, userInfo.getName());
 

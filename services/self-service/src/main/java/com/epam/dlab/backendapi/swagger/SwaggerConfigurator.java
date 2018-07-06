@@ -49,7 +49,8 @@ public class SwaggerConfigurator extends SwaggerBundle<SelfServiceApplicationCon
 		SwaggerBundleConfiguration swaggerConfiguration = new SwaggerBundleConfiguration();
 		swaggerConfiguration.setResourcePackage(configuration.getSwaggerResourcePackages());
 		swaggerConfiguration.setTitle("DLab API");
-		swaggerConfiguration.setDescription("Essential toolset for analytics");
+		swaggerConfiguration.setDescription("Essential toolset for analytics. Deployed on " +
+				configuration.getCloudProvider().getName().toUpperCase());
 		swaggerConfiguration.setVersion("2.0");
 		swaggerConfiguration.setContact("DLab");
 		swaggerConfiguration.setContactUrl("http://dlab.opensource.epam.com/");

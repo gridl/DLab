@@ -18,8 +18,10 @@ package com.epam.dlab.backendapi.resources;
 
 import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.service.EnvironmentService;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -31,6 +33,8 @@ import javax.ws.rs.core.Response;
 @Path("environment")
 @Slf4j
 @RolesAllowed("environment/*")
+@Api(value = "Environment service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 public class EnvironmentResource {
 
 	private EnvironmentService environmentService;
@@ -43,6 +47,8 @@ public class EnvironmentResource {
 	@GET
 	@Path("user/active")
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Fetches active users")
+	@ApiResponses(value = @ApiResponse(code = 404, message = "Active users not found"))
 	public Response getUsersWithActiveEnv(@Auth UserInfo userInfo) {
 		log.debug("User {} requested information about active environments", userInfo.getName());
 		return Response.ok(environmentService.getActiveUsers()).build();
@@ -52,6 +58,7 @@ public class EnvironmentResource {
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("terminate")
+	@ApiOperation(value = "Terminates user's environment including EDGE, notebooks, clusters")
 	public Response terminateEnv(@Auth UserInfo userInfo, @NotEmpty String user) {
 		log.info("User {} is terminating {} environment", userInfo.getName(), user);
 		environmentService.terminateEnvironment(user);
@@ -62,6 +69,7 @@ public class EnvironmentResource {
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("stop")
+	@ApiOperation(value = "Stops user's environment including EDGE, notebooks, Spark clusters")
 	public Response stopEnv(@Auth UserInfo userInfo, @NotEmpty String user) {
 		log.info("User {} is stopping {} environment", userInfo.getName(), user);
 		environmentService.stopEnvironment(user);
