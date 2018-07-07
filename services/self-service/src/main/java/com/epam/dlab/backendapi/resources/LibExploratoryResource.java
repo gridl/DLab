@@ -24,6 +24,7 @@ import com.epam.dlab.backendapi.resources.dto.LibInfoRecord;
 import com.epam.dlab.backendapi.resources.dto.LibInstallFormDTO;
 import com.epam.dlab.backendapi.resources.dto.SearchLibsFormDTO;
 import com.epam.dlab.backendapi.service.LibraryService;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.dto.UserInstanceDTO;
 import com.epam.dlab.dto.exploratory.LibraryInstallDTO;
@@ -34,6 +35,10 @@ import com.epam.dlab.rest.contracts.ExploratoryAPI;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
@@ -54,6 +59,8 @@ import java.util.stream.Collectors;
 @Path("/infrastructure_provision/exploratory_environment")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = "Library service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 @Slf4j
 public class LibExploratoryResource {
 
@@ -82,8 +89,12 @@ public class LibExploratoryResource {
 	 */
 	@GET
 	@Path("/lib_groups")
+	@ApiOperation(value = "Returns the list of library groups for notebook or cluster")
 	public Iterable<String> getLibGroupList(@Auth UserInfo userInfo,
+											@ApiParam(value = "Notebook's name", required = true)
 											@QueryParam("exploratory_name") @NotBlank String exploratoryName,
+											@ApiParam(value = "Cluster's name", required = true, allowEmptyValue =
+													true)
 											@QueryParam("computational_name") String computationalName) {
 
 		log.trace("Loading list of lib groups for user {} and exploratory {}, computational {}", userInfo.getName(),
@@ -121,8 +132,11 @@ public class LibExploratoryResource {
 	 */
 	@GET
 	@Path("/lib_list")
+	@ApiOperation(value = "Returns the list of installed/failed libraries for notebook or cluster")
 	public List<Document> getLibList(@Auth UserInfo userInfo,
+									 @ApiParam(value = "Notebook's name", required = true)
 									 @QueryParam("exploratory_name") @NotBlank String exploratoryName,
+									 @ApiParam(value = "Cluster's name", required = true, allowEmptyValue = true)
 									 @QueryParam("computational_name") String computationalName) {
 
 		log.debug("Loading list of libraries for user {} and exploratory {} and computational {}", userInfo.getName(),
@@ -149,7 +163,9 @@ public class LibExploratoryResource {
 	 */
 	@GET
 	@Path("/lib_list/formatted")
+	@ApiOperation(value = "Returns formatted representation of installed/failed libraries for notebook")
 	public List<LibInfoRecord> getLibListFormatted(@Auth UserInfo userInfo,
+												   @ApiParam(value = "Notebook's name", required = true)
 												   @QueryParam("exploratory_name") @NotBlank String exploratoryName) {
 
 		log.debug("Loading formatted list of libraries for user {} and exploratory {}", userInfo.getName(),
@@ -173,6 +189,7 @@ public class LibExploratoryResource {
 	 */
 	@POST
 	@Path("/lib_install")
+	@ApiOperation(value = "Installs libraries on notebook or cluster")
 	public Response libInstall(@Auth UserInfo userInfo, @Valid @NotNull LibInstallFormDTO formDTO) {
 		log.debug("Installing libs to environment {} for user {}", formDTO, userInfo.getName());
 		try {
@@ -208,6 +225,7 @@ public class LibExploratoryResource {
 	 */
 	@POST
 	@Path("search/lib_list")
+	@ApiOperation(value = "Returns the list of available libraries for notebook basing on search conditions")
 	public Map<String, String> getLibList(@Auth UserInfo userInfo, @Valid @NotNull SearchLibsFormDTO formDTO) {
 		log.trace("Search list of libs for user {} with condition {}", userInfo.getName(), formDTO);
 		try {

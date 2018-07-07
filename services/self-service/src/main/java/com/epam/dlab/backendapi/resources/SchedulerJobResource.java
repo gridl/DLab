@@ -19,9 +19,14 @@ package com.epam.dlab.backendapi.resources;
 
 import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.service.SchedulerJobService;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.dto.SchedulerJobDTO;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.*;
@@ -34,6 +39,9 @@ import javax.ws.rs.core.Response;
 @Path("/infrastructure_provision/exploratory_environment/scheduler")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = "Service for scheduling operations with notebooks or clusters",
+		authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+				@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 @Slf4j
 public class SchedulerJobResource {
 
@@ -55,9 +63,12 @@ public class SchedulerJobResource {
 	 */
 	@POST
 	@Path("/{exploratoryName}")
+	@ApiOperation(value = "Updates scheduler's data for notebook")
 	public Response updateExploratoryScheduler(@Auth UserInfo userInfo,
+											   @ApiParam(value = "Notebook's name", required = true)
 											   @PathParam("exploratoryName") String exploratoryName,
-											   SchedulerJobDTO dto) {
+											   @ApiParam(value = "Scheduler's data", required = true)
+													   SchedulerJobDTO dto) {
 		schedulerJobService.updateExploratorySchedulerData(userInfo.getName(), exploratoryName, dto);
 		return Response.ok().build();
 	}
@@ -74,10 +85,15 @@ public class SchedulerJobResource {
 	 */
 	@POST
 	@Path("/{exploratoryName}/{computationalName}")
+	@ApiOperation(value = "Updates scheduler's data for cluster")
 	public Response upsertComputationalScheduler(@Auth UserInfo userInfo,
+												 @ApiParam(value = "Notebook's name", required = true)
 												 @PathParam("exploratoryName") String exploratoryName,
+												 @ApiParam(value = "Cluster's name affiliated with notebook",
+														 required = true)
 												 @PathParam("computationalName") String computationalName,
-												 SchedulerJobDTO dto) {
+												 @ApiParam(value = "Scheduler's data", required = true)
+														 SchedulerJobDTO dto) {
 		schedulerJobService.updateComputationalSchedulerData(userInfo.getName(), exploratoryName,
 				computationalName, dto);
 		return Response.ok().build();
@@ -93,7 +109,9 @@ public class SchedulerJobResource {
 	 */
 	@GET
 	@Path("/{exploratoryName}")
+	@ApiOperation(value = "Returns scheduler's data for notebook")
 	public Response fetchSchedulerJobForUserAndExploratory(@Auth UserInfo userInfo,
+														   @ApiParam(value = "Notebook's name", required = true)
 														   @PathParam("exploratoryName") String exploratoryName) {
 		log.debug("Loading scheduler job for user {} and exploratory {}...", userInfo.getName(), exploratoryName);
 		final SchedulerJobDTO schedulerJob =
@@ -112,10 +130,15 @@ public class SchedulerJobResource {
 	 */
 	@GET
 	@Path("/{exploratoryName}/{computationalName}")
+	@ApiOperation(value = "Returns scheduler's data for cluster")
 	public Response fetchSchedulerJobForComputationalResource(@Auth UserInfo userInfo,
+															  @ApiParam(value = "Notebook's name", required = true)
 															  @PathParam("exploratoryName") String exploratoryName,
+															  @ApiParam(value = "Cluster's name affiliated with " +
+																	  "notebook",
+																	  required = true)
 															  @PathParam("computationalName") String
-																		  computationalName) {
+																	  computationalName) {
 		log.debug("Loading scheduler job for user {}, exploratory {} and computational resource {}...",
 				userInfo.getName(), exploratoryName, computationalName);
 		final SchedulerJobDTO schedulerJob = schedulerJobService

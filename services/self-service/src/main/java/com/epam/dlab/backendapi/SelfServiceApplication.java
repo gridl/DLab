@@ -24,6 +24,7 @@ import com.epam.dlab.backendapi.healthcheck.ProvisioningServiceHealthCheck;
 import com.epam.dlab.backendapi.modules.ModuleFactory;
 import com.epam.dlab.backendapi.resources.*;
 import com.epam.dlab.backendapi.resources.callback.*;
+import com.epam.dlab.backendapi.swagger.SwaggerAnnotationResolver;
 import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.cloud.CloudModule;
 import com.epam.dlab.constants.ServiceConsts;
@@ -92,6 +93,7 @@ public class SelfServiceApplication extends Application<SelfServiceApplicationCo
 		environment.lifecycle().manage(injector.getInstance(EnvStatusListener.class));
 		environment.lifecycle().manage(injector.getInstance(ExploratoryLibCache.class));
 		environment.lifecycle().manage(injector.getInstance(ManagedScheduler.class));
+		environment.lifecycle().manage(injector.getInstance(SwaggerAnnotationResolver.class));
 		environment.healthChecks().register(ServiceConsts.MONGO_NAME, injector.getInstance(MongoHealthCheck.class));
 		environment.healthChecks().register(
 				ServiceConsts.PROVISIONING_SERVICE_NAME, injector.getInstance(ProvisioningServiceHealthCheck.class));

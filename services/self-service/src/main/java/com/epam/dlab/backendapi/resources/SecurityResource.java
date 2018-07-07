@@ -19,19 +19,21 @@
 package com.epam.dlab.backendapi.resources;
 
 import com.epam.dlab.auth.UserInfo;
+import com.epam.dlab.auth.contract.SecurityAPI;
 import com.epam.dlab.auth.dto.UserCredentialDTO;
 import com.epam.dlab.backendapi.SelfServiceApplicationConfiguration;
 import com.epam.dlab.backendapi.dao.SecurityDAO;
 import com.epam.dlab.backendapi.domain.EnvStatusListener;
 import com.epam.dlab.backendapi.roles.UserRoles;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.rest.client.RESTService;
-import com.epam.dlab.auth.contract.SecurityAPI;
 import com.epam.dlab.validation.AwsValidation;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -51,6 +53,8 @@ import javax.ws.rs.core.Response.Status;
 @Path("/user")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = "Authorization service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 @Slf4j
 public class SecurityResource implements SecurityAPI {
 
@@ -76,6 +80,7 @@ public class SecurityResource implements SecurityAPI {
      */
     @POST
     @Path("/login")
+	@ApiOperation(value = "Login attempt for user")
     public Response userLogin(@Valid @NotNull UserCredentialDTO credential) {
         log.debug("Try login for user {}", credential.getUsername());
         try {
@@ -97,6 +102,8 @@ public class SecurityResource implements SecurityAPI {
      */
     @POST
     @Path("/authorize")
+	@ApiOperation(value = "Authorize attempt for user")
+	@ApiResponses(value = @ApiResponse(code = 500, message = "Access forbidden"))
     public Response authorize(@Auth UserInfo userInfo, @Valid @NotBlank(groups = AwsValidation.class) String username) {
         log.debug("Try authorize accessToken {} for user info {}", userInfo.getAccessToken(), userInfo);
         try {
@@ -123,6 +130,8 @@ public class SecurityResource implements SecurityAPI {
      */
     @POST
     @Path("/logout")
+	@ApiOperation(value = "Logout attempt for user")
+	@ApiResponses(value = @ApiResponse(code = 403, message = "Logout failed"))
     public Response userLogout(@Auth UserInfo userInfo) {
         log.debug("Try logout for accessToken {}", userInfo.getAccessToken());
         try {

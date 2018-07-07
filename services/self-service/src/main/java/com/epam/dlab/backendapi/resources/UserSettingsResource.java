@@ -20,9 +20,14 @@ package com.epam.dlab.backendapi.resources;
 
 import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.dao.UserSettingsDAO;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.exceptions.DlabException;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Authorization;
 import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +40,8 @@ import javax.ws.rs.core.Response;
 @Path("/user/settings")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = "User's settings service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 public class UserSettingsResource {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserSettingsResource.class);
 
@@ -46,6 +53,7 @@ public class UserSettingsResource {
 	}
     
     @GET
+	@ApiOperation(value = "Returns user's settings")
     public String getSettings(@Auth UserInfo userInfo) {
     	String settings = userSettingsDAO.getUISettings(userInfo);
     	LOGGER.debug("Returns settings for user {}, content is {}", userInfo.getName(), settings);
@@ -53,7 +61,10 @@ public class UserSettingsResource {
     }
     
     @POST
-    public Response saveSettings(@Auth UserInfo userInfo, @NotBlank String settings) {
+	@ApiOperation(value = "Saves user's settings to database")
+	public Response saveSettings(@Auth UserInfo userInfo,
+								 @ApiParam(value = "Settings data", required = true)
+								 @NotBlank String settings) {
         LOGGER.debug("Saves settings for user {}, content is {}", userInfo.getName(), settings);
         try {
         	userSettingsDAO.setUISettings(userInfo, settings);

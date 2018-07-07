@@ -50,7 +50,7 @@ import static com.epam.dlab.dto.UserInstanceStatus.CREATING;
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "Service for computational resources on GCP",
 		authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-				@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+				@Authorization(SwaggerConfigurator.TOKEN_AUTH)}, hidden = true)
 @Slf4j
 public class ComputationalResourceGcp implements ComputationalAPI {
 
@@ -71,7 +71,8 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	@PUT
 	@Path("dataengine-service")
 	@ApiOperation(value = "Creates Dataproc cluster on GCP")
-	@ApiResponses(value = @ApiResponse(code = 302, message = "Dataproc cluster on GCP has not been created"))
+	@ApiResponses(value = @ApiResponse(code = 302, message = "Dataproc cluster on GCP with current parameters already " +
+			"exists"))
 	public Response createDataEngineService(@Auth UserInfo userInfo, @Valid @NotNull GcpComputationalCreateForm
 			formDTO) {
 
@@ -109,7 +110,7 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	@PUT
 	@Path("dataengine")
 	@ApiOperation(value = "Creates Spark cluster on GCP")
-	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on GCP has not been created"))
+	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on GCP with current parameters already exists"))
 	public Response createDataEngine(@Auth UserInfo userInfo, @Valid @NotNull SparkStandaloneClusterCreateForm form) {
 		log.debug("Create computational resources for {} | form is {}", userInfo.getName(), form);
 

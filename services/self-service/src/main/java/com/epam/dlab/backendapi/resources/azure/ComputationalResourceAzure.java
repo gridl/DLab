@@ -50,7 +50,7 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "Service for computational resources on Azure",
 		authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-				@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+				@Authorization(SwaggerConfigurator.TOKEN_AUTH)}, hidden = true)
 @Slf4j
 public class ComputationalResourceAzure {
 
@@ -82,7 +82,8 @@ public class ComputationalResourceAzure {
 	@Path("dataengine")
 	@RolesAllowed(UserSessionDurationAuthorizer.SHORT_USER_SESSION_DURATION)
 	@ApiOperation(value = "Creates Spark cluster on Azure")
-	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on Azure has not been created"))
+	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on Azure with current parameters already " +
+			"exists"))
 	public Response createDataEngine(@Auth UserInfo userInfo, @Valid @NotNull SparkStandaloneClusterCreateForm form) {
 		log.debug("Create computational resources for {} | form is {}", userInfo.getName(), form);
 

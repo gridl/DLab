@@ -51,7 +51,7 @@ import static com.epam.dlab.dto.UserInstanceStatus.CREATING;
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "Service for computational resources on AWS",
 		authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-				@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+				@Authorization(SwaggerConfigurator.TOKEN_AUTH)}, hidden = true)
 @Slf4j
 public class ComputationalResourceAws implements ComputationalAPI {
 
@@ -72,7 +72,8 @@ public class ComputationalResourceAws implements ComputationalAPI {
 	@PUT
 	@Path("dataengine-service")
 	@ApiOperation(value = "Creates EMR cluster on AWS")
-	@ApiResponses(value = @ApiResponse(code = 302, message = "EMR cluster on AWS has not been created"))
+	@ApiResponses(value = @ApiResponse(code = 302, message = "EMR cluster on AWS with current parameters already " +
+			"exists"))
 	public Response createDataEngineService(@Auth UserInfo userInfo,
 											@Valid @NotNull AwsComputationalCreateForm form) {
 
@@ -112,7 +113,7 @@ public class ComputationalResourceAws implements ComputationalAPI {
 	@PUT
 	@Path("dataengine")
 	@ApiOperation(value = "Creates Spark cluster on AWS")
-	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on AWS has not been created"))
+	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on AWS with current parameters already exists"))
 	public Response createDataEngine(@Auth UserInfo userInfo, @Valid @NotNull SparkStandaloneClusterCreateForm form) {
 		log.debug("Create computational resources for {} | form is {}", userInfo.getName(), form);
 

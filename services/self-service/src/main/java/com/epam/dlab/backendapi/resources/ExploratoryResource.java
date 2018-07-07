@@ -25,11 +25,13 @@ import com.epam.dlab.backendapi.resources.dto.ExploratoryCreateFormDTO;
 import com.epam.dlab.backendapi.roles.RoleType;
 import com.epam.dlab.backendapi.roles.UserRoles;
 import com.epam.dlab.backendapi.service.ExploratoryService;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.model.exloratory.Exploratory;
 import com.epam.dlab.rest.contracts.ExploratoryAPI;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.security.RolesAllowed;
@@ -45,6 +47,8 @@ import javax.ws.rs.core.Response;
 @Path("/infrastructure_provision/exploratory_environment")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = "Notebook service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 @Slf4j
 public class ExploratoryResource implements ExploratoryAPI {
 
@@ -65,6 +69,8 @@ public class ExploratoryResource implements ExploratoryAPI {
 	 */
 	@PUT
 	@RolesAllowed(UserSessionDurationAuthorizer.SHORT_USER_SESSION_DURATION)
+	@ApiOperation(value = "Creates notebook")
+	@ApiResponses(value = @ApiResponse(code = 302, message = "Notebook with current parameters already exists"))
 	public Response create(@Auth UserInfo userInfo, @Valid @NotNull ExploratoryCreateFormDTO formDTO) {
 		log.debug("Creating exploratory environment {} with name {} for user {}",
 				formDTO.getImage(), formDTO.getName(), userInfo.getName());
@@ -87,6 +93,7 @@ public class ExploratoryResource implements ExploratoryAPI {
 	 */
 	@POST
 	@RolesAllowed(UserSessionDurationAuthorizer.SHORT_USER_SESSION_DURATION)
+	@ApiOperation(value = "Starts notebook by name")
 	public String start(@Auth UserInfo userInfo, @Valid @NotNull ExploratoryActionFormDTO formDTO) {
 		log.debug("Starting exploratory environment {} for user {}", formDTO.getNotebookInstanceName(), userInfo
 				.getName());
@@ -102,7 +109,10 @@ public class ExploratoryResource implements ExploratoryAPI {
 	 */
 	@DELETE
 	@Path("/{name}/stop")
-	public String stop(@Auth UserInfo userInfo, @PathParam("name") String name) {
+	@ApiOperation(value = "Stops notebook by name")
+	public String stop(@Auth UserInfo userInfo,
+					   @ApiParam(value = "Notebook's name", required = true)
+					   @PathParam("name") String name) {
 		log.debug("Stopping exploratory environment {} for user {}", name, userInfo.getName());
 		return exploratoryService.stop(userInfo, name);
 	}
@@ -116,7 +126,10 @@ public class ExploratoryResource implements ExploratoryAPI {
 	 */
 	@DELETE
 	@Path("/{name}/terminate")
-	public String terminate(@Auth UserInfo userInfo, @PathParam("name") String name) {
+	@ApiOperation(value = "Terminates notebook by name")
+	public String terminate(@Auth UserInfo userInfo,
+							@ApiParam(value = "Notebook's name", required = true)
+							@PathParam("name") String name) {
 		log.debug("Terminating exploratory environment {} for user {}", name, userInfo.getName());
 		return exploratoryService.terminate(userInfo, name);
 	}

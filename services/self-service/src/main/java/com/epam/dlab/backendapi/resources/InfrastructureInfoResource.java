@@ -21,8 +21,13 @@ import com.epam.dlab.backendapi.resources.dto.HealthStatusPageDTO;
 import com.epam.dlab.backendapi.resources.dto.InfrastructureInfo;
 import com.epam.dlab.backendapi.roles.UserRoles;
 import com.epam.dlab.backendapi.service.InfrastructureInfoService;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.*;
@@ -35,6 +40,8 @@ import javax.ws.rs.core.Response;
 @Path("/infrastructure")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = "Infrastructure info service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 @Slf4j
 public class InfrastructureInfoResource {
 
@@ -49,6 +56,7 @@ public class InfrastructureInfoResource {
 	 * Return status of self-service.
 	 */
 	@GET
+	@ApiOperation(value = "Returns status of self-service")
 	public Response status() {
 		return Response.status(Response.Status.OK).build();
 	}
@@ -60,7 +68,10 @@ public class InfrastructureInfoResource {
 	 */
 	@GET
 	@Path("/status")
-	public HealthStatusPageDTO status(@Auth UserInfo userInfo, @QueryParam("full") @DefaultValue("0") int fullReport) {
+	@ApiOperation(value = "Returns EDGE's status")
+	public HealthStatusPageDTO status(@Auth UserInfo userInfo,
+									  @ApiParam(value = "Full version of report required", defaultValue = "0")
+									  @QueryParam("full") @DefaultValue("0") int fullReport) {
 		return infrastructureInfoService
 				.getHeathStatus(userInfo.getName(), fullReport != 0, UserRoles.isAdmin(userInfo));
 	}
@@ -72,6 +83,7 @@ public class InfrastructureInfoResource {
 	 */
 	@GET
 	@Path("/info")
+	@ApiOperation(value = "Returns list of user's resources")
 	public InfrastructureInfo getUserResources(@Auth UserInfo userInfo) {
 		return infrastructureInfoService.getUserResources(userInfo.getName());
 

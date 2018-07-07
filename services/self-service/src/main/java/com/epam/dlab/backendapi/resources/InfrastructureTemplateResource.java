@@ -18,11 +18,15 @@ package com.epam.dlab.backendapi.resources;
 
 import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.service.InfrastructureTemplateService;
+import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.dto.base.computational.FullComputationalTemplate;
 import com.epam.dlab.dto.imagemetadata.ExploratoryMetadataDTO;
 import com.epam.dlab.rest.contracts.DockerAPI;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -36,6 +40,9 @@ import javax.ws.rs.core.MediaType;
 @Path("/infrastructure_templates")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = "Service for retrieving notebook and cluster templates",
+		authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
+				@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
 public class InfrastructureTemplateResource implements DockerAPI {
 
 	private InfrastructureTemplateService infrastructureTemplateService;
@@ -52,6 +59,7 @@ public class InfrastructureTemplateResource implements DockerAPI {
 	 */
 	@GET
 	@Path("/computational_templates")
+	@ApiOperation(value = "Returns list of cluster's templates")
 	public Iterable<FullComputationalTemplate> getComputationalTemplates(@Auth UserInfo userInfo) {
 		return infrastructureTemplateService.getComputationalTemplates(userInfo);
 	}
@@ -63,6 +71,7 @@ public class InfrastructureTemplateResource implements DockerAPI {
 	 */
 	@GET
 	@Path("/exploratory_templates")
+	@ApiOperation(value = "Returns list of notebook's templates")
 	public Iterable<ExploratoryMetadataDTO> getExploratoryTemplates(@Auth UserInfo userInfo) {
 		return infrastructureTemplateService.getExploratoryTemplates(userInfo);
 	}
