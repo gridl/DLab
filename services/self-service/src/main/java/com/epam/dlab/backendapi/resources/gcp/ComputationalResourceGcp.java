@@ -73,8 +73,9 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	@ApiOperation(value = "Creates Dataproc cluster on GCP")
 	@ApiResponses(value = @ApiResponse(code = 302, message = "Dataproc cluster on GCP with current parameters already " +
 			"exists"))
-	public Response createDataEngineService(@Auth UserInfo userInfo, @Valid @NotNull GcpComputationalCreateForm
-			formDTO) {
+	public Response createDataEngineService(@ApiParam(hidden = true) @Auth UserInfo userInfo,
+											@ApiParam(value = "GCP form DTO for Dataproc creation", required = true)
+											@Valid @NotNull GcpComputationalCreateForm formDTO) {
 
 		log.debug("Create computational resources for {} | form is {}", userInfo.getName(), formDTO);
 
@@ -111,7 +112,9 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	@Path("dataengine")
 	@ApiOperation(value = "Creates Spark cluster on GCP")
 	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on GCP with current parameters already exists"))
-	public Response createDataEngine(@Auth UserInfo userInfo, @Valid @NotNull SparkStandaloneClusterCreateForm form) {
+	public Response createDataEngine(@ApiParam(hidden = true) @Auth UserInfo userInfo,
+									 @ApiParam(value = "Spark cluster create form DTO", required = true)
+									 @Valid @NotNull SparkStandaloneClusterCreateForm form) {
 		log.debug("Create computational resources for {} | form is {}", userInfo.getName(), form);
 
 		if (!UserRoles.checkAccess(userInfo, RoleType.COMPUTATIONAL, form.getImage())) {
@@ -136,7 +139,7 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/terminate")
 	@ApiOperation(value = "Terminates computational resource (Dataproc/Spark cluster) on GCP")
-	public Response terminate(@Auth UserInfo userInfo,
+	public Response terminate(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 							  @ApiParam(value = "Notebook's name corresponding to computational resource",
 									  required = true)
 							  @PathParam("exploratoryName") String exploratoryName,
@@ -160,7 +163,7 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/stop")
 	@ApiOperation(value = "Stops Spark cluster on GCP")
-	public Response stop(@Auth UserInfo userInfo,
+	public Response stop(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 						 @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						 @PathParam("exploratoryName") String exploratoryName,
 						 @ApiParam(value = "Spark cluster's name for stopping", required = true)
@@ -183,7 +186,7 @@ public class ComputationalResourceGcp implements ComputationalAPI {
 	@PUT
 	@Path("/{exploratoryName}/{computationalName}/start")
 	@ApiOperation(value = "Starts Spark cluster on GCP")
-	public Response start(@Auth UserInfo userInfo,
+	public Response start(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 						  @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						  @PathParam("exploratoryName") String exploratoryName,
 						  @ApiParam(value = "Spark cluster's name for starting", required = true)

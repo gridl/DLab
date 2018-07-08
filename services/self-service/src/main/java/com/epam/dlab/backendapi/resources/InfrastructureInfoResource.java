@@ -69,7 +69,7 @@ public class InfrastructureInfoResource {
 	@GET
 	@Path("/status")
 	@ApiOperation(value = "Returns EDGE's status")
-	public HealthStatusPageDTO status(@Auth UserInfo userInfo,
+	public HealthStatusPageDTO status(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 									  @ApiParam(value = "Full version of report required", defaultValue = "0")
 									  @QueryParam("full") @DefaultValue("0") int fullReport) {
 		return infrastructureInfoService
@@ -84,7 +84,7 @@ public class InfrastructureInfoResource {
 	@GET
 	@Path("/info")
 	@ApiOperation(value = "Returns list of user's resources")
-	public InfrastructureInfo getUserResources(@Auth UserInfo userInfo) {
+	public InfrastructureInfo getUserResources(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
 		return infrastructureInfoService.getUserResources(userInfo.getName());
 
 	}

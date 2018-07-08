@@ -26,6 +26,7 @@ import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 
 import javax.ws.rs.Consumes;
@@ -60,7 +61,8 @@ public class InfrastructureTemplateResource implements DockerAPI {
 	@GET
 	@Path("/computational_templates")
 	@ApiOperation(value = "Returns list of cluster's templates")
-	public Iterable<FullComputationalTemplate> getComputationalTemplates(@Auth UserInfo userInfo) {
+	public Iterable<FullComputationalTemplate> getComputationalTemplates(@ApiParam(hidden = true) @Auth UserInfo
+																					 userInfo) {
 		return infrastructureTemplateService.getComputationalTemplates(userInfo);
 	}
 
@@ -72,7 +74,7 @@ public class InfrastructureTemplateResource implements DockerAPI {
 	@GET
 	@Path("/exploratory_templates")
 	@ApiOperation(value = "Returns list of notebook's templates")
-	public Iterable<ExploratoryMetadataDTO> getExploratoryTemplates(@Auth UserInfo userInfo) {
+	public Iterable<ExploratoryMetadataDTO> getExploratoryTemplates(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
 		return infrastructureTemplateService.getExploratoryTemplates(userInfo);
 	}
 }

@@ -18,21 +18,21 @@
 package com.epam.dlab.backendapi.swagger;
 
 import com.epam.dlab.backendapi.SelfServiceApplicationConfiguration;
-import com.epam.dlab.backendapi.resources.aws.ComputationalResourceAws;
-import com.epam.dlab.backendapi.resources.azure.ComputationalResourceAzure;
-import com.epam.dlab.backendapi.resources.gcp.ComputationalResourceGcp;
 import com.epam.dlab.cloud.CloudProvider;
-import com.epam.dlab.exceptions.DlabException;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.dropwizard.lifecycle.Managed;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Singleton
@@ -47,7 +47,7 @@ public class SwaggerAnnotationResolver implements Managed {
 	@Override
 	public void start() {
 		log.debug("SwaggerAnnotationResolver started");
-		setResourceClassVisibleForSwagger(configuration.getCloudProvider());
+		setClassesVisibleForSwagger(configuration.getCloudProvider(), configuration.getSwaggerResourcePackages());
 	}
 
 	@Override
@@ -55,23 +55,25 @@ public class SwaggerAnnotationResolver implements Managed {
 		log.debug("SwaggerAnnotationResolver stopped");
 	}
 
-	private void setResourceClassVisibleForSwagger(CloudProvider cloudProvider) {
-		Class<?> clazz = getTargetClass(cloudProvider);
+	private void setClassesVisibleForSwagger(CloudProvider cloudProvider, String swaggerPackages) {
+		Arrays.stream(swaggerPackages.split(","))
+				.forEach(pack -> setClassesFromPackageVisibleForSwagger(cloudProvider, pack));
+	}
+
+	private void setClassesFromPackageVisibleForSwagger(CloudProvider cloudProvider, String packageAbsolutePath) {
+		getTargetClassesFromPackage(cloudProvider, packageAbsolutePath).forEach(this::setClassVisibleForSwagger);
+	}
+
+	private List<Class<?>> getTargetClassesFromPackage(CloudProvider cloudProvider, String packageAbsolutePath) {
+		return new Reflections(packageAbsolutePath).getTypesAnnotatedWith(Api.class).stream()
+				.filter(clazz -> clazz.getSimpleName().toLowerCase().contains(cloudProvider.getName()))
+				.collect(Collectors.toList());
+	}
+
+	private void setClassVisibleForSwagger(Class<?> clazz) {
 		Api apiAnnotation = clazz.getAnnotation(Api.class);
 		Api targetValue = new DynamicApiAnnotation(apiAnnotation.value(), apiAnnotation.authorizations(), false);
 		alterAnnotationValue(clazz, Api.class, targetValue);
-	}
-
-	private Class<?> getTargetClass(CloudProvider cloudProvider) {
-		if (cloudProvider == CloudProvider.AWS) {
-			return ComputationalResourceAws.class;
-		} else if (cloudProvider == CloudProvider.AZURE) {
-			return ComputationalResourceAzure.class;
-		} else if (cloudProvider == CloudProvider.GCP) {
-			return ComputationalResourceGcp.class;
-		} else {
-			throw new DlabException("Invalid cloud provider");
-		}
 	}
 
 	@SuppressWarnings("unchecked")

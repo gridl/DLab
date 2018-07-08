@@ -84,7 +84,9 @@ public class ComputationalResourceAzure {
 	@ApiOperation(value = "Creates Spark cluster on Azure")
 	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on Azure with current parameters already " +
 			"exists"))
-	public Response createDataEngine(@Auth UserInfo userInfo, @Valid @NotNull SparkStandaloneClusterCreateForm form) {
+	public Response createDataEngine(@ApiParam(hidden = true) @Auth UserInfo userInfo,
+									 @ApiParam(value = "Spark cluster create form DTO", required = true)
+									 @Valid @NotNull SparkStandaloneClusterCreateForm form) {
 		log.debug("Create computational resources for {} | form is {}", userInfo.getName(), form);
 
 		if (!UserRoles.checkAccess(userInfo, RoleType.COMPUTATIONAL, form.getImage())) {
@@ -109,7 +111,7 @@ public class ComputationalResourceAzure {
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/terminate")
 	@ApiOperation(value = "Terminates computational Spark cluster on Azure")
-	public Response terminate(@Auth UserInfo userInfo,
+	public Response terminate(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 							  @ApiParam(value = "Notebook's name corresponding to computational resource",
 									  required = true)
 							  @PathParam("exploratoryName") String exploratoryName,
@@ -134,7 +136,7 @@ public class ComputationalResourceAzure {
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/stop")
 	@ApiOperation(value = "Stops Spark cluster on Azure")
-	public Response stop(@Auth UserInfo userInfo,
+	public Response stop(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 						 @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						 @PathParam("exploratoryName") String exploratoryName,
 						 @ApiParam(value = "Spark cluster's name for stopping", required = true)
@@ -157,7 +159,7 @@ public class ComputationalResourceAzure {
 	@PUT
 	@Path("/{exploratoryName}/{computationalName}/start")
 	@ApiOperation(value = "Starts Spark cluster on Azure")
-	public Response start(@Auth UserInfo userInfo,
+	public Response start(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 						  @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						  @PathParam("exploratoryName") String exploratoryName,
 						  @ApiParam(value = "Spark cluster's name for starting", required = true)

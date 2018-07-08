@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,7 +61,7 @@ public class EdgeResource implements EdgeAPI {
 	@POST
 	@Path("/start")
 	@ApiOperation(value = "Starts EDGE")
-	public String start(@Auth UserInfo userInfo) {
+	public String start(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
 		return edgeService.start(userInfo);
 	}
 
@@ -73,7 +74,7 @@ public class EdgeResource implements EdgeAPI {
 	@POST
 	@Path("/stop")
 	@ApiOperation(value = "Stops EDGE")
-	public String stop(@Auth UserInfo userInfo) {
+	public String stop(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
 		return edgeService.stop(userInfo);
 	}
 }

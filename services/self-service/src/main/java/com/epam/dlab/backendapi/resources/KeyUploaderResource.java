@@ -70,7 +70,7 @@ public class KeyUploaderResource implements EdgeAPI {
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "Key not found"),
 			@ApiResponse(code = 202, message = "Key is uploading now"),
 			@ApiResponse(code = 500, message = "Key's status is failed")})
-	public Response checkKey(@Auth UserInfo userInfo) {
+	public Response checkKey(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
 		final KeyLoadStatus status = keyService.getUserKeyStatus(userInfo.getName());
 		return Response.status(status.getHttpStatus()).build();
 	}
@@ -89,7 +89,7 @@ public class KeyUploaderResource implements EdgeAPI {
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@ApiOperation(value = "Uploads/reuploads user's key to server")
-	public Response loadKey(@Auth UserInfo userInfo,
+	public Response loadKey(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 							@ApiParam(value = "Key file's content", required = true)
 							@FormDataParam("file") String fileContent,
 							@ApiParam(value = "Primary uploading or secondary reuploading", allowableValues =
@@ -110,7 +110,7 @@ public class KeyUploaderResource implements EdgeAPI {
 	@POST
 	@Path("/recover")
 	@ApiOperation(value = "Creates EDGE node and uploads user's key to server")
-	public Response recover(@Auth UserInfo userInfo) {
+	public Response recover(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
 		return Response.ok(keyService.recoverEdge(userInfo)).build();
 	}
 
@@ -119,7 +119,7 @@ public class KeyUploaderResource implements EdgeAPI {
 	@Path("/generate")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@ApiOperation(value = "Generate user's key")
-	public Response generate(@Auth UserInfo userInfo,
+	public Response generate(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 							 @ApiParam(value = "Primary uploading or secondary reuploading", allowableValues =
 									 "true/false", defaultValue = "true")
 							 @QueryParam("is_primary_uploading") @DefaultValue("true") boolean isPrimaryUploading) {

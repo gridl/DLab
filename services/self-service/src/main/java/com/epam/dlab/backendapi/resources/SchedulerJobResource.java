@@ -64,7 +64,7 @@ public class SchedulerJobResource {
 	@POST
 	@Path("/{exploratoryName}")
 	@ApiOperation(value = "Updates scheduler's data for notebook")
-	public Response updateExploratoryScheduler(@Auth UserInfo userInfo,
+	public Response updateExploratoryScheduler(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 											   @ApiParam(value = "Notebook's name", required = true)
 											   @PathParam("exploratoryName") String exploratoryName,
 											   @ApiParam(value = "Scheduler's data", required = true)
@@ -86,7 +86,7 @@ public class SchedulerJobResource {
 	@POST
 	@Path("/{exploratoryName}/{computationalName}")
 	@ApiOperation(value = "Updates scheduler's data for cluster")
-	public Response upsertComputationalScheduler(@Auth UserInfo userInfo,
+	public Response upsertComputationalScheduler(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 												 @ApiParam(value = "Notebook's name", required = true)
 												 @PathParam("exploratoryName") String exploratoryName,
 												 @ApiParam(value = "Cluster's name affiliated with notebook",
@@ -110,7 +110,7 @@ public class SchedulerJobResource {
 	@GET
 	@Path("/{exploratoryName}")
 	@ApiOperation(value = "Returns scheduler's data for notebook")
-	public Response fetchSchedulerJobForUserAndExploratory(@Auth UserInfo userInfo,
+	public Response fetchSchedulerJobForUserAndExploratory(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 														   @ApiParam(value = "Notebook's name", required = true)
 														   @PathParam("exploratoryName") String exploratoryName) {
 		log.debug("Loading scheduler job for user {} and exploratory {}...", userInfo.getName(), exploratoryName);
@@ -131,12 +131,11 @@ public class SchedulerJobResource {
 	@GET
 	@Path("/{exploratoryName}/{computationalName}")
 	@ApiOperation(value = "Returns scheduler's data for cluster")
-	public Response fetchSchedulerJobForComputationalResource(@Auth UserInfo userInfo,
+	public Response fetchSchedulerJobForComputationalResource(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 															  @ApiParam(value = "Notebook's name", required = true)
 															  @PathParam("exploratoryName") String exploratoryName,
 															  @ApiParam(value = "Cluster's name affiliated with " +
-																	  "notebook",
-																	  required = true)
+																	  "notebook", required = true)
 															  @PathParam("computationalName") String
 																	  computationalName) {
 		log.debug("Loading scheduler job for user {}, exploratory {} and computational resource {}...",

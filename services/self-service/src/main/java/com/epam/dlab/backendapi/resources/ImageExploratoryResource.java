@@ -57,8 +57,10 @@ public class ImageExploratoryResource {
 	@POST
 	@ApiOperation(value = "Creates machine image from existing notebook")
 	@ApiResponses(value = @ApiResponse(code = 202, message = "Machine image has been created"))
-	public Response createImage(@Auth UserInfo ui, @Valid @NotNull ExploratoryImageCreateFormDTO formDTO,
-								@Context UriInfo uriInfo) {
+	public Response createImage(@ApiParam(hidden = true) @Auth UserInfo ui,
+								@ApiParam(value = "Notebook image create form DTO", required = true)
+								@Valid @NotNull ExploratoryImageCreateFormDTO formDTO,
+								@ApiParam(hidden = true) @Context UriInfo uriInfo) {
 		log.debug("Creating an image {} for user {}", formDTO, ui.getName());
 		String uuid = imageExploratoryService.createImage(ui, formDTO.getNotebookName(), formDTO.getName(), formDTO
 				.getDescription());
@@ -73,7 +75,7 @@ public class ImageExploratoryResource {
 
 	@GET
 	@ApiOperation(value = "Fetches machine images created from specific Docker image")
-	public Response getImages(@Auth UserInfo ui,
+	public Response getImages(@ApiParam(hidden = true) @Auth UserInfo ui,
 							  @ApiParam(value = "Docker image", required = true)
 							  @QueryParam("docker_image") String dockerImage) {
 		log.debug("Getting images for user " + ui.getName());
@@ -85,7 +87,7 @@ public class ImageExploratoryResource {
 	@Path("{name}")
 	@ApiOperation(value = "Fetches machine image by name")
 	@ApiResponses(value = @ApiResponse(code = 400, message = "Invalid machine image's name"))
-	public Response getImage(@Auth UserInfo ui,
+	public Response getImage(@ApiParam(hidden = true) @Auth UserInfo ui,
 							 @ApiParam(value = "Image's name", required = true) @PathParam("name") String name) {
 		log.debug("Getting image with name {} for user {}", name, ui.getName());
 		return Response.ok(imageExploratoryService.getImage(ui.getName(), name)).build();

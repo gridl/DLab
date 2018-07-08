@@ -59,7 +59,9 @@ public class BackupResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	@ApiOperation(value = "Creates backup")
 	@ApiResponses(value = @ApiResponse(code = 202, message = "Backup has been created"))
-	public Response createBackup(@Auth UserInfo userInfo, @Valid BackupFormDTO backupFormDTO) {
+	public Response createBackup(@ApiParam(hidden = true) @Auth UserInfo userInfo,
+								 @ApiParam(value = "Backup form DTO", required = true)
+								 @Valid BackupFormDTO backupFormDTO) {
 		log.debug("Creating backup for user {} with parameters {}", userInfo.getName(), backupFormDTO);
 		final EnvBackupDTO dto = requestBuilder.newBackupCreate(backupFormDTO, UUID.randomUUID().toString());
 		final String uuid = backupService.createBackup(dto, userInfo);
@@ -72,7 +74,7 @@ public class BackupResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Fetches all backups")
 	@ApiResponses(value = @ApiResponse(code = 400, message = "Invalid user's name"))
-	public Response getBackups(@Auth UserInfo userInfo) {
+	public Response getBackups(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
 		log.debug("Getting backups for user {}", userInfo.getName());
 		return Response.ok(backupService.getBackups(userInfo.getName())).build();
 	}
@@ -81,10 +83,9 @@ public class BackupResource {
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Fetches backup by ID")
-	@ApiResponses(value = @ApiResponse(code = 400, message = "Invalid user's name or ID"))
-	public Response getBackup(@Auth UserInfo userInfo,
-							  @ApiParam(value = "Backup's ID", required = true)
-							  @PathParam("id") String id) {
+	@ApiResponses(value = @ApiResponse(code = 404, message = "Backup with ID not found"))
+	public Response getBackup(@ApiParam(hidden = true) @Auth UserInfo userInfo,
+							  @ApiParam(value = "Backup's ID", required = true) @PathParam("id") String id) {
 		log.debug("Getting backup with id {} for user {}", id, userInfo.getName());
 		return Response.ok(backupService.getBackup(userInfo.getName(), id)).build();
 	}

@@ -90,7 +90,7 @@ public class LibExploratoryResource {
 	@GET
 	@Path("/lib_groups")
 	@ApiOperation(value = "Returns the list of library groups for notebook or cluster")
-	public Iterable<String> getLibGroupList(@Auth UserInfo userInfo,
+	public Iterable<String> getLibGroupList(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 											@ApiParam(value = "Notebook's name", required = true)
 											@QueryParam("exploratory_name") @NotBlank String exploratoryName,
 											@ApiParam(value = "Cluster's name", required = true, allowEmptyValue =
@@ -133,7 +133,7 @@ public class LibExploratoryResource {
 	@GET
 	@Path("/lib_list")
 	@ApiOperation(value = "Returns the list of installed/failed libraries for notebook or cluster")
-	public List<Document> getLibList(@Auth UserInfo userInfo,
+	public List<Document> getLibList(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 									 @ApiParam(value = "Notebook's name", required = true)
 									 @QueryParam("exploratory_name") @NotBlank String exploratoryName,
 									 @ApiParam(value = "Cluster's name", required = true, allowEmptyValue = true)
@@ -164,7 +164,7 @@ public class LibExploratoryResource {
 	@GET
 	@Path("/lib_list/formatted")
 	@ApiOperation(value = "Returns formatted representation of installed/failed libraries for notebook")
-	public List<LibInfoRecord> getLibListFormatted(@Auth UserInfo userInfo,
+	public List<LibInfoRecord> getLibListFormatted(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 												   @ApiParam(value = "Notebook's name", required = true)
 												   @QueryParam("exploratory_name") @NotBlank String exploratoryName) {
 
@@ -190,7 +190,9 @@ public class LibExploratoryResource {
 	@POST
 	@Path("/lib_install")
 	@ApiOperation(value = "Installs libraries on notebook or cluster")
-	public Response libInstall(@Auth UserInfo userInfo, @Valid @NotNull LibInstallFormDTO formDTO) {
+	public Response libInstall(@ApiParam(hidden = true) @Auth UserInfo userInfo,
+							   @ApiParam(value = "Library install form DTO", required = true)
+							   @Valid @NotNull LibInstallFormDTO formDTO) {
 		log.debug("Installing libs to environment {} for user {}", formDTO, userInfo.getName());
 		try {
 
@@ -226,7 +228,9 @@ public class LibExploratoryResource {
 	@POST
 	@Path("search/lib_list")
 	@ApiOperation(value = "Returns the list of available libraries for notebook basing on search conditions")
-	public Map<String, String> getLibList(@Auth UserInfo userInfo, @Valid @NotNull SearchLibsFormDTO formDTO) {
+	public Map<String, String> getLibList(@ApiParam(hidden = true) @Auth UserInfo userInfo,
+										  @ApiParam(value = "Search libraries form DTO", required = true)
+										  @Valid @NotNull SearchLibsFormDTO formDTO) {
 		log.trace("Search list of libs for user {} with condition {}", userInfo.getName(), formDTO);
 		try {
 

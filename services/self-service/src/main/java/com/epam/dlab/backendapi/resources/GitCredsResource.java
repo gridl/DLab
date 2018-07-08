@@ -25,6 +25,7 @@ import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,7 +63,9 @@ public class GitCredsResource implements ExploratoryAPI {
 	 */
 	@PUT
 	@ApiOperation(value = "Updates GIT credentials")
-	public Response updateGitCreds(@Auth UserInfo userInfo, @Valid @NotNull ExploratoryGitCredsDTO formDTO) {
+	public Response updateGitCreds(@ApiParam(hidden = true) @Auth UserInfo userInfo,
+								   @ApiParam(value = "Notebook GIT credentials form DTO", required = true)
+								   @Valid @NotNull ExploratoryGitCredsDTO formDTO) {
 		gitCredentialService.updateGitCredentials(userInfo, formDTO);
 		return Response.ok().build();
 	}
@@ -74,7 +77,7 @@ public class GitCredsResource implements ExploratoryAPI {
 	 */
 	@GET
 	@ApiOperation(value = "Fetches info about GIT credentials")
-	public ExploratoryGitCredsDTO getGitCreds(@Auth UserInfo userInfo) {
+	public ExploratoryGitCredsDTO getGitCreds(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
 		return gitCredentialService.getGitCredentials(userInfo.getName());
 	}
 }

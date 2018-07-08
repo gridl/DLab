@@ -81,7 +81,8 @@ public class SecurityResource implements SecurityAPI {
     @POST
     @Path("/login")
 	@ApiOperation(value = "Login attempt for user")
-    public Response userLogin(@Valid @NotNull UserCredentialDTO credential) {
+	public Response userLogin(@ApiParam(value = "User credential DTO", required = true)
+							  @Valid @NotNull UserCredentialDTO credential) {
         log.debug("Try login for user {}", credential.getUsername());
         try {
             dao.writeLoginAttempt(credential);
@@ -104,7 +105,9 @@ public class SecurityResource implements SecurityAPI {
     @Path("/authorize")
 	@ApiOperation(value = "Authorize attempt for user")
 	@ApiResponses(value = @ApiResponse(code = 500, message = "Access forbidden"))
-    public Response authorize(@Auth UserInfo userInfo, @Valid @NotBlank(groups = AwsValidation.class) String username) {
+	public Response authorize(@ApiParam(hidden = true) @Auth UserInfo userInfo,
+							  @ApiParam(value = "User's name", required = true)
+							  @Valid @NotBlank(groups = AwsValidation.class) String username) {
         log.debug("Try authorize accessToken {} for user info {}", userInfo.getAccessToken(), userInfo);
         try {
         	Status status = userInfo.getName().equalsIgnoreCase(username) ?
@@ -132,7 +135,7 @@ public class SecurityResource implements SecurityAPI {
     @Path("/logout")
 	@ApiOperation(value = "Logout attempt for user")
 	@ApiResponses(value = @ApiResponse(code = 403, message = "Logout failed"))
-    public Response userLogout(@Auth UserInfo userInfo) {
+	public Response userLogout(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
         log.debug("Try logout for accessToken {}", userInfo.getAccessToken());
         try {
             envStatusListener.unregisterSession(userInfo);

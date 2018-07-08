@@ -54,7 +54,7 @@ public class UserSettingsResource {
     
     @GET
 	@ApiOperation(value = "Returns user's settings")
-    public String getSettings(@Auth UserInfo userInfo) {
+	public String getSettings(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
     	String settings = userSettingsDAO.getUISettings(userInfo);
     	LOGGER.debug("Returns settings for user {}, content is {}", userInfo.getName(), settings);
         return settings;
@@ -62,7 +62,7 @@ public class UserSettingsResource {
     
     @POST
 	@ApiOperation(value = "Saves user's settings to database")
-	public Response saveSettings(@Auth UserInfo userInfo,
+	public Response saveSettings(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 								 @ApiParam(value = "Settings data", required = true)
 								 @NotBlank String settings) {
         LOGGER.debug("Saves settings for user {}, content is {}", userInfo.getName(), settings);
