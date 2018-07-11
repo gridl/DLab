@@ -17,10 +17,10 @@ package com.epam.dlab.process.model;
 
 import com.epam.dlab.process.ProcessConveyor;
 import com.epam.dlab.process.builder.ProcessInfoBuilder;
+import com.epam.dlab.util.SecurityUtils;
 import com.epam.dlab.process.exception.DlabProcessException;
 import io.dropwizard.util.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,20 +29,19 @@ import java.util.concurrent.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class DlabProcess {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DlabProcess.class);
+	private final static DlabProcess INSTANCE = new DlabProcess();
 
-	private static final DlabProcess INSTANCE = new DlabProcess();
+	private ExecutorService executorService = Executors.newFixedThreadPool(50*3);
+	private Map<String,ExecutorService> perUserService = new ConcurrentHashMap<>();
+	private int userMaxparallelism = 5;
+	private long expirationTime = TimeUnit.HOURS.toMillis(3);
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(50*3);
-	private Map<String, ExecutorService> perUserService = new ConcurrentHashMap<>();
-    private int userMaxparallelism = 5;
-    private long expirationTime = TimeUnit.HOURS.toMillis(3);
-
-    public static DlabProcess getInstance() {
-        return INSTANCE;
-    }
+	public static DlabProcess getInstance() {
+		return INSTANCE;
+	}
 
     private final ProcessConveyor processConveyor;
 
@@ -71,8 +70,8 @@ public class DlabProcess {
     }
 
 	private CompletableFuture<ProcessInfo> start(ProcessData processData, String... command) {
-		LOG.debug("Run OS command for user {} with UUID {}: {}", processData.getUser(), processData.getUuid(),
-				command);
+		log.debug("Run OS command for user {} with UUID {}: {}", processData.getUser(), processData.getUuid(),
+				SecurityUtils.hideCreds(command));
 		CompletableFuture<ProcessInfo> future =
 				processConveyor.createBuildFuture(processData, () -> new ProcessInfoBuilder(processData,
 						expirationTime));
