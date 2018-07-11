@@ -29,7 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 @Singleton
 public class CommandBuilder {
 
-	public String buildCommand(RunDockerCommand runDockerCommand, ResourceBaseDTO<?> resourceBaseDTO) throws JsonProcessingException {
+	public String buildCommand(RunDockerCommand runDockerCommand, ResourceBaseDTO<?> resourceBaseDTO) throws
+			JsonProcessingException {
 		StringBuilder builder = new StringBuilder();
 		if (resourceBaseDTO != null) {
 			builder.append("echo -e '");
