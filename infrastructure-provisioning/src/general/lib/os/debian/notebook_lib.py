@@ -91,6 +91,8 @@ def ensure_r(os_user, r_libs, region, r_mirror):
                 sudo('R -e "library(\'devtools\');install_github(\'IRkernel/repr\');install_github(\'IRkernel/IRdisplay\');install_github(\'IRkernel/IRkernel\');"')
             except:
                 sudo('R -e "options(download.file.method = "wget");library(\'devtools\');install_github(\'IRkernel/repr\');install_github(\'IRkernel/IRdisplay\');install_github(\'IRkernel/IRkernel\');"')
+            if os.environ['application'] == 'tensor-rstudio':
+                sudo('R -e "library(\'devtools\');install_github(\'rstudio/keras\');"')
             sudo('R -e "install.packages(\'RJDBC\',repos=\'{}\',dep=TRUE)"'.format(r_repository))
             sudo('touch /home/' + os_user + '/.ensure_dir/r_ensured')
         except:
@@ -106,6 +108,10 @@ def install_rstudio(os_user, local_spark_path, rstudio_pass, rstudio_version):
             sudo('gdebi -n rstudio-server-{}-amd64.deb'.format(rstudio_version))
             sudo('mkdir -p /mnt/var')
             sudo('chown {0}:{0} /mnt/var'.format(os_user))
+            if os.environ['application'] == 'tensor-rstudio':
+                sudo("sed -i '/ExecStart/s|=|=/bin/bash -c \"export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cudnn/lib64:/usr/local/cuda/lib64; |g' /etc/systemd/system/rstudio-server.service")
+                sudo("sed -i '/ExecStart/s|$|\"|g' /etc/systemd/system/rstudio-server.service")
+                sudo("systemctl daemon-reload")
             sudo('touch /home/{}/.Renviron'.format(os_user))
             sudo('chown {0}:{0} /home/{0}/.Renviron'.format(os_user))
             sudo('''echo 'SPARK_HOME="{0}"' >> /home/{1}/.Renviron'''.format(local_spark_path, os_user))
@@ -258,7 +264,12 @@ def install_tensor(os_user, cuda_version, cuda_file_name,
             sudo('update-initramfs -u')
             with settings(warn_only=True):
                 reboot(wait=150)
-            sudo('apt-get -y install dkms linux-image-extra-`uname -r`')
+            sudo('apt-get -y install dkms')
+            kernel_version = run('uname -r | tr -d "[..0-9-]"')
+            if kernel_version == 'azure':
+                sudo('apt-get -y install linux-modules-extra-`uname -r`')
+            else:
+                sudo('apt-get -y install linux-image-extra-`uname -r`')
             sudo('wget http://us.download.nvidia.com/XFree86/Linux-x86_64/{0}/NVIDIA-Linux-x86_64-{0}.run -O /home/{1}/NVIDIA-Linux-x86_64-{0}.run'.format(nvidia_version, os_user))
             sudo('/bin/bash /home/{0}/NVIDIA-Linux-x86_64-{1}.run -s --dkms'.format(os_user, nvidia_version))
             sudo('rm -f /home/{0}/NVIDIA-Linux-x86_64-{1}.run'.format(os_user, nvidia_version))
@@ -355,6 +366,7 @@ def install_os_pkg(requisites):
         return "Fail to install OS packages"
 
 
+@backoff.on_exception(backoff.expo, SystemExit, max_tries=10)
 def remove_os_pkg(pkgs):
     try:
         sudo('apt remove --purge -y {}'.format(' '.join(pkgs)))
