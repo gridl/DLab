@@ -69,6 +69,11 @@ public class DlabProcess {
 		return perUserService.get(user);
 	}
 
+	public CompletableFuture<ProcessInfo> start(String username, String uuid, ProcessType processType,
+												String processDescription, String... command) {
+		return start(new ProcessData(username, uuid, processType, processDescription), command);
+	}
+
 	private CompletableFuture<ProcessInfo> start(ProcessData processData, String... command) {
 		log.debug("Run OS command for user {} with UUID {}: {}", processData.getUser(), processData.getUuid(),
 				SecurityUtils.hideCreds(command));
@@ -80,25 +85,25 @@ public class DlabProcess {
 		return future;
 	}
 
-	public CompletableFuture<ProcessInfo> start(String username, String uuid, ProcessType processType,
-												String processDescription, String... command) {
-		return start(new ProcessData(username, uuid, processType, processDescription), command);
+	public CompletableFuture<Boolean> stop(String username, String uuid) {
+		return stop(new ProcessData(username, uuid));
 	}
 
 	private CompletableFuture<Boolean> stop(ProcessData processData) {
 		return processConveyor.add(processData, "STOP", ProcessStep.STOP);
 	}
 
-	public CompletableFuture<Boolean> stop(String username, String uuid) {
-		return stop(new ProcessData(username, uuid));
-	}
-
-	private CompletableFuture<Boolean> kill(ProcessData processData) {
-		return processConveyor.add(processData, "KILL", ProcessStep.KILL);
+	public CompletableFuture<Boolean> cancel(String username, String uuid) {
+		ProcessData processData = new ProcessData(username, uuid);
+		return processConveyor.add(processData, "CANCEL", ProcessStep.CANCEL);
 	}
 
 	public CompletableFuture<Boolean> kill(String username, String uuid) {
 		return kill(new ProcessData(username, uuid));
+	}
+
+	private CompletableFuture<Boolean> kill(ProcessData processData) {
+		return processConveyor.add(processData, "KILL", ProcessStep.KILL);
 	}
 
 	public CompletableFuture<Boolean> failed(ProcessData processData) {
@@ -124,11 +129,6 @@ public class DlabProcess {
 		PrintWriter pw = new PrintWriter(sw);
 		err.printStackTrace(pw);
 		return processConveyor.add(processData, sw.toString(), ProcessStep.STD_ERR);
-	}
-
-	public CompletableFuture<Boolean> cancel(String username, String uuid) {
-		ProcessData processData = new ProcessData(username, uuid);
-		return processConveyor.add(processData, "CANCEL", ProcessStep.CANCEL);
 	}
 
 	public Collection<ProcessData> getActiveProcesses() {
