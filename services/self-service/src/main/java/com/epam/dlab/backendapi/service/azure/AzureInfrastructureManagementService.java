@@ -16,7 +16,7 @@
 
 package com.epam.dlab.backendapi.service.azure;
 
-import com.epam.dlab.backendapi.service.impl.InfrastructureInfoServiceBase;
+import com.epam.dlab.backendapi.service.impl.InfrastructureManagementServiceBase;
 import com.epam.dlab.dto.azure.edge.EdgeInfoAzure;
 import com.google.inject.Singleton;
 
@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
-public class AzureInfrastructureInfoService extends InfrastructureInfoServiceBase<EdgeInfoAzure> {
+public class AzureInfrastructureManagementService extends InfrastructureManagementServiceBase<EdgeInfoAzure> {
 
 	@Override
 	protected Map<String, String> getSharedInfo(EdgeInfoAzure edgeInfo) {

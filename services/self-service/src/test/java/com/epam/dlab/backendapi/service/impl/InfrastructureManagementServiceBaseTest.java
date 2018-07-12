@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class InfrastructureInfoServiceBaseTest {
+public class InfrastructureManagementServiceBaseTest {
 
 	private final String USER = "test";
 
@@ -53,7 +53,8 @@ public class InfrastructureInfoServiceBaseTest {
 	private SelfServiceApplicationConfiguration configuration;
 
 	@InjectMocks
-	private InfrastructureInfoServiceBase infrastructureInfoServiceBase = spy(InfrastructureInfoServiceBase.class);
+	private InfrastructureManagementServiceBase infrastructureInfoServiceBase = spy
+			(InfrastructureManagementServiceBase.class);
 
 	@Test
 	public void getUserResources() throws NoSuchFieldException, IllegalAccessException {

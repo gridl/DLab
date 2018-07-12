@@ -26,10 +26,10 @@ import com.epam.dlab.backendapi.resources.aws.ComputationalResourceAws;
 import com.epam.dlab.backendapi.resources.callback.aws.EdgeCallbackAws;
 import com.epam.dlab.backendapi.resources.callback.aws.KeyUploaderCallbackAws;
 import com.epam.dlab.backendapi.service.BillingService;
-import com.epam.dlab.backendapi.service.InfrastructureInfoService;
+import com.epam.dlab.backendapi.service.InfrastructureManagementService;
 import com.epam.dlab.backendapi.service.InfrastructureTemplateService;
 import com.epam.dlab.backendapi.service.aws.AwsBillingService;
-import com.epam.dlab.backendapi.service.aws.AwsInfrastructureInfoService;
+import com.epam.dlab.backendapi.service.aws.AwsInfrastructureManagementService;
 import com.epam.dlab.backendapi.service.aws.AwsInfrastructureTemplateService;
 import com.epam.dlab.cloud.CloudModule;
 import com.fiestacabin.dropwizard.quartz.SchedulerConfiguration;
@@ -48,7 +48,7 @@ public class AwsSelfServiceModule extends CloudModule {
 	protected void configure() {
 		bind(BillingService.class).to(AwsBillingService.class);
 		bind((KeyDAO.class)).to(AwsKeyDao.class);
-		bind(InfrastructureInfoService.class).to(AwsInfrastructureInfoService.class);
+		bind(InfrastructureManagementService.class).to(AwsInfrastructureManagementService.class);
 		bind(SchedulerConfiguration.class).toInstance(
 				new SchedulerConfiguration(SelfServiceApplication.class.getPackage().getName()));
 		bind(InfrastructureTemplateService.class).to(AwsInfrastructureTemplateService.class);

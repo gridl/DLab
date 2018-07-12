@@ -16,11 +16,19 @@
 
 package com.epam.dlab.backendapi.service;
 
+import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.resources.dto.HealthStatusPageDTO;
 import com.epam.dlab.backendapi.resources.dto.InfrastructureInfo;
+import com.epam.dlab.process.model.ProcessInfo;
 
-public interface InfrastructureInfoService {
+import java.util.List;
+
+public interface InfrastructureManagementService {
 	InfrastructureInfo getUserResources(String user);
 
 	HealthStatusPageDTO getHeathStatus(String user, boolean fullReport, boolean isAdmin);
+
+	List<ProcessInfo> getProcessInfo(UserInfo userInfo);
+
+	void cancelProcess(UserInfo userInfo, String uuid);
 }

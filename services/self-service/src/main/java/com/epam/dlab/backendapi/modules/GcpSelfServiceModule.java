@@ -26,9 +26,9 @@ import com.epam.dlab.backendapi.resources.callback.gcp.EdgeCallbackGcp;
 import com.epam.dlab.backendapi.resources.callback.gcp.KeyUploaderCallbackGcp;
 import com.epam.dlab.backendapi.resources.gcp.ComputationalResourceGcp;
 import com.epam.dlab.backendapi.resources.gcp.GcpOauthResource;
-import com.epam.dlab.backendapi.service.InfrastructureInfoService;
+import com.epam.dlab.backendapi.service.InfrastructureManagementService;
 import com.epam.dlab.backendapi.service.InfrastructureTemplateService;
-import com.epam.dlab.backendapi.service.gcp.GcpInfrastructureInfoService;
+import com.epam.dlab.backendapi.service.gcp.GcpInfrastructureManagementService;
 import com.epam.dlab.backendapi.service.gcp.GcpInfrastructureTemplateService;
 import com.epam.dlab.cloud.CloudModule;
 import com.fiestacabin.dropwizard.quartz.SchedulerConfiguration;
@@ -61,7 +61,7 @@ public class GcpSelfServiceModule extends CloudModule {
 	@Override
 	protected void configure() {
 		bind((KeyDAO.class)).to(GcpKeyDao.class);
-		bind(InfrastructureInfoService.class).to(GcpInfrastructureInfoService.class);
+		bind(InfrastructureManagementService.class).to(GcpInfrastructureManagementService.class);
 		bind(InfrastructureTemplateService.class).to(GcpInfrastructureTemplateService.class);
 		bind(SchedulerConfiguration.class).toInstance(
 				new SchedulerConfiguration(SelfServiceApplication.class.getPackage().getName()));

@@ -62,7 +62,7 @@ public class RESTService {
         return builder.get(clazz);
     }
 
-    public <T> T post(String path, String accessToken, Object parameter, Class<T> clazz) {
+	public <T> T post(String path, String accessToken, Object parameter, Class<T> clazz) {
 		Invocation.Builder builder = getBuilder(path, accessToken, Collections.emptyMap());
 		log.debug("REST post secured {} {}", path, accessToken);
 		return builder.post(Entity.json(parameter), clazz);
@@ -73,6 +73,12 @@ public class RESTService {
 		Invocation.Builder builder = getBuilder(path, accessToken, queryParams);
 		log.debug("REST post secured {} {}", path, accessToken);
 		return builder.post(Entity.json(parameter), clazz);
+	}
+
+	public <T> T delete(String path, String accessToken, Class<T> clazz) {
+		Invocation.Builder builder = getBuilder(path, accessToken, Collections.emptyMap());
+		log.debug("REST delete secured {} {}", path, accessToken);
+		return builder.delete(clazz);
 	}
 
     private Invocation.Builder getBuilder(String path) {

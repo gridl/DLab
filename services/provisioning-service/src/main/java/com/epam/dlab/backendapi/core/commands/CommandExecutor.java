@@ -49,7 +49,7 @@ public class CommandExecutor implements ICommandExecutor {
 	public Boolean cancelSync(final String username, final String uuid) throws ExecutionException,
 			InterruptedException {
 		ProcessStatus processStatus = DlabProcess.getInstance().getProcessStatus(username, uuid);
-		if (processStatus == ProcessStatus.SCHEDULED) {
+		if (processStatus == ProcessStatus.LAUNCHING) {
 			return DlabProcess.getInstance().cancel(username, uuid).get();
 		} else {
 			throw new DlabProcessException("Couldn't cancel the process with " + uuid + " for user " + username +
@@ -60,7 +60,7 @@ public class CommandExecutor implements ICommandExecutor {
 	@Override
 	public void cancelAsync(final String username, final String uuid) {
 		ProcessStatus processStatus = DlabProcess.getInstance().getProcessStatus(username, uuid);
-		if (processStatus == ProcessStatus.SCHEDULED) {
+		if (processStatus == ProcessStatus.LAUNCHING) {
 			DlabProcess.getInstance().cancel(username, uuid);
 		} else {
 			throw new DlabProcessException("Couldn't cancel the process with " + uuid + " for user " + username +

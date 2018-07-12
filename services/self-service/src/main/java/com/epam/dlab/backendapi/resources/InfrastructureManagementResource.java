@@ -20,7 +20,7 @@ import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.resources.dto.HealthStatusPageDTO;
 import com.epam.dlab.backendapi.resources.dto.InfrastructureInfo;
 import com.epam.dlab.backendapi.roles.UserRoles;
-import com.epam.dlab.backendapi.service.InfrastructureInfoService;
+import com.epam.dlab.backendapi.service.InfrastructureManagementService;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
 import lombok.extern.slf4j.Slf4j;
@@ -30,19 +30,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * Provides the REST API for the basic information about infrastructure.
+ * Provides the REST API for management of current processes and obtaining the basic information about infrastructure.
  */
 @Path("/infrastructure")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
-public class InfrastructureInfoResource {
+public class InfrastructureManagementResource {
 
-	private InfrastructureInfoService infrastructureInfoService;
+	private InfrastructureManagementService infrastructureManagementService;
 
 	@Inject
-	public InfrastructureInfoResource(InfrastructureInfoService infrastructureInfoService) {
-		this.infrastructureInfoService = infrastructureInfoService;
+	public InfrastructureManagementResource(InfrastructureManagementService infrastructureManagementService) {
+		this.infrastructureManagementService = infrastructureManagementService;
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class InfrastructureInfoResource {
 	@GET
 	@Path("/status")
 	public HealthStatusPageDTO status(@Auth UserInfo userInfo, @QueryParam("full") @DefaultValue("0") int fullReport) {
-		return infrastructureInfoService
+		return infrastructureManagementService
 				.getHeathStatus(userInfo.getName(), fullReport != 0, UserRoles.isAdmin(userInfo));
 	}
 
@@ -73,7 +73,27 @@ public class InfrastructureInfoResource {
 	@GET
 	@Path("/info")
 	public InfrastructureInfo getUserResources(@Auth UserInfo userInfo) {
-		return infrastructureInfoService.getUserResources(userInfo.getName());
-
+		return infrastructureManagementService.getUserResources(userInfo.getName());
 	}
+
+	/**
+	 * Returns info about DLab operations (notebook/cluster creation, stopping, deletion etc.) which are currently
+	 * executing.
+	 */
+	@GET
+	@Path("/operations")
+	public Response operations(@Auth UserInfo ui) {
+		return Response.ok(infrastructureManagementService.getProcessInfo(ui)).build();
+	}
+
+	/**
+	 * Cancels queued DLab operation by its ID.
+	 */
+	@DELETE
+	@Path("/operations/cancel/{uuid}")
+	public Response cancel(@Auth UserInfo ui, @PathParam("uuid") String uuid) {
+		infrastructureManagementService.cancelProcess(ui, uuid);
+		return Response.ok().build();
+	}
+
 }

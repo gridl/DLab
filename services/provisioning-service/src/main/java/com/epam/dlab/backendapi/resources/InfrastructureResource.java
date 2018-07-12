@@ -35,19 +35,26 @@ public class InfrastructureResource {
 	private ICommandExecutor commandExecutor;
 
 	/**
-	 * Return status of provisioning service.
+	 * Returns status of provisioning service.
 	 */
 	@GET
 	public Response status(@Auth UserInfo ui) {
 		return Response.status(Response.Status.OK).build();
 	}
 
+	/**
+	 * Returns info about DLab operations (notebook/cluster creation, stopping, deletion etc.) which are currently
+	 * executing.
+	 */
 	@GET
 	@Path("/operations")
 	public Response operations(@Auth UserInfo ui) {
 		return Response.ok(commandExecutor.getProcessInfo(ui.getName())).build();
 	}
 
+	/**
+	 * Cancels queued DLab operation by its ID.
+	 */
 	@DELETE
 	@Path("/operations/cancel/{uuid}")
 	public Response cancel(@Auth UserInfo ui, @PathParam("uuid") String uuid) {

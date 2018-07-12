@@ -24,7 +24,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class AwsInfrastructureInfoServiceTest {
+public class AwsInfrastructureManagementServiceTest {
 
 	@Test
 	public void getSharedInfo() {
@@ -38,7 +38,7 @@ public class AwsInfrastructureInfoServiceTest {
 		expectedMap.put("user_own_bicket_name", "userOwnBucketName");
 		expectedMap.put("shared_bucket_name", "sharedBucketName");
 
-		Map<String, String> actualMap = new AwsInfrastructureInfoService().getSharedInfo(edgeInfoAws);
+		Map<String, String> actualMap = new AwsInfrastructureManagementService().getSharedInfo(edgeInfoAws);
 		assertEquals(expectedMap, actualMap);
 	}
 }

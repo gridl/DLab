@@ -29,10 +29,10 @@ import com.epam.dlab.backendapi.resources.azure.ComputationalResourceAzure;
 import com.epam.dlab.backendapi.resources.callback.azure.EdgeCallbackAzure;
 import com.epam.dlab.backendapi.resources.callback.azure.KeyUploaderCallbackAzure;
 import com.epam.dlab.backendapi.service.BillingService;
-import com.epam.dlab.backendapi.service.InfrastructureInfoService;
+import com.epam.dlab.backendapi.service.InfrastructureManagementService;
 import com.epam.dlab.backendapi.service.InfrastructureTemplateService;
 import com.epam.dlab.backendapi.service.azure.AzureBillingService;
-import com.epam.dlab.backendapi.service.azure.AzureInfrastructureInfoService;
+import com.epam.dlab.backendapi.service.azure.AzureInfrastructureManagementService;
 import com.epam.dlab.backendapi.service.azure.AzureInfrastructureTemplateService;
 import com.epam.dlab.cloud.CloudModule;
 import com.fiestacabin.dropwizard.quartz.SchedulerConfiguration;
@@ -61,7 +61,7 @@ public class AzureSelfServiceModule extends CloudModule {
 	protected void configure() {
 		bind(BillingService.class).to(AzureBillingService.class);
 		bind((KeyDAO.class)).to(AzureKeyDao.class);
-		bind(InfrastructureInfoService.class).to(AzureInfrastructureInfoService.class);
+		bind(InfrastructureManagementService.class).to(AzureInfrastructureManagementService.class);
 		bind(SchedulerConfiguration.class).toInstance(
 				new SchedulerConfiguration(SelfServiceApplication.class.getPackage().getName()));
 		bind(InfrastructureTemplateService.class).to(AzureInfrastructureTemplateService.class);

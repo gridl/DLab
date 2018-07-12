@@ -24,7 +24,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class AzureInfrastructureInfoServiceTest {
+public class AzureInfrastructureManagementServiceTest {
 
 	@Test
 	public void getSharedInfo() {
@@ -48,7 +48,7 @@ public class AzureInfrastructureInfoServiceTest {
 		expectedMap.put("datalake_user_directory_name", "datalakeUserDirectoryName");
 		expectedMap.put("datalake_shared_directory_name", "datalakeSharedDirectoryName");
 
-		Map<String, String> actualMap = new AzureInfrastructureInfoService().getSharedInfo(edgeInfoAzure);
+		Map<String, String> actualMap = new AzureInfrastructureManagementService().getSharedInfo(edgeInfoAzure);
 		assertEquals(expectedMap, actualMap);
 	}
 }

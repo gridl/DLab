@@ -84,13 +84,16 @@ limitations under the License.
             <artifactId>dlab-utils</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.epam.dlab</groupId>
             <artifactId>dlab-webapp-common</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.epam.dlab</groupId>
+            <artifactId>dlab-process</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.epam.dlab</groupId>
             <artifactId>dlab-mongo-migration</artifactId>

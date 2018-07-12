@@ -109,9 +109,7 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 		if (b.p != null) {
 			b.p.destroy();
 		}
-		if (b.status != LAUNCHING && b.status != RUNNING) {
-			b.setReady();
-		}
+		b.setReady();
 		b.status = CANCELLED;
 	}
 
