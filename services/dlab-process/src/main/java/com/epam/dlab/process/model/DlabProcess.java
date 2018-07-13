@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DlabProcess {
 
-	private final static DlabProcess INSTANCE = new DlabProcess();
+	private static final DlabProcess INSTANCE = new DlabProcess();
 
 	private ExecutorService executorService = Executors.newFixedThreadPool(50 * 3);
 	private Map<String, ExecutorService> perUserService = new ConcurrentHashMap<>();

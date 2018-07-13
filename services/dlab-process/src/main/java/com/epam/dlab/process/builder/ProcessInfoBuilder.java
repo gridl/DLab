@@ -109,7 +109,6 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 		if (b.p != null) {
 			b.p.destroy();
 		}
-		b.setReady();
 		b.status = CANCELLED;
 	}
 
@@ -124,7 +123,7 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 	}
 
 	public static void finish(ProcessInfoBuilder b, Integer exitCode) {
-		if (b.status != STOPPED && b.status != KILLED && b.status != TIMEOUT) {
+		if (b.status != STOPPED && b.status != CANCELLED && b.status != KILLED && b.status != TIMEOUT) {
 			b.status = FINISHED;
 		}
 		b.exitCode = exitCode;
@@ -149,31 +148,35 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 
 	private void launch() {
 		DlabProcess.getInstance().getUsersExecutorService(processData.getUser()).submit(() -> {
-			status = SCHEDULED;
-			DlabProcess.getInstance().getExecutorService().execute(() -> {
+			if (status != CANCELLED) {
+				status = SCHEDULED;
+				DlabProcess.getInstance().getExecutorService().execute(() -> {
+					try {
+						p = new ProcessBuilder(command).start();
+						pid = getPid(p);
+						InputStream stdOutStream = p.getInputStream();
+						DlabProcess.getInstance().getExecutorService().execute(() -> print(stdOutStream));
+						InputStream stdErrStream = p.getErrorStream();
+						DlabProcess.getInstance().getExecutorService().execute(() -> printError(stdErrStream));
+						status = RUNNING;
+						int exit = p.waitFor();
+						DlabProcess.getInstance().finish(processData, exit);
+					} catch (IOException e) {
+						DlabProcess.getInstance().toStdErr(processData, "Command launch failed. " + get().getCommand()
+								, e);
+						DlabProcess.getInstance().failed(processData);
+					} catch (InterruptedException e) {
+						DlabProcess.getInstance().toStdErr(processData, "Command interrupted. " + get().getCommand(),
+								e);
+						DlabProcess.getInstance().failed(processData);
+						Thread.currentThread().interrupt();
+					}
+				});
 				try {
-					p = new ProcessBuilder(command).start();
-					pid = getPid(p);
-					InputStream stdOutStream = p.getInputStream();
-					DlabProcess.getInstance().getExecutorService().execute(() -> print(stdOutStream));
-					InputStream stdErrStream = p.getErrorStream();
-					DlabProcess.getInstance().getExecutorService().execute(() -> printError(stdErrStream));
-					status = RUNNING;
-					int exit = p.waitFor();
-					DlabProcess.getInstance().finish(processData, exit);
-				} catch (IOException e) {
-					DlabProcess.getInstance().toStdErr(processData, "Command launch failed. " + get().getCommand(), e);
-					DlabProcess.getInstance().failed(processData);
-				} catch (InterruptedException e) {
-					DlabProcess.getInstance().toStdErr(processData, "Command interrupted. " + get().getCommand(), e);
-					DlabProcess.getInstance().failed(processData);
-					Thread.currentThread().interrupt();
+					future.get();
+				} catch (Exception e) {
+					log.error("Exception occurred during getting future result: {}", e.getMessage());
 				}
-			});
-			try {
-				future.get();
-			} catch (Exception e) {
-				log.error("Exception occurred during getting future result: {}", e.getMessage());
 			}
 		});
 	}

@@ -50,7 +50,7 @@ public class CommandExecutor implements ICommandExecutor {
 			InterruptedException {
 		ProcessStatus processStatus = DlabProcess.getInstance().getProcessStatus(username, uuid);
 		if (processStatus == ProcessStatus.LAUNCHING) {
-			return DlabProcess.getInstance().kill(username, uuid).get();
+			return DlabProcess.getInstance().cancel(username, uuid).get();
 		} else {
 			throw new DlabProcessException("Couldn't cancel the process with ID " + uuid + " for user " + username +
 					" because its current status is " + processStatus);
@@ -61,7 +61,7 @@ public class CommandExecutor implements ICommandExecutor {
 	public void cancelAsync(final String username, final String uuid) {
 		ProcessStatus processStatus = DlabProcess.getInstance().getProcessStatus(username, uuid);
 		if (processStatus == ProcessStatus.LAUNCHING) {
-			DlabProcess.getInstance().kill(username, uuid);
+			DlabProcess.getInstance().cancel(username, uuid);
 		} else {
 			throw new DlabProcessException("Couldn't cancel the process with ID " + uuid + " for user " + username +
 					" because its current status is " + processStatus);
