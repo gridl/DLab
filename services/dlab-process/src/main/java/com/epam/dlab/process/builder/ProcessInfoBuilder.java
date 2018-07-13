@@ -175,8 +175,7 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 				getFutureResult();
 			} else {
 				future.cancel(true);
-				DlabProcess.getInstance().finish(processData, 0);
-				getFutureResult();
+				DlabProcess.getInstance().getProcessConveyor().remove(processData);
 			}
 		});
 	}

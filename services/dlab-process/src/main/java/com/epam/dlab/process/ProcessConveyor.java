@@ -55,4 +55,8 @@ public class ProcessConveyor extends AssemblingConveyor<ProcessData, ProcessStep
         }
     }
 
+	public void remove(ProcessData processData) {
+		this.collector.remove(processData);
+	}
+
 }

@@ -93,6 +93,10 @@ public class DlabProcess {
 		return processConveyor.add(processData, "STOP", ProcessStep.STOP);
 	}
 
+	public ProcessConveyor getProcessConveyor() {
+		return processConveyor;
+	}
+
 	public CompletableFuture<Boolean> cancel(String username, String uuid) {
 		ProcessData processData = new ProcessData(username, uuid);
 		return processConveyor.add(processData, "CANCEL", ProcessStep.CANCEL);
