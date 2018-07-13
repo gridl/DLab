@@ -47,8 +47,7 @@ import javax.ws.rs.core.Response;
 @Path("/infrastructure_provision/exploratory_environment")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "Notebook service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+@Api(value = "Notebook service", authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
 @Slf4j
 public class ExploratoryResource implements ExploratoryAPI {
 

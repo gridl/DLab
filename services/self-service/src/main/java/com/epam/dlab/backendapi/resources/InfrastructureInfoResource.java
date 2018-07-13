@@ -40,8 +40,7 @@ import javax.ws.rs.core.Response;
 @Path("/infrastructure")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "Infrastructure info service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+@Api(value = "Infrastructure info service", authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
 @Slf4j
 public class InfrastructureInfoResource {
 

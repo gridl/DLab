@@ -42,8 +42,7 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "Service for retrieving notebook and cluster templates",
-		authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-				@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+		authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
 public class InfrastructureTemplateResource implements DockerAPI {
 
 	private InfrastructureTemplateService infrastructureTemplateService;

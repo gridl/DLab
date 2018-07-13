@@ -59,8 +59,7 @@ import java.util.stream.Collectors;
 @Path("/infrastructure_provision/exploratory_environment")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "Library service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+@Api(value = "Library service", authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
 @Slf4j
 public class LibExploratoryResource {
 

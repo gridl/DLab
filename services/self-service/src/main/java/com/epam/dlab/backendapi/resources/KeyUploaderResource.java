@@ -41,8 +41,7 @@ import javax.ws.rs.core.Response.Status;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "Service for uploading or reuploading user's access keys",
-		authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-				@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+		authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
 @Slf4j
 public class KeyUploaderResource implements EdgeAPI {
 

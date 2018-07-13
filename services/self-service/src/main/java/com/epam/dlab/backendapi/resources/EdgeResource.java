@@ -40,8 +40,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/infrastructure/edge")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "EDGE service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+@Api(value = "EDGE service", authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
 @Slf4j
 public class EdgeResource implements EdgeAPI {
 

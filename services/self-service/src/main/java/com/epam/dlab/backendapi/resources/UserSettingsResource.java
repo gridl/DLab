@@ -40,8 +40,7 @@ import javax.ws.rs.core.Response;
 @Path("/user/settings")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "User's settings service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+@Api(value = "User's settings service", authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
 public class UserSettingsResource {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserSettingsResource.class);
 

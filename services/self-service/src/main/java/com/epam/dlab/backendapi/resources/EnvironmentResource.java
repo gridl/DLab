@@ -33,8 +33,7 @@ import javax.ws.rs.core.Response;
 @Path("environment")
 @Slf4j
 @RolesAllowed("environment/*")
-@Api(value = "Environment service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+@Api(value = "Environment service", authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
 public class EnvironmentResource {
 
 	private EnvironmentService environmentService;

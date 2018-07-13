@@ -39,8 +39,7 @@ import java.util.UUID;
 @Slf4j
 @Path("/infrastructure/backup")
 @RolesAllowed("/api/infrastructure/backup")
-@Api(value = "Backup service", authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-		@Authorization(SwaggerConfigurator.TOKEN_AUTH)})
+@Api(value = "Backup service", authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
 public class BackupResource {
 
 	private final BackupService backupService;

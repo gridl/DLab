@@ -23,7 +23,7 @@ import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import io.swagger.jaxrs.config.SwaggerContextService;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
-import io.swagger.models.auth.BasicAuthDefinition;
+import io.swagger.models.auth.ApiKeyAuthDefinition;
 import io.swagger.models.auth.In;
 
 import javax.ws.rs.core.MediaType;
@@ -33,7 +33,6 @@ public class SwaggerConfigurator extends SwaggerBundle<SelfServiceApplicationCon
 
 	private static SwaggerConfigurator instance;
 	private Swagger swagger;
-	public static final String BASIC_AUTH = "Basic authorization";
 	public static final String TOKEN_AUTH = "Token authorization";
 
 
@@ -71,8 +70,6 @@ public class SwaggerConfigurator extends SwaggerBundle<SelfServiceApplicationCon
 				.schemes(Arrays.asList(Scheme.HTTPS, Scheme.HTTP))
 				.externalDocs(new io.swagger.models.ExternalDocs().description("GitHub")
 						.url("https://github.com/epam/DLab"))
-				.securityDefinition(TOKEN_AUTH,
-						new io.swagger.models.auth.ApiKeyAuthDefinition("Authorization", In.HEADER))
-				.securityDefinition(BASIC_AUTH, new BasicAuthDefinition());
+				.securityDefinition(TOKEN_AUTH, new ApiKeyAuthDefinition("Authorization", In.HEADER));
 	}
 }

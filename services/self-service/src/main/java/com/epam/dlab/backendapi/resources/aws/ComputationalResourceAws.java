@@ -50,8 +50,7 @@ import static com.epam.dlab.dto.UserInstanceStatus.CREATING;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "Service for computational resources on AWS",
-		authorizations = {@Authorization(SwaggerConfigurator.BASIC_AUTH),
-				@Authorization(SwaggerConfigurator.TOKEN_AUTH)}, hidden = true)
+		authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH), hidden = true)
 @Slf4j
 public class ComputationalResourceAws implements ComputationalAPI {
 
