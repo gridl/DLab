@@ -31,13 +31,11 @@ import java.util.Arrays;
 
 public class SwaggerConfigurator extends SwaggerBundle<SelfServiceApplicationConfiguration> {
 
-	private static SwaggerConfigurator instance;
-	private Swagger swagger;
+	private Swagger swagger = new Swagger();
 	public static final String TOKEN_AUTH = "Token authorization";
 
 
-	private SwaggerConfigurator() {
-		swagger = new Swagger();
+	public SwaggerConfigurator() {
 		configureSwagger();
 		new SwaggerContextService().updateSwagger(swagger);
 	}
@@ -56,13 +54,6 @@ public class SwaggerConfigurator extends SwaggerBundle<SelfServiceApplicationCon
 		swaggerConfiguration.setLicense("Apache 2.0");
 		swaggerConfiguration.setLicenseUrl("https://www.apache.org/licenses/LICENSE-2.0");
 		return swaggerConfiguration;
-	}
-
-	public static SwaggerConfigurator getInstance() {
-		if (instance == null) {
-			instance = new SwaggerConfigurator();
-		}
-		return instance;
 	}
 
 	private void configureSwagger() {

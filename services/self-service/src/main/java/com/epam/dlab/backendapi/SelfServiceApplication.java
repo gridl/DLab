@@ -75,7 +75,7 @@ public class SelfServiceApplication extends Application<SelfServiceApplicationCo
 		bootstrap.addBundle(new TemplateConfigBundle(
 				new TemplateConfigBundleConfiguration().fileIncludePath(ServiceUtils.getConfPath())
 		));
-		bootstrap.addBundle(SwaggerConfigurator.getInstance());
+		bootstrap.addBundle(new SwaggerConfigurator());
 	}
 
 	@Override

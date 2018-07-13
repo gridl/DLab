@@ -53,7 +53,7 @@ import javax.ws.rs.core.Response.Status;
 @Path("/user")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "Authorization service", authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
+@Api(value = "Authorization service")
 @Slf4j
 public class SecurityResource implements SecurityAPI {
 
@@ -102,7 +102,8 @@ public class SecurityResource implements SecurityAPI {
      */
     @POST
     @Path("/authorize")
-	@ApiOperation(value = "Authorize attempt for user")
+	@ApiOperation(value = "Authorize attempt for user", authorizations = @Authorization(SwaggerConfigurator
+			.TOKEN_AUTH))
 	@ApiResponses(value = @ApiResponse(code = 500, message = "Access forbidden"))
 	public Response authorize(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 							  @ApiParam(value = "User's name", required = true)
@@ -132,7 +133,7 @@ public class SecurityResource implements SecurityAPI {
      */
     @POST
     @Path("/logout")
-	@ApiOperation(value = "Logout attempt for user")
+	@ApiOperation(value = "Logout attempt for user", authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
 	@ApiResponses(value = @ApiResponse(code = 403, message = "Logout failed"))
 	public Response userLogout(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
         log.debug("Try logout for accessToken {}", userInfo.getAccessToken());
