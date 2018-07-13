@@ -162,12 +162,12 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 						int exit = p.waitFor();
 						DlabProcess.getInstance().finish(processData, exit);
 					} catch (IOException e) {
-						DlabProcess.getInstance().toStdErr(processData, "Command launch failed. " + get().getCommand()
-								, e);
+						DlabProcess.getInstance().toStdErr(processData, "Command launch failed. " +
+								get().getCommand(), e);
 						DlabProcess.getInstance().failed(processData);
 					} catch (InterruptedException e) {
-						DlabProcess.getInstance().toStdErr(processData, "Command interrupted. " + get().getCommand(),
-								e);
+						DlabProcess.getInstance().toStdErr(processData, "Command interrupted. " +
+								get().getCommand(), e);
 						DlabProcess.getInstance().failed(processData);
 						Thread.currentThread().interrupt();
 					}
@@ -177,6 +177,8 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 				} catch (Exception e) {
 					log.error("Exception occurred during getting future result: {}", e.getMessage());
 				}
+			} else {
+				future.cancel(true);
 			}
 		});
 	}
