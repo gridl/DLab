@@ -172,15 +172,21 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 						Thread.currentThread().interrupt();
 					}
 				});
-				try {
-					future.get();
-				} catch (Exception e) {
-					log.error("Exception occurred during getting future result: {}", e.getMessage());
-				}
+				getFutureResult();
 			} else {
 				future.cancel(true);
+				DlabProcess.getInstance().finish(processData, 0);
+				getFutureResult();
 			}
 		});
+	}
+
+	private void getFutureResult() {
+		try {
+			future.get();
+		} catch (Exception e) {
+			log.error("Exception occurred during getting future result: {}", e.getMessage());
+		}
 	}
 
 	private void printError(InputStream stdErrStream) {
@@ -264,7 +270,7 @@ public class ProcessInfoBuilder implements Supplier<ProcessInfo>, Testing, Timeo
 
 	private static Function<Process, Integer> pidSupplier = null;
 
-	public static int getPid(Process process) {
+	private static int getPid(Process process) {
 		try {
 			if (pidSupplier == null) {
 				Class<?> cProcessImpl = process.getClass();
