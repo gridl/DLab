@@ -72,7 +72,8 @@ public class BackupResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Fetches all backups")
-	@ApiResponses(value = @ApiResponse(code = 400, message = "Invalid user's name"))
+	@ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid user's name"),
+			@ApiResponse(code = 200, message = "Backups were fetched successfully")})
 	public Response getBackups(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
 		log.debug("Getting backups for user {}", userInfo.getName());
 		return Response.ok(backupService.getBackups(userInfo.getName())).build();
@@ -82,7 +83,8 @@ public class BackupResource {
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Fetches backup by ID")
-	@ApiResponses(value = @ApiResponse(code = 404, message = "Backup with ID not found"))
+	@ApiResponses(value = {@ApiResponse(code = 404, message = "Backup with ID not found"),
+			@ApiResponse(code = 200, message = "Backup with ID fetched successfully")})
 	public Response getBackup(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 							  @ApiParam(value = "Backup's ID", required = true) @PathParam("id") String id) {
 		log.debug("Getting backup with id {} for user {}", id, userInfo.getName());

@@ -74,6 +74,7 @@ public class ImageExploratoryResource {
 
 	@GET
 	@ApiOperation(value = "Fetches machine images created from specific Docker image")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "Machine images were fetched successfully"))
 	public Response getImages(@ApiParam(hidden = true) @Auth UserInfo ui,
 							  @ApiParam(value = "Docker image", required = true)
 							  @QueryParam("docker_image") String dockerImage) {
@@ -85,7 +86,8 @@ public class ImageExploratoryResource {
 	@GET
 	@Path("{name}")
 	@ApiOperation(value = "Fetches machine image by name")
-	@ApiResponses(value = @ApiResponse(code = 400, message = "Invalid machine image's name"))
+	@ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid machine image's name"),
+			@ApiResponse(code = 200, message = "Machine image fetched successfully")})
 	public Response getImage(@ApiParam(hidden = true) @Auth UserInfo ui,
 							 @ApiParam(value = "Image's name", required = true) @PathParam("name") String name) {
 		log.debug("Getting image with name {} for user {}", name, ui.getName());

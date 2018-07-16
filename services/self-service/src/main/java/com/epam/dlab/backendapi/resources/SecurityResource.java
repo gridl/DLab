@@ -80,6 +80,8 @@ public class SecurityResource implements SecurityAPI {
     @POST
     @Path("/login")
 	@ApiOperation(value = "Login attempt for user")
+	@ApiResponses(value = {@ApiResponse(code = 500, message = "Internal server error occured"),
+			@ApiResponse(code = 200, message = "User logged in successfully")})
 	public Response userLogin(@ApiParam(value = "User credential DTO", required = true)
 							  @Valid @NotNull UserCredentialDTO credential) {
         log.debug("Try login for user {}", credential.getUsername());
@@ -104,7 +106,8 @@ public class SecurityResource implements SecurityAPI {
     @Path("/authorize")
 	@ApiOperation(value = "Authorize attempt for user", authorizations = @Authorization(SwaggerConfigurator
 			.TOKEN_AUTH))
-	@ApiResponses(value = @ApiResponse(code = 500, message = "Access forbidden"))
+	@ApiResponses(value = {@ApiResponse(code = 500, message = "Access forbidden"),
+			@ApiResponse(code = 200, message = "User authorized successfully")})
 	public Response authorize(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 							  @ApiParam(value = "User's name", required = true)
 							  @Valid @NotBlank(groups = AwsValidation.class) String username) {
@@ -134,7 +137,9 @@ public class SecurityResource implements SecurityAPI {
     @POST
     @Path("/logout")
 	@ApiOperation(value = "Logout attempt for user", authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH))
-	@ApiResponses(value = @ApiResponse(code = 403, message = "Logout failed"))
+	@ApiResponses(value = {@ApiResponse(code = 500, message = "Internal server error occured"),
+			@ApiResponse(code = 403, message = "Logout failed"),
+			@ApiResponse(code = 200, message = "User logged out successfully")})
 	public Response userLogout(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
         log.debug("Try logout for accessToken {}", userInfo.getAccessToken());
         try {

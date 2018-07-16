@@ -24,10 +24,7 @@ import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.exceptions.DlabException;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Authorization;
+import io.swagger.annotations.*;
 import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +58,7 @@ public class UserSettingsResource {
     
     @POST
 	@ApiOperation(value = "Saves user's settings to database")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "User's settings were saved to database successfully"))
 	public Response saveSettings(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 								 @ApiParam(value = "Settings data", required = true)
 								 @NotBlank String settings) {

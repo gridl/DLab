@@ -47,7 +47,8 @@ public class EnvironmentResource {
 	@Path("user/active")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Fetches active users")
-	@ApiResponses(value = @ApiResponse(code = 404, message = "Active users not found"))
+	@ApiResponses(value = {@ApiResponse(code = 404, message = "Active users not found"),
+			@ApiResponse(code = 200, message = "Active users were fetched successfully")})
 	public Response getUsersWithActiveEnv(@ApiParam(hidden = true) @Auth UserInfo userInfo) {
 		log.debug("User {} requested information about active environments", userInfo.getName());
 		return Response.ok(environmentService.getActiveUsers()).build();
@@ -58,6 +59,7 @@ public class EnvironmentResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("terminate")
 	@ApiOperation(value = "Terminates user's environment including EDGE, notebooks, clusters")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "User's environment terminated successfully"))
 	public Response terminateEnv(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 								 @ApiParam(value = "User's name", required = true) @NotEmpty String user) {
 		log.info("User {} is terminating {} environment", userInfo.getName(), user);
@@ -70,6 +72,7 @@ public class EnvironmentResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("stop")
 	@ApiOperation(value = "Stops user's environment including EDGE, notebooks, Spark clusters")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "User's environment stopped successfully"))
 	public Response stopEnv(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 							@ApiParam(value = "User's name", required = true) @NotEmpty String user) {
 		log.info("User {} is stopping {} environment", userInfo.getName(), user);

@@ -24,10 +24,7 @@ import com.epam.dlab.backendapi.service.InfrastructureInfoService;
 import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Authorization;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.*;
@@ -56,6 +53,7 @@ public class InfrastructureInfoResource {
 	 */
 	@GET
 	@ApiOperation(value = "Returns status of self-service")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "Self-service's status fetched successfully"))
 	public Response status() {
 		return Response.status(Response.Status.OK).build();
 	}

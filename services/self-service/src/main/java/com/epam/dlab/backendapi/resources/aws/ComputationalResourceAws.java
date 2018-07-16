@@ -19,12 +19,14 @@ package com.epam.dlab.backendapi.resources.aws;
 
 import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.SelfServiceApplicationConfiguration;
+import com.epam.dlab.backendapi.annotation.CloudService;
 import com.epam.dlab.backendapi.resources.dto.SparkStandaloneClusterCreateForm;
 import com.epam.dlab.backendapi.resources.dto.aws.AwsComputationalCreateForm;
 import com.epam.dlab.backendapi.roles.RoleType;
 import com.epam.dlab.backendapi.roles.UserRoles;
 import com.epam.dlab.backendapi.service.ComputationalService;
 import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
+import com.epam.dlab.cloud.CloudProvider;
 import com.epam.dlab.dto.aws.computational.AwsComputationalResource;
 import com.epam.dlab.dto.base.DataEngineType;
 import com.epam.dlab.exceptions.DlabException;
@@ -52,6 +54,7 @@ import static com.epam.dlab.dto.UserInstanceStatus.CREATING;
 @Api(value = "Service for computational resources on AWS",
 		authorizations = @Authorization(SwaggerConfigurator.TOKEN_AUTH), hidden = true)
 @Slf4j
+@CloudService(value = CloudProvider.AWS)
 public class ComputationalResourceAws implements ComputationalAPI {
 
 	@Inject
@@ -71,8 +74,8 @@ public class ComputationalResourceAws implements ComputationalAPI {
 	@PUT
 	@Path("dataengine-service")
 	@ApiOperation(value = "Creates EMR cluster on AWS")
-	@ApiResponses(value = @ApiResponse(code = 302, message = "EMR cluster on AWS with current parameters already " +
-			"exists"))
+	@ApiResponses(value = {@ApiResponse(code = 302, message = "EMR cluster on AWS with current parameters already " +
+			"exists"), @ApiResponse(code = 200, message = "EMR cluster on AWS successfully created")})
 	public Response createDataEngineService(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 											@ApiParam(value = "AWS form DTO for EMR creation", required = true)
 											@Valid @NotNull AwsComputationalCreateForm form) {
@@ -113,7 +116,8 @@ public class ComputationalResourceAws implements ComputationalAPI {
 	@PUT
 	@Path("dataengine")
 	@ApiOperation(value = "Creates Spark cluster on AWS")
-	@ApiResponses(value = @ApiResponse(code = 302, message = "Spark cluster on AWS with current parameters already exists"))
+	@ApiResponses(value = {@ApiResponse(code = 302, message = "Spark cluster on AWS with current parameters already " +
+			"exists"), @ApiResponse(code = 200, message = "Spark cluster on AWS successfully created")})
 	public Response createDataEngine(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 									 @ApiParam(value = "Spark cluster create form DTO", required = true)
 									 @Valid @NotNull SparkStandaloneClusterCreateForm form) {
@@ -140,6 +144,7 @@ public class ComputationalResourceAws implements ComputationalAPI {
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/terminate")
 	@ApiOperation(value = "Terminates computational resource (EMR/Spark cluster) on AWS")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "EMR/Spark cluster on AWS successfully terminated"))
 	public Response terminate(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 							  @ApiParam(value = "Notebook's name corresponding to computational resource",
 									  required = true)
@@ -164,6 +169,7 @@ public class ComputationalResourceAws implements ComputationalAPI {
 	@DELETE
 	@Path("/{exploratoryName}/{computationalName}/stop")
 	@ApiOperation(value = "Stops Spark cluster on AWS")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "Spark cluster on AWS successfully stopped"))
 	public Response stop(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 						 @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						 @PathParam("exploratoryName") String exploratoryName,
@@ -187,6 +193,7 @@ public class ComputationalResourceAws implements ComputationalAPI {
 	@PUT
 	@Path("/{exploratoryName}/{computationalName}/start")
 	@ApiOperation(value = "Starts Spark cluster on AWS")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "Spark cluster on AWS successfully started"))
 	public Response start(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 						  @ApiParam(value = "Notebook's name corresponding to Spark cluster", required = true)
 						  @PathParam("exploratoryName") String exploratoryName,

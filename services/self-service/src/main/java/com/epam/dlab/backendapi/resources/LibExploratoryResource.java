@@ -35,10 +35,7 @@ import com.epam.dlab.rest.contracts.ExploratoryAPI;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.dropwizard.auth.Auth;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Authorization;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
@@ -189,6 +186,7 @@ public class LibExploratoryResource {
 	@POST
 	@Path("/lib_install")
 	@ApiOperation(value = "Installs libraries on notebook or cluster")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "Libraries were installed successfully"))
 	public Response libInstall(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 							   @ApiParam(value = "Library install form DTO", required = true)
 							   @Valid @NotNull LibInstallFormDTO formDTO) {

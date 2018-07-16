@@ -23,10 +23,7 @@ import com.epam.dlab.backendapi.swagger.SwaggerConfigurator;
 import com.epam.dlab.dto.SchedulerJobDTO;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Authorization;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.*;
@@ -63,6 +60,7 @@ public class SchedulerJobResource {
 	@POST
 	@Path("/{exploratoryName}")
 	@ApiOperation(value = "Updates scheduler's data for notebook")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "Scheduler's data for notebook was updated successfully"))
 	public Response updateExploratoryScheduler(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 											   @ApiParam(value = "Notebook's name", required = true)
 											   @PathParam("exploratoryName") String exploratoryName,
@@ -85,6 +83,7 @@ public class SchedulerJobResource {
 	@POST
 	@Path("/{exploratoryName}/{computationalName}")
 	@ApiOperation(value = "Updates scheduler's data for cluster")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "Scheduler's data for cluster was updated successfully"))
 	public Response upsertComputationalScheduler(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 												 @ApiParam(value = "Notebook's name", required = true)
 												 @PathParam("exploratoryName") String exploratoryName,
@@ -109,6 +108,7 @@ public class SchedulerJobResource {
 	@GET
 	@Path("/{exploratoryName}")
 	@ApiOperation(value = "Returns scheduler's data for notebook")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "Scheduler's data for notebook fetched successfully"))
 	public Response fetchSchedulerJobForUserAndExploratory(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 														   @ApiParam(value = "Notebook's name", required = true)
 														   @PathParam("exploratoryName") String exploratoryName) {
@@ -130,6 +130,7 @@ public class SchedulerJobResource {
 	@GET
 	@Path("/{exploratoryName}/{computationalName}")
 	@ApiOperation(value = "Returns scheduler's data for cluster")
+	@ApiResponses(value = @ApiResponse(code = 200, message = "Scheduler's data for cluster fetched successfully"))
 	public Response fetchSchedulerJobForComputationalResource(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 															  @ApiParam(value = "Notebook's name", required = true)
 															  @PathParam("exploratoryName") String exploratoryName,

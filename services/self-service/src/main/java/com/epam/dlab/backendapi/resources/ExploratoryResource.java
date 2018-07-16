@@ -69,7 +69,8 @@ public class ExploratoryResource implements ExploratoryAPI {
 	@PUT
 	@RolesAllowed(UserSessionDurationAuthorizer.SHORT_USER_SESSION_DURATION)
 	@ApiOperation(value = "Creates notebook")
-	@ApiResponses(value = @ApiResponse(code = 302, message = "Notebook with current parameters already exists"))
+	@ApiResponses(value = {@ApiResponse(code = 302, message = "Notebook with current parameters already exists"),
+			@ApiResponse(code = 200, message = "Notebook created successfully")})
 	public Response create(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 						   @ApiParam(value = "Notebook create form DTO", required = true)
 						   @Valid @NotNull ExploratoryCreateFormDTO formDTO) {
@@ -98,8 +99,8 @@ public class ExploratoryResource implements ExploratoryAPI {
 	public String start(@ApiParam(hidden = true) @Auth UserInfo userInfo,
 						@ApiParam(value = "Notebook action form DTO", required = true)
 						@Valid @NotNull ExploratoryActionFormDTO formDTO) {
-		log.debug("Starting exploratory environment {} for user {}", formDTO.getNotebookInstanceName(), userInfo
-				.getName());
+		log.debug("Starting exploratory environment {} for user {}", formDTO.getNotebookInstanceName(),
+				userInfo.getName());
 		return exploratoryService.start(userInfo, formDTO.getNotebookInstanceName());
 	}
 

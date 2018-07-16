@@ -18,6 +18,7 @@
 package com.epam.dlab.backendapi.swagger;
 
 import com.epam.dlab.backendapi.SelfServiceApplicationConfiguration;
+import com.epam.dlab.backendapi.annotation.CloudService;
 import com.epam.dlab.cloud.CloudProvider;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -66,7 +67,8 @@ public class SwaggerAnnotationResolver implements Managed {
 
 	private List<Class<?>> getTargetClassesFromPackage(CloudProvider cloudProvider, String packageAbsolutePath) {
 		return new Reflections(packageAbsolutePath).getTypesAnnotatedWith(Api.class).stream()
-				.filter(clazz -> clazz.getSimpleName().toLowerCase().contains(cloudProvider.getName()))
+				.filter(clazz -> clazz.isAnnotationPresent(CloudService.class) &&
+						clazz.getAnnotation(CloudService.class).value() == cloudProvider)
 				.collect(Collectors.toList());
 	}
 
