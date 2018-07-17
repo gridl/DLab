@@ -38,7 +38,7 @@ import java.util.Map;
 public abstract class EdgeService implements DockerCommands {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private static Map<DockerAction, ProcessType> processTypeMap = new EnumMap<>(DockerAction.class);
+	private static final Map<DockerAction, ProcessType> PROCESS_TYPE_MAP = new EnumMap<>(DockerAction.class);
 
 	@Inject
 	protected RESTService selfService;
@@ -52,10 +52,10 @@ public abstract class EdgeService implements DockerCommands {
 	private CommandBuilder commandBuilder;
 
 	static {
-		processTypeMap.put(DockerAction.CREATE, ProcessType.EDGE_CREATE);
-		processTypeMap.put(DockerAction.START, ProcessType.EDGE_START);
-		processTypeMap.put(DockerAction.STOP, ProcessType.EDGE_STOP);
-		processTypeMap.put(DockerAction.TERMINATE, ProcessType.EDGE_TERMINATE);
+		PROCESS_TYPE_MAP.put(DockerAction.CREATE, ProcessType.EDGE_CREATE);
+		PROCESS_TYPE_MAP.put(DockerAction.START, ProcessType.EDGE_START);
+		PROCESS_TYPE_MAP.put(DockerAction.STOP, ProcessType.EDGE_STOP);
+		PROCESS_TYPE_MAP.put(DockerAction.TERMINATE, ProcessType.EDGE_TERMINATE);
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public abstract class EdgeService implements DockerCommands {
 				.withImage(configuration.getEdgeImage())
 				.withAction(action);
 
-		commandExecutor.startAsync(username, uuid, processTypeMap.get(action), StringUtils.EMPTY,
+		commandExecutor.startAsync(username, uuid, PROCESS_TYPE_MAP.get(action), StringUtils.EMPTY,
 				commandBuilder.buildCommand(runDockerCommand, dto));
 		return uuid;
 	}

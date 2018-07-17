@@ -45,24 +45,12 @@ public class CommandExecutor implements ICommandExecutor {
 	@Override
 	public Boolean cancelSync(final String username, final String uuid) throws ExecutionException,
 			InterruptedException {
-		ProcessStatus processStatus = DlabProcess.getInstance().getProcessStatus(username, uuid);
-		if (processStatus == ProcessStatus.LAUNCHING) {
-			return getCancelFuture(username, uuid).get();
-		} else {
-			throw new DlabProcessException("Couldn't cancel the process with ID " + uuid + " for user " + username +
-					" because its current status is " + processStatus);
-		}
+		return getOrElseThrow(DlabProcess.getInstance().getProcessStatus(username, uuid), username, uuid).get();
 	}
 
 	@Override
 	public void cancelAsync(final String username, final String uuid) {
-		ProcessStatus processStatus = DlabProcess.getInstance().getProcessStatus(username, uuid);
-		if (processStatus == ProcessStatus.LAUNCHING) {
-			getCancelFuture(username, uuid);
-		} else {
-			throw new DlabProcessException("Couldn't cancel the process with ID " + uuid + " for user " + username +
-					" because its current status is " + processStatus);
-		}
+		getOrElseThrow(DlabProcess.getInstance().getProcessStatus(username, uuid), username, uuid);
 	}
 
 	@Override
@@ -80,4 +68,12 @@ public class CommandExecutor implements ICommandExecutor {
 				"bash", "-c", command);
 	}
 
+	private CompletableFuture<Boolean> getOrElseThrow(ProcessStatus processStatus, String username, String uuid) {
+		if (processStatus == ProcessStatus.LAUNCHING) {
+			return getCancelFuture(username, uuid);
+		} else {
+			throw new DlabProcessException("Couldn't cancel the process with ID " + uuid + " for user " + username +
+					" because its current status is " + processStatus);
+		}
+	}
 }

@@ -44,16 +44,16 @@ import static com.epam.dlab.backendapi.core.commands.DockerAction.*;
 public class SparkClusterService extends DockerService implements DockerCommands {
 
 	private static final DataEngineType SPARK_ENGINE = DataEngineType.SPARK_STANDALONE;
-	private static Map<DockerAction, ProcessType> processTypeMap = new EnumMap<>(DockerAction.class);
+	private static final Map<DockerAction, ProcessType> PROCESS_TYPE_MAP = new EnumMap<>(DockerAction.class);
 
 	@Inject
 	private ComputationalConfigure computationalConfigure;
 
 	static {
-		processTypeMap.put(DockerAction.CREATE, ProcessType.SPARK_CLUSTER_CREATE);
-		processTypeMap.put(DockerAction.START, ProcessType.SPARK_CLUSTER_START);
-		processTypeMap.put(DockerAction.STOP, ProcessType.SPARK_CLUSTER_STOP);
-		processTypeMap.put(DockerAction.TERMINATE, ProcessType.SPARK_CLUSTER_TERMINATE);
+		PROCESS_TYPE_MAP.put(DockerAction.CREATE, ProcessType.SPARK_CLUSTER_CREATE);
+		PROCESS_TYPE_MAP.put(DockerAction.START, ProcessType.SPARK_CLUSTER_START);
+		PROCESS_TYPE_MAP.put(DockerAction.STOP, ProcessType.SPARK_CLUSTER_STOP);
+		PROCESS_TYPE_MAP.put(DockerAction.TERMINATE, ProcessType.SPARK_CLUSTER_TERMINATE);
 	}
 
 	public String create(UserInfo ui, ComputationalBase<?> dto) {
@@ -93,7 +93,7 @@ public class SparkClusterService extends DockerService implements DockerCommands
 
 			final String processDescription = String.format("Cluster %s affiliated with exploratory %s",
 					dto.getComputationalName(), dto.getExploratoryName());
-			commandExecutor.startAsync(ui.getName(), uuid, processTypeMap.get(action), processDescription,
+			commandExecutor.startAsync(ui.getName(), uuid, PROCESS_TYPE_MAP.get(action), processDescription,
 					commandBuilder.buildCommand(dockerCommand, dto));
 		} catch (JsonProcessingException e) {
 			throw new DlabException("Could not" + action.toString() + "computational resources cluster", e);

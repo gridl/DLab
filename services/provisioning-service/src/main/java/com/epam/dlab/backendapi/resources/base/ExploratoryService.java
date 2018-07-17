@@ -34,13 +34,13 @@ import java.util.Map;
 @Slf4j
 public class ExploratoryService extends DockerService implements DockerCommands {
 
-	private static Map<DockerAction, ProcessType> processTypeMap = new EnumMap<>(DockerAction.class);
+	private static final Map<DockerAction, ProcessType> PROCESS_TYPE_MAP = new EnumMap<>(DockerAction.class);
 
 	static {
-		processTypeMap.put(DockerAction.CREATE, ProcessType.EXPLORATORY_CREATE);
-		processTypeMap.put(DockerAction.START, ProcessType.EXPLORATORY_START);
-		processTypeMap.put(DockerAction.STOP, ProcessType.EXPLORATORY_STOP);
-		processTypeMap.put(DockerAction.TERMINATE, ProcessType.EXPLORATORY_TERMINATE);
+		PROCESS_TYPE_MAP.put(DockerAction.CREATE, ProcessType.EXPLORATORY_CREATE);
+		PROCESS_TYPE_MAP.put(DockerAction.START, ProcessType.EXPLORATORY_START);
+		PROCESS_TYPE_MAP.put(DockerAction.STOP, ProcessType.EXPLORATORY_STOP);
+		PROCESS_TYPE_MAP.put(DockerAction.TERMINATE, ProcessType.EXPLORATORY_TERMINATE);
 	}
 
     public String action(String username, ExploratoryBaseDTO<?> dto, DockerAction action) throws JsonProcessingException {
@@ -63,7 +63,7 @@ public class ExploratoryService extends DockerService implements DockerCommands 
                 .withAction(action);
 
 		final String processDescription = String.format("Exploratory_name: %s", dto.getExploratoryName());
-		commandExecutor.startAsync(username, uuid, processTypeMap.get(action), processDescription,
+		commandExecutor.startAsync(username, uuid, PROCESS_TYPE_MAP.get(action), processDescription,
 				commandBuilder.buildCommand(runDockerCommand, dto));
         return uuid;
     }
