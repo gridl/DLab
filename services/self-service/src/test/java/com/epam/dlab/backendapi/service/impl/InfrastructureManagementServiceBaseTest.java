@@ -16,6 +16,7 @@
 
 package com.epam.dlab.backendapi.service.impl;
 
+import com.epam.dlab.auth.UserInfo;
 import com.epam.dlab.backendapi.SelfServiceApplicationConfiguration;
 import com.epam.dlab.backendapi.dao.EnvStatusDAO;
 import com.epam.dlab.backendapi.dao.ExploratoryDAO;
@@ -25,6 +26,12 @@ import com.epam.dlab.backendapi.resources.dto.HealthStatusPageDTO;
 import com.epam.dlab.backendapi.resources.dto.InfrastructureInfo;
 import com.epam.dlab.dto.base.edge.EdgeInfo;
 import com.epam.dlab.exceptions.DlabException;
+import com.epam.dlab.process.model.ProcessData;
+import com.epam.dlab.process.model.ProcessInfo;
+import com.epam.dlab.process.model.ProcessStatus;
+import com.epam.dlab.process.model.ProcessType;
+import com.epam.dlab.rest.client.RESTService;
+import com.epam.dlab.rest.contracts.InfrasctructureAPI;
 import org.bson.Document;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,8 +39,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.ws.rs.core.Response;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -49,6 +59,8 @@ public class InfrastructureManagementServiceBaseTest {
 	private ExploratoryDAO expDAO;
 	@Mock
 	private KeyDAO keyDAO;
+	@Mock
+	private RESTService provisioningService;
 	@Mock
 	private SelfServiceApplicationConfiguration configuration;
 
@@ -127,6 +139,27 @@ public class InfrastructureManagementServiceBaseTest {
 		verifyNoMoreInteractions(envDAO);
 	}
 
+	@Test
+	public void getProcessInfo() {
+		when(provisioningService.get(anyString(), anyString(), any())).thenReturn(getProcessInfoList());
+
+		infrastructureInfoServiceBase.getProcessInfo(new UserInfo(USER, "token"));
+
+		verify(provisioningService).get(InfrasctructureAPI.INFRASTRUCTURE_OPERATIONS, "token", List.class);
+		verifyNoMoreInteractions(provisioningService);
+	}
+
+	@Test
+	public void cancelProcess() {
+		when(provisioningService.delete(anyString(), anyString(), any())).thenReturn(mock(Response.class));
+
+		infrastructureInfoServiceBase.cancelProcess(new UserInfo(USER, "token"), "someUuid");
+
+		verify(provisioningService).delete(InfrasctructureAPI.INFRASTRUCTURE_OPERATIONS_CANCEL + "someUuid",
+				"token", Response.class);
+		verifyNoMoreInteractions(provisioningService);
+	}
+
 	private boolean areInfrastructureInfoObjectsEqual(InfrastructureInfo object1, InfrastructureInfo object2) throws
 			NoSuchFieldException, IllegalAccessException {
 		Field shared1 = object1.getClass().getDeclaredField("shared");
@@ -139,5 +172,15 @@ public class InfrastructureManagementServiceBaseTest {
 		exploratory2.setAccessible(true);
 		return shared1.get(object1).equals(shared2.get(object2))
 				&& exploratory1.get(object1).equals(exploratory2.get(object2));
+	}
+
+	private List<ProcessInfo> getProcessInfoList() {
+		ProcessData pd1 = new ProcessData(USER, "uuid1", ProcessType.BACKUP_CREATE, "descr1");
+		ProcessData pd2 = new ProcessData(USER, "uuid2", ProcessType.EDGE_CREATE, "descr2");
+		ProcessInfo pi1 = new ProcessInfo(pd1, ProcessStatus.CREATED, new String[0], "stdOut1", "stdErr1",
+				0, 100L, 200L, Collections.emptyList(), 10);
+		ProcessInfo pi2 = new ProcessInfo(pd2, ProcessStatus.CREATED, new String[0], "stdOut2", "stdErr2",
+				0, 100L, 200L, Collections.emptyList(), 20);
+		return Arrays.asList(pi1, pi2);
 	}
 }

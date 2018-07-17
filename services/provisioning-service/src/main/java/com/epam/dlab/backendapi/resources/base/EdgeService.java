@@ -32,9 +32,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 public abstract class EdgeService implements DockerCommands {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private static Map<DockerAction, ProcessType> processTypeMap = new EnumMap<>(DockerAction.class);
 
 	@Inject
 	protected RESTService selfService;
@@ -46,6 +50,13 @@ public abstract class EdgeService implements DockerCommands {
 	private ICommandExecutor commandExecutor;
 	@Inject
 	private CommandBuilder commandBuilder;
+
+	static {
+		processTypeMap.put(DockerAction.CREATE, ProcessType.EDGE_CREATE);
+		processTypeMap.put(DockerAction.START, ProcessType.EDGE_START);
+		processTypeMap.put(DockerAction.STOP, ProcessType.EDGE_STOP);
+		processTypeMap.put(DockerAction.TERMINATE, ProcessType.EDGE_TERMINATE);
+	}
 
 	@Override
 	public String getResourceType() {
@@ -73,7 +84,7 @@ public abstract class EdgeService implements DockerCommands {
 				.withImage(configuration.getEdgeImage())
 				.withAction(action);
 
-		commandExecutor.startAsync(username, uuid, getProcessType(action), StringUtils.EMPTY,
+		commandExecutor.startAsync(username, uuid, processTypeMap.get(action), StringUtils.EMPTY,
 				commandBuilder.buildCommand(runDockerCommand, dto));
 		return uuid;
 	}
@@ -92,17 +103,4 @@ public abstract class EdgeService implements DockerCommands {
 	protected String getKeyFilename(String edgeUserName) {
 		return UsernameUtils.replaceWhitespaces(edgeUserName) + KeyAPI.KEY_EXTENTION;
 	}
-
-	private ProcessType getProcessType(DockerAction dockerAction) {
-		if (dockerAction == DockerAction.CREATE) {
-			return ProcessType.EDGE_CREATE;
-		} else if (dockerAction == DockerAction.START) {
-			return ProcessType.EDGE_START;
-		} else if (dockerAction == DockerAction.STOP) {
-			return ProcessType.EDGE_STOP;
-		} else if (dockerAction == DockerAction.TERMINATE) {
-			return ProcessType.EDGE_TERMINATE;
-		} else return null;
-	}
-
 }

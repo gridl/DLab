@@ -28,8 +28,20 @@ import com.epam.dlab.process.model.ProcessType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 @Slf4j
 public class ExploratoryService extends DockerService implements DockerCommands {
+
+	private static Map<DockerAction, ProcessType> processTypeMap = new EnumMap<>(DockerAction.class);
+
+	static {
+		processTypeMap.put(DockerAction.CREATE, ProcessType.EXPLORATORY_CREATE);
+		processTypeMap.put(DockerAction.START, ProcessType.EXPLORATORY_START);
+		processTypeMap.put(DockerAction.STOP, ProcessType.EXPLORATORY_STOP);
+		processTypeMap.put(DockerAction.TERMINATE, ProcessType.EXPLORATORY_TERMINATE);
+	}
 
     public String action(String username, ExploratoryBaseDTO<?> dto, DockerAction action) throws JsonProcessingException {
         log.debug("{} exploratory environment", action);
@@ -51,7 +63,7 @@ public class ExploratoryService extends DockerService implements DockerCommands 
                 .withAction(action);
 
 		final String processDescription = String.format("Exploratory_name: %s", dto.getExploratoryName());
-		commandExecutor.startAsync(username, uuid, getProcessType(action), processDescription,
+		commandExecutor.startAsync(username, uuid, processTypeMap.get(action), processDescription,
 				commandBuilder.buildCommand(runDockerCommand, dto));
         return uuid;
     }
@@ -68,16 +80,4 @@ public class ExploratoryService extends DockerService implements DockerCommands 
     private String nameContainer(String user, DockerAction action, String name) {
         return nameContainer(user, action.toString(), "exploratory", name);
     }
-
-	private ProcessType getProcessType(DockerAction dockerAction) {
-		if (dockerAction == DockerAction.CREATE) {
-			return ProcessType.EXPLORATORY_CREATE;
-		} else if (dockerAction == DockerAction.START) {
-			return ProcessType.EXPLORATORY_START;
-		} else if (dockerAction == DockerAction.STOP) {
-			return ProcessType.EXPLORATORY_STOP;
-		} else if (dockerAction == DockerAction.TERMINATE) {
-			return ProcessType.EXPLORATORY_TERMINATE;
-		} else return null;
-	}
 }

@@ -35,15 +35,26 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import static com.epam.dlab.backendapi.core.commands.DockerAction.*;
 
 @Singleton
 public class SparkClusterService extends DockerService implements DockerCommands {
 
 	private static final DataEngineType SPARK_ENGINE = DataEngineType.SPARK_STANDALONE;
+	private static Map<DockerAction, ProcessType> processTypeMap = new EnumMap<>(DockerAction.class);
 
 	@Inject
 	private ComputationalConfigure computationalConfigure;
+
+	static {
+		processTypeMap.put(DockerAction.CREATE, ProcessType.SPARK_CLUSTER_CREATE);
+		processTypeMap.put(DockerAction.START, ProcessType.SPARK_CLUSTER_START);
+		processTypeMap.put(DockerAction.STOP, ProcessType.SPARK_CLUSTER_STOP);
+		processTypeMap.put(DockerAction.TERMINATE, ProcessType.SPARK_CLUSTER_TERMINATE);
+	}
 
 	public String create(UserInfo ui, ComputationalBase<?> dto) {
 		return action(ui, dto, CREATE);
@@ -82,7 +93,7 @@ public class SparkClusterService extends DockerService implements DockerCommands
 
 			final String processDescription = String.format("Cluster %s affiliated with exploratory %s",
 					dto.getComputationalName(), dto.getExploratoryName());
-			commandExecutor.startAsync(ui.getName(), uuid, getProcessType(action), processDescription,
+			commandExecutor.startAsync(ui.getName(), uuid, processTypeMap.get(action), processDescription,
 					commandBuilder.buildCommand(dockerCommand, dto));
 		} catch (JsonProcessingException e) {
 			throw new DlabException("Could not" + action.toString() + "computational resources cluster", e);
@@ -104,15 +115,4 @@ public class SparkClusterService extends DockerService implements DockerCommands
 		return Directories.DATA_ENGINE_LOG_DIRECTORY;
 	}
 
-	private ProcessType getProcessType(DockerAction dockerAction) {
-		if (dockerAction == DockerAction.CREATE) {
-			return ProcessType.SPARK_CLUSTER_CREATE;
-		} else if (dockerAction == DockerAction.START) {
-			return ProcessType.SPARK_CLUSTER_START;
-		} else if (dockerAction == DockerAction.STOP) {
-			return ProcessType.SPARK_CLUSTER_STOP;
-		} else if (dockerAction == DockerAction.TERMINATE) {
-			return ProcessType.SPARK_CLUSTER_TERMINATE;
-		} else return null;
-	}
 }

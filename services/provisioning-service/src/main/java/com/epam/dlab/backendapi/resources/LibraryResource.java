@@ -30,6 +30,7 @@ import com.epam.dlab.dto.base.DataEngineType;
 import com.epam.dlab.dto.exploratory.ExploratoryActionDTO;
 import com.epam.dlab.dto.exploratory.ExploratoryBaseDTO;
 import com.epam.dlab.dto.exploratory.LibraryInstallDTO;
+import com.epam.dlab.process.exception.DlabProcessException;
 import com.epam.dlab.process.model.ProcessType;
 import com.epam.dlab.rest.contracts.ComputationalAPI;
 import com.epam.dlab.rest.contracts.ExploratoryAPI;
@@ -42,6 +43,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.Optional;
 
 @Path("/library")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -86,7 +88,10 @@ public class LibraryResource extends DockerService implements DockerCommands {
         RunDockerCommand runDockerCommand = getDockerCommandExploratory(dto, action, uuid);
 
 		final String processDescription = String.format("Exploratory name: %s", dto.getExploratoryName());
-		commandExecutor.startAsync(username, uuid, getProcessType(EXPLORATORY_RESOURCE, action),
+		commandExecutor.startAsync(username, uuid, getProcessType(EXPLORATORY_RESOURCE, action).orElseThrow(() ->
+						new DlabProcessException("Corresponding to resource=" + EXPLORATORY_RESOURCE + " and Docker " +
+								"action "
+								+ action.toString() + " not found.")),
 				processDescription, commandBuilder.buildCommand(runDockerCommand, dto));
         return uuid;
     }
@@ -102,7 +107,11 @@ public class LibraryResource extends DockerService implements DockerCommands {
 
 		final String processDescription = String.format("Cluster affiliated with exploratory %s",
 				dto.getExploratoryName());
-		commandExecutor.startAsync(username, uuid, getProcessType(COMPUTATIONAL_RESOURCE, action),
+		commandExecutor.startAsync(username, uuid, getProcessType(COMPUTATIONAL_RESOURCE, action).orElseThrow(() ->
+						new DlabProcessException("Corresponding to resource=" + COMPUTATIONAL_RESOURCE + " and " +
+								"Docker" +
+								" " +
+								"action " + action.toString() + " not found.")),
 				processDescription, commandBuilder.buildCommand(runDockerCommand, dto));
         return uuid;
     }
@@ -184,15 +193,15 @@ public class LibraryResource extends DockerService implements DockerCommands {
         return Directories.NOTEBOOK_LOG_DIRECTORY;
     }
 
-	private ProcessType getProcessType(String resourceType, DockerAction dockerAction) {
+	private Optional<ProcessType> getProcessType(String resourceType, DockerAction dockerAction) {
 		if (resourceType.equals(EXPLORATORY_RESOURCE) && dockerAction == DockerAction.LIB_LIST) {
-			return ProcessType.FETCH_EXPLORATORY_LIB_LIST;
+			return Optional.of(ProcessType.FETCH_EXPLORATORY_LIB_LIST);
 		} else if (resourceType.equals(EXPLORATORY_RESOURCE) && dockerAction == DockerAction.LIB_INSTALL) {
-			return ProcessType.EXPLORATORY_LIBRARY_INSTALL;
+			return Optional.of(ProcessType.EXPLORATORY_LIBRARY_INSTALL);
 		} else if (resourceType.equals(COMPUTATIONAL_RESOURCE) && dockerAction == DockerAction.LIB_LIST) {
-			return ProcessType.FETCH_CLUSTER_LIB_LIST;
+			return Optional.of(ProcessType.FETCH_CLUSTER_LIB_LIST);
 		} else if (resourceType.equals(COMPUTATIONAL_RESOURCE) && dockerAction == DockerAction.LIB_INSTALL) {
-			return ProcessType.CLUSTER_LIBRARY_INSTALL;
-		} else return null;
+			return Optional.of(ProcessType.CLUSTER_LIBRARY_INSTALL);
+		} else return Optional.empty();
 	}
 }

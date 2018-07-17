@@ -27,6 +27,7 @@ import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -98,6 +99,20 @@ public class CommandExecutorMock implements ICommandExecutor {
 		execAsync = new CommandExecutorMockAsync(user, uuid, processType, processDescription, command, cloudProvider);
         future = CompletableFuture.supplyAsync(execAsync);
     }
+
+	@Override
+	public Boolean cancelSync(String username, String uuid) {
+		return false;
+	}
+
+	@Override
+	public void cancelAsync(String username, String uuid) {
+	}
+
+	@Override
+	public List<ProcessInfo> getProcessInfo(String username) {
+		return Collections.emptyList();
+	}
 
 	private List<String> getComputationalDockerImage() {
         switch (cloudProvider) {
