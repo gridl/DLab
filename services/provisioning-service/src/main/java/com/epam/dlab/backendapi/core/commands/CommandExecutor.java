@@ -45,12 +45,12 @@ public class CommandExecutor implements ICommandExecutor {
 	@Override
 	public Boolean cancelSync(final String username, final String uuid) throws ExecutionException,
 			InterruptedException {
-		return getOrElseThrow(DlabProcess.getInstance().getProcessStatus(username, uuid), username, uuid).get();
+		return cancelOrElseThrow(DlabProcess.getInstance().getProcessStatus(username, uuid), username, uuid).get();
 	}
 
 	@Override
 	public void cancelAsync(final String username, final String uuid) {
-		getOrElseThrow(DlabProcess.getInstance().getProcessStatus(username, uuid), username, uuid);
+		cancelOrElseThrow(DlabProcess.getInstance().getProcessStatus(username, uuid), username, uuid);
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class CommandExecutor implements ICommandExecutor {
 				"bash", "-c", command);
 	}
 
-	private CompletableFuture<Boolean> getOrElseThrow(ProcessStatus processStatus, String username, String uuid) {
+	private CompletableFuture<Boolean> cancelOrElseThrow(ProcessStatus processStatus, String username, String uuid) {
 		if (processStatus == ProcessStatus.LAUNCHING) {
 			return getCancelFuture(username, uuid);
 		} else {
