@@ -178,11 +178,11 @@ limitations under the License.
 }
 
 .dialog-header {
-  padding-left: 20px;
+  padding-left: 30px;
   background: #f6fafe;
   border-bottom: 1px solid #edf1f5;
-  height: 50px;
-  line-height: 50px;
+  height: 54px;
+  line-height: 54px;
 }
 
 .header-white .dialog-header {
@@ -338,41 +338,6 @@ limitations under the License.
   margin-top: 5px;
 }
 
-.confirmation-dialog {
-  color: #718ba6;
-}
-
-.confirmation-dialog p {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0;
-  margin-bottom: 10px;
-}
-
-.confirmation-dialog .truncate-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 60%;
-  display: inline-block;
-  vertical-align: bottom;
-}
-
-.confirmation-dialog li {
-  font-size: 14px;
-  color: #9cadbe;
-  word-wrap: break-word;
-  width: 90%;
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  vertical-align: middle;
-  text-overflow: ellipsis;
-}
-
-.confirmation-dialog.dialog-container {
-  width: 550px;
-}
-
 .detail-dialog .dialog-header {
   border-bottom: 0;
 }
@@ -413,7 +378,6 @@ limitations under the License.
   text-overflow: ellipsis;
   font-weight: 600;
   color: #455c74;
-  line-height: 50px;
   font-size: 18px;
   background: #f6fafe;
 }
