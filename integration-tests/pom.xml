@@ -127,22 +127,22 @@ limitations under the License.
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>azure</artifactId>
-            <version>1.5.1</version>
+            <version>1.13.0</version>
         </dependency>
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>azure-mgmt-compute</artifactId>
-            <version>1.5.1</version>
+            <version>1.13.0</version>
         </dependency>
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>azure-mgmt-resources</artifactId>
-            <version>1.5.1</version>
+            <version>1.13.0</version>
         </dependency>
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>azure-mgmt-network</artifactId>
-            <version>1.5.1</version>
+            <version>1.13.0</version>
         </dependency>
 
         <dependency>
