@@ -24,6 +24,25 @@ from dlab.meta_lib import *
 import sys, time, os
 from dlab.actions_lib import *
 
+def clean_azure_env():
+    AzureActions().remove_instance(edge_conf['resource_group_name'], edge_conf['instance_name'])
+    AzureActions().remove_subnet(edge_conf['resource_group_name'], edge_conf['vpc_name'],
+                                 edge_conf['private_subnet_name'])
+    AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['edge_security_group_name'])
+    AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['notebook_security_group_name'])
+    AzureActions().remove_security_group(edge_conf['resource_group_name'],
+                                         edge_conf['master_security_group_name'])
+    AzureActions().remove_security_group(edge_conf['resource_group_name'],
+                                             edge_conf['slave_security_group_name'])
+    for storage_account in AzureMeta().list_storage_accounts(edge_conf['resource_group_name']):
+        if edge_conf['user_storage_account_name'] == storage_account.tags["Name"]:
+            AzureActions().remove_storage_account(edge_conf['resource_group_name'], storage_account.name)
+    if os.environ['azure_datalake_enable'] == 'true':
+        for datalake in AzureMeta().list_datalakes(edge_conf['resource_group_name']):
+            if edge_conf['datalake_store_name'] == datalake.tags["Name"]:
+                AzureActions().remove_datalake_directory(datalake.name, edge_conf['datalake_user_directory_name'])
+    sys.exit(1)
+
 if __name__ == "__main__":
     local_log_filename = "{}_{}_{}.log".format(os.environ['conf_resource'], os.environ['edge_user_name'],
                                                os.environ['request_id'])
@@ -76,23 +95,7 @@ if __name__ == "__main__":
                                                                         edge_conf['instance_name'])
     except Exception as err:
         append_result("Failed to generate infrastructure names", str(err))
-        AzureActions().remove_instance(edge_conf['resource_group_name'], edge_conf['instance_name'])
-        AzureActions().remove_subnet(edge_conf['resource_group_name'], edge_conf['vpc_name'],
-                                     edge_conf['private_subnet_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['edge_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['notebook_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'],
-                                             edge_conf['master_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'],
-                                                 edge_conf['slave_security_group_name'])
-        for storage_account in AzureMeta().list_storage_accounts(edge_conf['resource_group_name']):
-            if edge_conf['user_storage_account_name'] == storage_account.tags["Name"]:
-                AzureActions().remove_storage_account(edge_conf['resource_group_name'], storage_account.name)
-        if os.environ['azure_datalake_enable'] == 'true':
-            for datalake in AzureMeta().list_datalakes(edge_conf['resource_group_name']):
-                if edge_conf['datalake_store_name'] == datalake.tags["Name"]:
-                    AzureActions().remove_datalake_directory(datalake.name, edge_conf['datalake_user_directory_name'])
-        sys.exit(1)
+        clean_azure_env()
 
     try:
         if os.environ['conf_os_family'] == 'debian':
@@ -115,23 +118,7 @@ if __name__ == "__main__":
             raise Exception
     except Exception as err:
         append_result("Failed creating ssh user 'dlab'.", str(err))
-        AzureActions().remove_instance(edge_conf['resource_group_name'], edge_conf['instance_name'])
-        AzureActions().remove_subnet(edge_conf['resource_group_name'], edge_conf['vpc_name'],
-                                     edge_conf['private_subnet_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['edge_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['notebook_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'],
-                                             edge_conf['master_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'],
-                                                 edge_conf['slave_security_group_name'])
-        for storage_account in AzureMeta().list_storage_accounts(edge_conf['resource_group_name']):
-            if edge_conf['user_storage_account_name'] == storage_account.tags["Name"]:
-                AzureActions().remove_storage_account(edge_conf['resource_group_name'], storage_account.name)
-        if os.environ['azure_datalake_enable'] == 'true':
-            for datalake in AzureMeta().list_datalakes(edge_conf['resource_group_name']):
-                if edge_conf['datalake_store_name'] == datalake.tags["Name"]:
-                    AzureActions().remove_datalake_directory(datalake.name, edge_conf['datalake_user_directory_name'])
-        sys.exit(1)
+        clean_azure_env()
 
     try:
         print('[INSTALLING PREREQUISITES]')
@@ -145,23 +132,7 @@ if __name__ == "__main__":
             raise Exception
     except Exception as err:
         append_result("Failed installing apps: apt & pip.", str(err))
-        AzureActions().remove_instance(edge_conf['resource_group_name'], edge_conf['instance_name'])
-        AzureActions().remove_subnet(edge_conf['resource_group_name'], edge_conf['vpc_name'],
-                                     edge_conf['private_subnet_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['edge_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['notebook_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'],
-                                             edge_conf['master_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'],
-                                                 edge_conf['slave_security_group_name'])
-        for storage_account in AzureMeta().list_storage_accounts(edge_conf['resource_group_name']):
-            if edge_conf['user_storage_account_name'] == storage_account.tags["Name"]:
-                AzureActions().remove_storage_account(edge_conf['resource_group_name'], storage_account.name)
-        if os.environ['azure_datalake_enable'] == 'true':
-            for datalake in AzureMeta().list_datalakes(edge_conf['resource_group_name']):
-                if edge_conf['datalake_store_name'] == datalake.tags["Name"]:
-                    AzureActions().remove_datalake_directory(datalake.name, edge_conf['datalake_user_directory_name'])
-        sys.exit(1)
+        clean_azure_env()
 
     try:
         print('[INSTALLING HTTP PROXY]')
@@ -177,23 +148,7 @@ if __name__ == "__main__":
             raise Exception
     except Exception as err:
         append_result("Failed installing http proxy.", str(err))
-        AzureActions().remove_instance(edge_conf['resource_group_name'], edge_conf['instance_name'])
-        AzureActions().remove_subnet(edge_conf['resource_group_name'], edge_conf['vpc_name'],
-                                     edge_conf['private_subnet_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['edge_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['notebook_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'],
-                                             edge_conf['master_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'],
-                                                 edge_conf['slave_security_group_name'])
-        for storage_account in AzureMeta().list_storage_accounts(edge_conf['resource_group_name']):
-            if edge_conf['user_storage_account_name'] == storage_account.tags["Name"]:
-                AzureActions().remove_storage_account(edge_conf['resource_group_name'], storage_account.name)
-        if os.environ['azure_datalake_enable'] == 'true':
-            for datalake in AzureMeta().list_datalakes(edge_conf['resource_group_name']):
-                if edge_conf['datalake_store_name'] == datalake.tags["Name"]:
-                    AzureActions().remove_datalake_directory(datalake.name, edge_conf['datalake_user_directory_name'])
-        sys.exit(1)
+        clean_azure_env()
 
 
     try:
@@ -210,23 +165,21 @@ if __name__ == "__main__":
             raise Exception
     except Exception as err:
         append_result("Failed installing users key. Excpeption: " + str(err))
-        AzureActions().remove_instance(edge_conf['resource_group_name'], edge_conf['instance_name'])
-        AzureActions().remove_subnet(edge_conf['resource_group_name'], edge_conf['vpc_name'],
-                                     edge_conf['private_subnet_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['edge_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'], edge_conf['notebook_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'],
-                                             edge_conf['master_security_group_name'])
-        AzureActions().remove_security_group(edge_conf['resource_group_name'],
-                                                 edge_conf['slave_security_group_name'])
-        for storage_account in AzureMeta().list_storage_accounts(edge_conf['resource_group_name']):
-            if edge_conf['user_storage_account_name'] == storage_account.tags["Name"]:
-                AzureActions().remove_storage_account(edge_conf['resource_group_name'], storage_account.name)
-        if os.environ['azure_datalake_enable'] == 'true':
-            for datalake in AzureMeta().list_datalakes(edge_conf['resource_group_name']):
-                if edge_conf['datalake_store_name'] == datalake.tags["Name"]:
-                    AzureActions().remove_datalake_directory(datalake.name, edge_conf['datalake_user_directory_name'])
-        sys.exit(1)
+        clean_azure_env()
+
+    try:
+        print('[INSTALLING NGINX REVERSE PROXY]')
+        logging.info('[INSTALLING NGINX REVERSE PROXY]')
+        params = "--hostname {} --keyfile {} --user {} --edge_user {}" \
+            .format(instance_hostname, keyfile_name, edge_conf['dlab_ssh_user'], os.environ['azure_iam_user'])
+        try:
+            local("~/scripts/{}.py {}".format('configure_nginx_reverse_proxy', params))
+        except:
+            traceback.print_exc()
+            raise Exception
+    except Exception as err:
+        append_result("Failed installing users key. Excpeption: " + str(err))
+        clean_azure_env()
 
     try:
         for storage_account in AzureMeta().list_storage_accounts(edge_conf['resource_group_name']):

@@ -206,6 +206,8 @@ if __name__ == "__main__":
         edge_instance_name = '{}-{}-edge'.format(data_engine['service_base_name'], data_engine['user_name'])
         edge_instance_hostname = AzureMeta().get_private_ip_address(data_engine['resource_group_name'],
                                                                     edge_instance_name)
+        edge_instance_ip = AzureMeta().get_instance_public_ip_address(data_engine['resource_group_name'],
+            edge_instance_name)
         keyfile_name = "{}{}.pem".format(os.environ['conf_key_dir'], os.environ['conf_key_name'])
         key = RSA.importKey(open(keyfile_name, 'rb').read())
         data_engine['public_ssh_key'] = key.publickey().exportKey("OpenSSH")
@@ -361,8 +363,46 @@ if __name__ == "__main__":
         AzureActions().remove_instance(data_engine['resource_group_name'], data_engine['master_node_name'])
         sys.exit(1)
 
+    try:
+        print('[SETUP EDGE REVERSE PROXY TEMPLATE]')
+        logging.info('[SETUP EDGE REVERSE PROXY TEMPLATE]')
+        notebook_instance_ip =  AzureMeta().get_private_ip_address(data_engine['resource_group_name'],
+                                                                   os.environ['notebook_instance_name'])
+        additional_info = {
+            "computational_name": data_engine['computational_name'],
+            "master_node_hostname": master_node_hostname,
+            "notebook_instance_ip": notebook_instance_ip,
+            "instance_count": data_engine['instance_count'],
+            "master_node_name": data_engine['master_node_name'],
+            "slave_node_name": data_engine['slave_node_name'],
+            "tensor": False
+        }
+        params = "--edge_hostname {} " \
+                 "--keyfile {} " \
+                 "--os_user {} " \
+                 "--type {} " \
+                 "--exploratory_name {} " \
+                 "--additional_info '{}'"\
+            .format(edge_instance_hostname,
+                    keyfile_name,
+                    data_engine['dlab_ssh_user'],
+                    'spark',
+                    data_engine['exploratory_name'],
+                    json.dumps(additional_info))
+        try:
+            local("~/scripts/{}.py {}".format('common_configure_reverse_proxy', params))
+        except:
+            append_result("Failed edge reverse proxy template")
+            raise Exception
+    except Exception as err:
+        for i in range(data_engine['instance_count'] - 1):
+            slave_name = data_engine['slave_node_name'] + '{}'.format(i + 1)
+            AzureActions().remove_instance(data_engine['resource_group_name'], slave_name)
+        AzureActions().remove_instance(data_engine['resource_group_name'], data_engine['master_node_name'])
+        sys.exit(1)
 
     try:
+        spark_master_acces_url = "http://" + edge_instance_ip + "/{}/".format(data_engine['exploratory_name'] + '_' + data_engine['computational_name'])
         logging.info('[SUMMARY]')
         print('[SUMMARY]')
         print("Service base name: {}".format(data_engine['service_base_name']))
@@ -375,7 +415,11 @@ if __name__ == "__main__":
             res = {"hostname": data_engine['cluster_name'],
                    "instance_id": data_engine['master_node_name'],
                    "key_name": data_engine['key_name'],
-                   "Action": "Create new Data Engine"}
+                   "Action": "Create new Data Engine",
+                   "computational_url": [
+                       {"description": "SPARK Master",
+                        "url": spark_master_acces_url}
+                   ]}
             print(json.dumps(res))
             result.write(json.dumps(res))
     except:

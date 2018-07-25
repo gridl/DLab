@@ -168,8 +168,8 @@ if __name__ == "__main__":
     try:
         print('[INSTALLING NGINX REVERSE PROXY]')
         logging.info('[INSTALLING NGINX REVERSE PROXY]')
-        params = "--hostname {} --keyfile {} --user {}" \
-            .format(instance_hostname, keyfile_name, edge_conf['dlab_ssh_user'])
+        params = "--hostname {} --keyfile {} --user {} --edge_user {}" \
+            .format(instance_hostname, keyfile_name, edge_conf['dlab_ssh_user'], os.environ['aws_iam_user'])
         try:
             local("~/scripts/{}.py {}".format('configure_nginx_reverse_proxy', params))
         except:
