@@ -261,8 +261,8 @@ if __name__ == "__main__":
             sys.exit(1)
     # generating output information
     try:
-        ip_address = get_instance_ip_address(notebook_config['tag_name'],
-                                             notebook_config['instance_name']).get('Private')
+        ip_address = AzureMeta().get_private_ip_address(notebook_config['tag_name'],
+                                             notebook_config['instance_name'])
         tensorboard_url = "http://" + ip_address + ":6006/"
         jupyter_ip_url = "http://" + ip_address + ":8888/{}/".format(
             notebook_config['exploratory_name'])
