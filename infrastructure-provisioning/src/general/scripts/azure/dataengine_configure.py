@@ -368,13 +368,22 @@ if __name__ == "__main__":
         logging.info('[SETUP EDGE REVERSE PROXY TEMPLATE]')
         notebook_instance_ip =  AzureMeta().get_private_ip_address(data_engine['resource_group_name'],
                                                                    os.environ['notebook_instance_name'])
+        master_ip = AzureMeta().get_private_ip_address(data_engine['resource_group_name'], data_engine['master_node_name'])
+        slaves = []
+        for i in range(data_engine['instance_count'] - 1):
+            slave_name = data_engine['slave_node_name'] + '{}'.format(i + 1)
+            slave_ip = AzureMeta().get_private_ip_address(data_engine['resource_group_name'], slave_name)
+            slave = {
+                'name': 'datanode{}'.format(i + 1),
+                'ip': slave_ip
+            }
+            slaves.append(slave)
         additional_info = {
             "computational_name": data_engine['computational_name'],
-            "master_node_hostname": master_node_hostname,
+            "master_ip": master_ip,
+            "master_dns": master_node_hostname,
             "notebook_instance_ip": notebook_instance_ip,
-            "instance_count": data_engine['instance_count'],
-            "master_node_name": data_engine['master_node_name'],
-            "slave_node_name": data_engine['slave_node_name'],
+            "slaves": slaves,
             "tensor": False
         }
         params = "--edge_hostname {} " \

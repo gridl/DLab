@@ -23,7 +23,6 @@ import json
 import sys
 from fabric.api import *
 from jinja2 import Environment, FileSystemLoader
-from dlab.meta_lib import get_instance_private_ip_address, get_instance_hostname
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--edge_hostname', type=str, default='')
@@ -46,30 +45,15 @@ def make_template():
     if args.type != 'emr' and args.type != 'spark':
         config['NAME'] = args.exploratory_name
         config['IP'] = additional_info['instance_hostname']
-    elif args.type == 'spark':
-        config['CLUSTER_NAME'] = '{}_{}'.format(
-            args.exploratory_name, additional_info['computational_name'])
-        config['MASTER_IP'] = get_instance_private_ip_address('Name', additional_info['master_node_name'])
-        config['MASTER_DNS'] = additional_info['master_node_hostname']
-        config['NOTEBOOK_IP'] = additional_info['notebook_instance_ip']
-        slaves = []
-        for i in range(additional_info['instance_count'] - 1):
-            slave_name = additional_info['slave_node_name'] + '{}'.format(i + 1)
-            slave_hostname = get_instance_private_ip_address('Name', slave_name)
-            slave = {
-                'name': 'datanode{}'.format(i + 1),
-                'ip': slave_hostname
-            }
-            slaves.append(slave)
-        config['slaves'] = slaves
-        conf_file_name = config['CLUSTER_NAME']
-    elif args.type == 'emr':
+    elif args.type == 'spark' or args.type == 'emr':
         config['CLUSTER_NAME'] = '{}_{}'.format(
             args.exploratory_name, additional_info['computational_name'])
         config['MASTER_IP'] = additional_info['master_ip']
         config['MASTER_DNS'] = additional_info['master_dns']
+        config['NOTEBOOK_IP'] = additional_info['notebook_instance_ip']
         config['slaves'] = additional_info['slaves']
         conf_file_name = config['CLUSTER_NAME']
+
 
     # Render the template with data and print the output
     f = open('/tmp/{}.conf'.format(conf_file_name), 'w')

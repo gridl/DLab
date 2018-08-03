@@ -88,6 +88,7 @@ def configure_dataengine_service(instance, emr_conf):
     try:
         print('[SETUP EDGE REVERSE PROXY TEMPLATE]')
         logging.info('[SETUP EDGE REVERSE PROXY TEMPLATE]')
+        notebook_instance_ip = get_instance_private_ip_address('Name', os.environ['notebook_instance_name'])
         cluster_master_instances = emr_conf['cluster_master_instances']
         slaves = []
         for idx, instance in enumerate(emr_conf['cluster_core_instances']):
@@ -101,6 +102,7 @@ def configure_dataengine_service(instance, emr_conf):
             "computational_name": emr_conf['computational_name'],
             "master_ip": cluster_master_instances[0].get('PrivateIpAddress'),
             "master_dns": cluster_master_instances[0].get('PrivateDnsName'),
+            "notebook_instance_ip": notebook_instance_ip,
             "slaves": slaves,
             "tensor": False
         }
