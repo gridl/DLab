@@ -17,7 +17,6 @@ limitations under the License.
 ****************************************************************************/
 
 import { Injectable, EventEmitter } from '@angular/core';
-import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
@@ -48,7 +47,7 @@ export class ApplicationSecurityService {
   public login(loginModel: LoginModel): Observable<boolean> {
     return this.serviceFacade
       .buildLoginRequest(loginModel.toJsonString())
-      .map((response: Response) => {
+      .map((response) => {
         if (response.status === HTTP_STATUS_CODES.OK) {
           if (!DICTIONARY.use_ldap) {
             this.setAuthToken(response.json().access_token);
@@ -69,7 +68,7 @@ export class ApplicationSecurityService {
     if (!!authToken) {
       return this.serviceFacade
         .buildLogoutRequest()
-        .map((response: Response) => {
+        .map((response) => {
           this.clearAuthToken();
 
           return response.status === HTTP_STATUS_CODES.OK;
@@ -94,7 +93,7 @@ export class ApplicationSecurityService {
     if (authToken && currentUser) {
       return this.serviceFacade
         .buildAuthorizeRequest(currentUser)
-        .map((response: Response) => {
+        .map((response) => {
           if (response.status === HTTP_STATUS_CODES.OK)
             return true;
 
@@ -144,7 +143,6 @@ export class ApplicationSecurityService {
   }
 
   private handleError(error: any) {
-
     this.emmitMessage(ErrorMapUtils.handleError(error));
   }
 

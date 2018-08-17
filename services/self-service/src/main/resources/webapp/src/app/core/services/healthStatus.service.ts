@@ -17,9 +17,9 @@ limitations under the License.
 ****************************************************************************/
 
 import { Injectable } from '@angular/core';
-import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
+import { GeneralEnvironmentStatus } from '../../health-status/environment-status.model';
 import { ApplicationServiceFacade, AppRoutingService } from './';
 import { HTTP_STATUS_CODES } from '../util';
 
@@ -33,7 +33,7 @@ export class HealthStatusService {
    public isHealthStatusOk(): Observable<boolean> {
       return this.applicationServiceFacade
         .buildGetEnvironmentHealthStatus()
-        .map((response: Response) => {
+        .map(response => {
           if (response.status === HTTP_STATUS_CODES.OK)
             if (response.json().status === 'ok')
               return true;
@@ -42,43 +42,46 @@ export class HealthStatusService {
         }, this);
   }
 
-  public getEnvironmentHealthStatus(): Observable<Response> {
+  public getEnvironmentHealthStatus(): Observable<GeneralEnvironmentStatus> {
     return this.applicationServiceFacade
     .buildGetEnvironmentHealthStatus()
-    .map((response: Response) => response.json())
+    .map(response => response.json())
     .catch((error: any) => error);
   }
 
-  public getEnvironmentStatuses(): Observable<Response> {
+  public getEnvironmentStatuses(): Observable<GeneralEnvironmentStatus> {
     const body = '?full=1';
     return this.applicationServiceFacade
     .buildGetEnvironmentStatuses(body)
-    .map((response: Response) => response.json())
+    .map(response => response.json())
     .catch((error: any) => error);
   }
 
-  public runEdgeNode(): Observable<Response> {
+  public runEdgeNode(): Observable<{}> {
     return this.applicationServiceFacade
       .buildRunEdgeNodeRequest()
-      .map((response: Response) => response);
+      .map(response => response)
+      .catch((error: any) => error);
   }
 
-  public suspendEdgeNode(): Observable<Response> {
+  public suspendEdgeNode(): Observable<{}> {
     return this.applicationServiceFacade
       .buildSuspendEdgeNodeRequest()
-      .map((response: Response) => response);
+      .map(response => response)
+      .catch((error: any) => error);
   }
 
-  public recreateEdgeNode(): Observable<Response> {
+  public recreateEdgeNode(): Observable<{}> {
     return this.applicationServiceFacade
       .buildRecreateEdgeNodeRequest()
-      .map((response: Response) => response);
+      .map(response => response)
+      .catch((error: any) => error);
   }
   
   public isBillingEnabled(): Observable<boolean> {
     return this.applicationServiceFacade
     .buildGetEnvironmentHealthStatus()
-    .map((response: Response) => {
+    .map(response => {
       if (response.status === HTTP_STATUS_CODES.OK) {
         const data = response.json();
         if (!data.billingEnabled) {
@@ -90,10 +93,10 @@ export class HealthStatusService {
     });
   }
 
-  public getActiveUsers(): Observable<Response> {
+  public getActiveUsers(): Observable<Array<string>> {
     return this.applicationServiceFacade
       .buildGetActiveUsers()
-      .map((response: Response) => response.json())
+      .map(response => response.json())
       .catch((error: any) => error);
   }
 
@@ -101,7 +104,7 @@ export class HealthStatusService {
     const action = `/${act}`;
     return this.applicationServiceFacade
       .buildManageEnvironment(action, data)
-      .map((response: Response) => response)
+      .map(response => response)
       .catch((error: any) => {
         return Observable.throw(
             new Error(`{"status": "${ error.status }", "statusText": "${ error.statusText }", "message": "${ error._body }"}`)

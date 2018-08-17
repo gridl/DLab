@@ -17,28 +17,25 @@ limitations under the License.
 ****************************************************************************/
 
 import { Injectable } from '@angular/core';
-import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
-import { ApplicationServiceFacade, AppRoutingService } from './';
-import { HTTP_STATUS_CODES } from '../util';
+import { ApplicationServiceFacade } from './';
 
 @Injectable()
 export class BillingReportService {
+  constructor(private applicationServiceFacade: ApplicationServiceFacade) {}
 
-    constructor(private applicationServiceFacade: ApplicationServiceFacade) { }
+  public getGeneralBillingData(data): Observable<{}> {
+    return this.applicationServiceFacade
+      .buildGetGeneralBillingData(data)
+      .map(response => response.json())
+      .catch((error: any) => error);
+  }
 
-    public getGeneralBillingData(data): Observable<Response> {
-        return this.applicationServiceFacade
-        .buildGetGeneralBillingData(data)
-        .map((response: Response) => response.json())
-        .catch((error: any) => error);
-    }
-
-    public downloadReport(data): Observable<{} | Response> {
-        return this.applicationServiceFacade
-        .buildDownloadReportData(data)
-        .map((response: Response) => response)
-        .catch((error: any) => error);
-    }
+  public downloadReport(data): Observable<string | {}> {
+    return this.applicationServiceFacade
+      .buildDownloadReportData(data)
+      .map(response => response)
+      .catch((error: any) => error);
+  }
 }

@@ -17,7 +17,7 @@ limitations under the License.
 ****************************************************************************/
 
 import { Injectable } from '@angular/core';
-import { Response } from '@angular/http';
+// import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ApplicationServiceFacade } from './';
@@ -35,15 +35,15 @@ export class BackupService {
   public createBackup(data): Observable<any> {
     return this.applicationServiceFacade
       .buildCreateBackupRequest(data)
-      .map((response: Response) => response)
+      .map(response => response)
       .catch((error: any) => error);
   }
 
-  public getBackupStatus(uuid): Observable<Response> {
+  public getBackupStatus(uuid): Observable<{}> {
     const body = `/${uuid}`;
     return this.applicationServiceFacade
       .buildGetBackupStatusRequest(body)
-      .map((response: Response) => response.json())
+      .map(response => response.json())
       .map(data => (this.creatingBackup = data))
       .catch((error: any) => error);
   }

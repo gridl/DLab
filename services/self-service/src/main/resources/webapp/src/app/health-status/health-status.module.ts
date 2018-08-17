@@ -30,6 +30,8 @@ import {
 } from './manage-environment/manage-environment-dilog.component';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
 
+export * from './environment-status.model';
+
 @NgModule({
   imports: [
     CommonModule,
