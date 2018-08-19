@@ -25,9 +25,9 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import * as _moment from 'moment';
 import 'moment-timezone';
 
-import { HTTP_STATUS_CODES } from './../../core/util';
+import { HTTP_STATUS_CODES } from '../../core/util';
 
-import { SchedulerService } from './../../core/services';
+import { SchedulerService } from '../../core/services';
 import { SchedulerModel, WeekdaysModel } from './scheduler.model';
 
 @Component({

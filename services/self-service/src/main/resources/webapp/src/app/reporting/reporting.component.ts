@@ -19,7 +19,7 @@ limitations under the License.
 
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
-import { BillingReportService, HealthStatusService, UserAccessKeyService }  from './../core/services';
+import { BillingReportService, HealthStatusService, UserAccessKeyService }  from '../core/services';
 import { ReportingGridComponent } from './reporting-grid/reporting-grid.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 

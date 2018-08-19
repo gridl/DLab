@@ -22,7 +22,7 @@ import { Response } from '@angular/http';
 import { ConfirmationDialogModel } from './confirmation-dialog.model';
 import { ConfirmationDialogType } from './confirmation-dialog-type.enum';
 import { UserResourceService, HealthStatusService, ManageEnvironmentsService } from '../../../core/services';
-import { ErrorMapUtils, HTTP_STATUS_CODES } from '../../../core/util';
+import { ErrorUtils, HTTP_STATUS_CODES } from '../../../core/util';
 import { DICTIONARY } from '../../../../dictionary/global.dictionary';
 
 @Component({
@@ -73,7 +73,7 @@ export class ConfirmationDialogComponent implements OnInit {
     },
       (response: Response) => {
         this.processError = true;
-        this.errorMessage = ErrorMapUtils.setErrorMessage(response);
+        this.errorMessage = ErrorUtils.setErrorMessage(response);
       },
       this.manageAction,
       this.userResourceService,

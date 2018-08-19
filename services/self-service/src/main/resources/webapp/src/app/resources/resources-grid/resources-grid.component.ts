@@ -19,7 +19,7 @@ limitations under the License.
 
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { UserResourceService } from '../../core/services';
-import { ResourcesGridRowModel, FilterConfigurationModel, CreateResourceModel } from './';
+import { ResourcesGridRowModel, FilterConfigurationModel, CreateResourceModel } from '.';
 import { ConfirmationDialogType } from '../../shared';
 import { SortUtil } from '../../core/util';
 

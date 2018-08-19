@@ -21,7 +21,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { LoginModel } from './login.model';
 import { AppRoutingService, HealthStatusService, ApplicationSecurityService } from '../core/services';
-import { ErrorMapUtils, HTTP_STATUS_CODES } from '../core/util';
+import { ErrorUtils, HTTP_STATUS_CODES } from '../core/util';
 import { DICTIONARY } from '../../dictionary/global.dictionary';
 
 @Component({
@@ -73,7 +73,7 @@ export class LoginComponent implements OnInit {
         if (DICTIONARY.cloud_provider === 'azure' && error && error.status === HTTP_STATUS_CODES.FORBIDDEN) {
           window.location.href = error.headers.get('Location');
         } else {
-          this.error = ErrorMapUtils.handleError(error);
+          this.error = ErrorUtils.handleError(error);
           this.loading = false;
         }
       });

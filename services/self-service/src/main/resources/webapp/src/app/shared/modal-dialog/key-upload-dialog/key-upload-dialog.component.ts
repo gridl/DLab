@@ -21,7 +21,7 @@ import { Response } from '@angular/http';
 
 import { KeyUploadDialogModel } from './key-upload.model';
 import { UserAccessKeyService } from '../../../core/services';
-import { ErrorMapUtils, HTTP_STATUS_CODES } from '../../../core/util';
+import { ErrorUtils, HTTP_STATUS_CODES } from '../../../core/util';
 
 @Component({
   moduleId: module.id,

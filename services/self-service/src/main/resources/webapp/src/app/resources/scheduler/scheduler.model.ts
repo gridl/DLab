@@ -19,8 +19,8 @@ limitations under the License.
 import { Observable } from 'rxjs/Observable';
 import { Response } from '@angular/http';
 
-import { SortUtil } from './../../core/util';
-import { SchedulerService } from './../../core/services';
+import { SortUtil } from '../../core/util';
+import { SchedulerService } from '../../core/services';
 
 export interface SchedulerParameters {
     begin_date : string;

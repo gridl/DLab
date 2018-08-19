@@ -20,9 +20,9 @@ import { Component, OnInit, EventEmitter, Output, ViewChild, ChangeDetectorRef, 
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Response } from '@angular/http';
 
-import { ComputationalResourceCreateModel } from './';
+import { ComputationalResourceCreateModel } from '.';
 import { UserResourceService } from '../../../core/services';
-import { ErrorMapUtils, HTTP_STATUS_CODES, CheckUtils } from '../../../core/util';
+import { ErrorUtils, HTTP_STATUS_CODES, CheckUtils } from '../../../core/util';
 
 import { DICTIONARY } from '../../../../dictionary/global.dictionary';
 
@@ -211,7 +211,7 @@ export class ComputationalResourceCreateDialogComponent implements OnInit {
       },
         (response: Response) => {
           this.processError = true;
-          this.errorMessage = ErrorMapUtils.setErrorMessage(response);
+          this.errorMessage = ErrorUtils.setErrorMessage(response);
         },
         () => {
           this.template_description = this.model.selectedItem.description;

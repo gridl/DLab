@@ -25,7 +25,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 
-import { InstallLibrariesModel } from './';
+import { InstallLibrariesModel } from '.';
 import { LibrariesInstallationService} from '../../../core/services';
 import { SortUtil, HTTP_STATUS_CODES } from '../../../core/util';
 

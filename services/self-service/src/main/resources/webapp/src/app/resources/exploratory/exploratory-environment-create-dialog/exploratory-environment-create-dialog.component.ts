@@ -20,9 +20,9 @@ import { Component, OnInit, EventEmitter, Output, ViewChild, ChangeDetectorRef }
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Response } from '@angular/http';
 
-import { ExploratoryEnvironmentCreateModel } from './';
+import { ExploratoryEnvironmentCreateModel } from '.';
 import { UserResourceService } from '../../../core/services';
-import { ErrorMapUtils, HTTP_STATUS_CODES } from '../../../core/util';
+import { ErrorUtils, HTTP_STATUS_CODES } from '../../../core/util';
 import { DICTIONARY } from '../../../../dictionary/global.dictionary';
 
 @Component({
@@ -136,7 +136,7 @@ export class ExploratoryEnvironmentCreateDialogComponent implements OnInit {
       },
         (response: Response) => {
           this.processError = true;
-          this.errorMessage = ErrorMapUtils.setErrorMessage(response);
+          this.errorMessage = ErrorUtils.setErrorMessage(response);
         },
         () => {
           this.templateDescription = this.model.selectedItem.description;

@@ -19,7 +19,7 @@ limitations under the License.
 import { Observable } from 'rxjs/Observable';
 import { Response } from '@angular/http';
 
-import { ManageUngitService } from './../../core/services';
+import { ManageUngitService } from '../../core/services';
 
 export interface AccountCredentials {
     hostname: string;

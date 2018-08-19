@@ -22,8 +22,8 @@ import { Response } from '@angular/http';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { AccountCredentials, MangeUngitModel } from './manage-ungit.model';
-import { ManageUngitService } from './../../core/services';
-import { ErrorMapUtils, HTTP_STATUS_CODES } from './../../core/util';
+import { ManageUngitService } from '../../core/services';
+import { ErrorUtils, HTTP_STATUS_CODES } from '../../core/util';
 
 @Component({
   selector: 'dlab-manage-ungit',
