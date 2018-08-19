@@ -18,7 +18,7 @@ limitations under the License.
 
 import { Component, OnInit, ViewChild, Output, EventEmitter, ViewEncapsulation, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { DICTIONARY } from './../../../dictionary/global.dictionary';
+import { DICTIONARY } from '../../../dictionary/global.dictionary';
 
 @Component({
   selector: 'dlab-manage-env-dilog',

@@ -17,7 +17,7 @@ limitations under the License.
 ****************************************************************************/
 
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { HealthStatusService, ManageEnvironmentsService, UserAccessKeyService } from './../core/services';
+import { HealthStatusService, ManageEnvironmentsService, UserAccessKeyService } from '../core/services';
 import { EnvironmentModel } from './management.model';
 import { FileUtils, HTTP_STATUS_CODES } from '../core/util';
 

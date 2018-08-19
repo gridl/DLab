@@ -20,7 +20,7 @@ import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { EnvironmentStatusModel } from './environment-status.model';
 import { HealthStatusService, BackupService, UserResourceService, UserAccessKeyService } from '../core/services';
 import { FileUtils, HTTP_STATUS_CODES } from '../core/util';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastsManager } from 'ng2-toastr';
 
 @Component({
   moduleId: module.id,
@@ -95,17 +95,18 @@ export class HealthStatusComponent implements OnInit {
     });
   }
 
-  manageEnvironment($event) {
+  manageEnvironment(event: {action: string, user: string}) {
     this.healthStatusService
-      .manageEnvironment($event.action, $event.user)
+      .manageEnvironment(event.action, event.user)
       .subscribe(res => {
           this.getActiveUsersList().subscribe(usersList => {
               this.manageEnvironmentDialog.usersList = usersList;
+              this.toastr.success(`Action ${event.action } completed!`, 'Success!', { toastLife: 5000 });
               this.buildGrid();
             });
         },
       (error) => {
-        this.manageEnvironmentDialog.errorMessage = JSON.parse(error.message).message;
+        this.toastr.error(error.message, 'Oops!', { toastLife: 5000 });
       });
   }
 
