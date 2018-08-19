@@ -20,7 +20,7 @@ import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
-import { ApplicationServiceFacade } from './';
+import { ApplicationServiceFacade } from '.';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';

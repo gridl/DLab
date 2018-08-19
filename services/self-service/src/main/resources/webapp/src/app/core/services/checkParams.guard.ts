@@ -18,7 +18,7 @@ limitations under the License.
 
 import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { ApplicationSecurityService, AuthorizationGuard } from './';
+import { ApplicationSecurityService, AuthorizationGuard } from '.';
 
 import 'rxjs/add/operator/toPromise';
 

@@ -16,7 +16,19 @@ limitations under the License.
 
 ****************************************************************************/
 
-export class ErrorMapUtils {
+import { Observable } from 'rxjs/Observable';
+
+export class ErrorUtils {
+
+  public static isJson(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  };
+
   public static setErrorMessage(errorCode): string {
     if (errorCode) {
       const defaultStatus = 'Error status [' + errorCode.status + ']. ';
@@ -26,20 +38,11 @@ export class ErrorMapUtils {
   }
 
   public static handleError(error: any) {
-    const isJson = function(str) {
-      try {
-        JSON.parse(str);
-      } catch (e) {
-        return false;
-      }
-      return true;
-    };
-
     let errMsg: string;
-    if (typeof error === 'object' && error._body && isJson(error._body)) {
+    if (typeof error === 'object' && error._body && this.isJson(error._body)) {
       if (error.json().error_message)
         errMsg = error.json().error_message;
-    } else if (isJson(error._body)) {
+    } else if (this.isJson(error._body)) {
       const body = error.json() || '';
       const err = body.error || JSON.stringify(body);
       errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
@@ -49,4 +52,13 @@ export class ErrorMapUtils {
 
     return errMsg;
   }
+
+  public static handleServiceError(errorMessage) {
+    let error = errorMessage.json();
+    
+    return Observable.throw({
+      status: error.code,
+      message: error.message
+    });
+  } 
 }

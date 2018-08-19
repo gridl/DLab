@@ -26,8 +26,8 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
 import { LoginModel } from '../../login/login.model';
-import { ApplicationServiceFacade, AppRoutingService } from './';
-import { ErrorMapUtils, HTTP_STATUS_CODES } from '../util';
+import { ApplicationServiceFacade, AppRoutingService } from '.';
+import { ErrorUtils, HTTP_STATUS_CODES } from '../util';
 import { DICTIONARY } from '../../../dictionary/global.dictionary';
 
 @Injectable()
@@ -143,7 +143,7 @@ export class ApplicationSecurityService {
   }
 
   private handleError(error: any) {
-    this.emmitMessage(ErrorMapUtils.handleError(error));
+    this.emmitMessage(ErrorUtils.handleError(error));
   }
 
   private emmitMessage(message): void {

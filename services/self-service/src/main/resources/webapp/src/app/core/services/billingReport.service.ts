@@ -19,7 +19,7 @@ limitations under the License.
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
-import { ApplicationServiceFacade } from './';
+import { ApplicationServiceFacade } from '.';
 
 @Injectable()
 export class BillingReportService {

@@ -20,8 +20,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { GeneralEnvironmentStatus } from '../../health-status/environment-status.model';
-import { ApplicationServiceFacade, AppRoutingService } from './';
-import { HTTP_STATUS_CODES } from '../util';
+import { ApplicationServiceFacade, AppRoutingService } from '.';
+import { HTTP_STATUS_CODES, ErrorUtils } from '../util';
 
 @Injectable()
 export class HealthStatusService {
@@ -97,7 +97,7 @@ export class HealthStatusService {
     return this.applicationServiceFacade
       .buildGetActiveUsers()
       .map(response => response.json())
-      .catch((error: any) => error);
+      .catch(ErrorUtils.handleServiceError);
   }
 
   public manageEnvironment(act, data): Observable<Response | {}> {
@@ -105,10 +105,6 @@ export class HealthStatusService {
     return this.applicationServiceFacade
       .buildManageEnvironment(action, data)
       .map(response => response)
-      .catch((error: any) => {
-        return Observable.throw(
-            new Error(`{"status": "${ error.status }", "statusText": "${ error.statusText }", "message": "${ error._body }"}`)
-        );
-    });
+      .catch(ErrorUtils.handleServiceError);
   }
 }
