@@ -91,9 +91,9 @@ export class HealthStatusComponent implements OnInit {
   }
  
   openManageEnvironmentDialog() {
-    this.getActiveUsersList().subscribe(usersList => {
-      this.manageEnvironmentDialog.open({ isFooter: false }, usersList);
-    });
+    this.getActiveUsersList().subscribe(
+      usersList => this.manageEnvironmentDialog.open({ isFooter: false }, usersList),
+      () => this.toastr.error('Failed users list loading!', 'Oops!', { toastLife: 5000 }));
   }
 
   manageEnvironment(event: {action: string, user: string}) {
@@ -101,10 +101,10 @@ export class HealthStatusComponent implements OnInit {
       .manageEnvironment(event.action, event.user)
       .subscribe(res => {
           this.getActiveUsersList().subscribe(usersList => {
-              this.manageEnvironmentDialog.usersList = usersList;
-              this.toastr.success(`Action ${event.action } completed!`, 'Success!', { toastLife: 5000 });
-              this.buildGrid();
-            });
+            this.manageEnvironmentDialog.usersList = usersList;
+            this.toastr.success(`Action ${event.action } completed!`, 'Success!', { toastLife: 5000 });
+            this.buildGrid();
+          });
         },
       (error) => {
         this.toastr.error(error.message, 'Oops!', { toastLife: 5000 });
