@@ -16,7 +16,8 @@ limitations under the License.
 
 ****************************************************************************/
 
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, EventEmitter, ViewContainerRef } from '@angular/core';
+import { ToastsManager } from 'ng2-toastr';
 
 import { EnvironmentStatusModel } from '../environment-status.model';
 import { HealthStatusService, UserAccessKeyService } from '../../core/services';
@@ -40,12 +41,15 @@ export class HealthStatusGridComponent implements OnInit {
 
    @ViewChild('confirmationDialog') confirmationDialog;
    @ViewChild('keyReuploadDialog') keyReuploadDialog;
-   
 
     constructor(
       private healthStatusService: HealthStatusService,
       private userAccessKeyService: UserAccessKeyService,
-    ) { }
+      public toastr: ToastsManager,
+      public vcr: ViewContainerRef
+    ) {
+      this.toastr.setRootViewContainerRef(vcr);
+    }
 
     ngOnInit(): void { }
     
@@ -57,13 +61,19 @@ export class HealthStatusGridComponent implements OnInit {
       if (action === 'run') {
         this.healthStatusService
           .runEdgeNode()
-          .subscribe(() => this.buildGrid());
+          .subscribe(() => {
+            this.buildGrid();
+            this.toastr.success('Edge node is starting!', 'Processing!', { toastLife: 5000 });
+          }, error => this.toastr.error('Edge Node running failed!', 'Oops!', { toastLife: 5000 }));
       } else if (action === 'stop') {
         this.confirmationDialog.open({ isFooter: false }, data, ConfirmationDialogType.StopEdgeNode);
       } else if (action === 'recreate') {
         this.healthStatusService
           .recreateEdgeNode()
-          .subscribe(() => this.buildGrid());
+          .subscribe(() => {
+            this.buildGrid();
+            this.toastr.success('Edge Node recreation is processing!', 'Processing!', { toastLife: 5000 });
+          }, error => this.toastr.error('Edge Node recreation failed!', 'Oops!', { toastLife: 5000 }));
       }
     }
 

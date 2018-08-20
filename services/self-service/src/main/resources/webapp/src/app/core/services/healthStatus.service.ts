@@ -54,28 +54,28 @@ export class HealthStatusService {
     return this.applicationServiceFacade
     .buildGetEnvironmentStatuses(body)
     .map(response => response.json())
-    .catch((error: any) => error);
+    .catch(ErrorUtils.handleServiceError);
   }
 
   public runEdgeNode(): Observable<{}> {
     return this.applicationServiceFacade
       .buildRunEdgeNodeRequest()
       .map(response => response)
-      .catch((error: any) => error);
+      .catch(ErrorUtils.handleServiceError);
   }
 
   public suspendEdgeNode(): Observable<{}> {
     return this.applicationServiceFacade
       .buildSuspendEdgeNodeRequest()
       .map(response => response)
-      .catch((error: any) => error);
+      .catch(ErrorUtils.handleServiceError);
   }
 
   public recreateEdgeNode(): Observable<{}> {
     return this.applicationServiceFacade
       .buildRecreateEdgeNodeRequest()
       .map(response => response)
-      .catch((error: any) => error);
+      .catch(ErrorUtils.handleServiceError);
   }
   
   public isBillingEnabled(): Observable<boolean> {

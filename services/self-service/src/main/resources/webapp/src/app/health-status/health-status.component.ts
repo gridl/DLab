@@ -17,10 +17,11 @@ limitations under the License.
 ****************************************************************************/
 
 import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { ToastsManager } from 'ng2-toastr';
+
 import { EnvironmentStatusModel } from './environment-status.model';
 import { HealthStatusService, BackupService, UserResourceService, UserAccessKeyService } from '../core/services';
 import { FileUtils, HTTP_STATUS_CODES } from '../core/util';
-import { ToastsManager } from 'ng2-toastr';
 
 @Component({
   moduleId: module.id,

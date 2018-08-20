@@ -19,15 +19,14 @@ limitations under the License.
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../shared/material.module';
-
-import { NavbarModule, ModalModule, UploadKeyDialogModule, ProgressDialogModule } from '../shared';
+import { NavbarModule, ModalModule, UploadKeyDialogModule, ProgressDialogModule, BubbleModule, ConfirmationDialogModule } from '../shared';
 import { HealthStatusComponent } from './health-status.component';
-import { HealthStatusGridModule } from './health-status-grid/health-status-grid.module';
 import { BackupDilogComponent } from './backup-dilog/backup-dilog.component';
 import {
   ManageEnvironmentComponent,
   ConfirmActionDialog
 } from './manage-environment/manage-environment-dilog.component';
+import { HealthStatusGridComponent } from './health-status-grid/health-status-grid.component';
 import { ToastModule } from 'ng2-toastr';
 
 export * from './environment-status.model';
@@ -37,9 +36,10 @@ export * from './environment-status.model';
     CommonModule,
     NavbarModule,
     ModalModule,
-    HealthStatusGridModule,
     UploadKeyDialogModule,
     ProgressDialogModule,
+    BubbleModule,
+    ConfirmationDialogModule,
     MaterialModule,
     ToastModule.forRoot()
   ],
@@ -47,9 +47,10 @@ export * from './environment-status.model';
     HealthStatusComponent,
     BackupDilogComponent,
     ManageEnvironmentComponent,
-    ConfirmActionDialog
+    ConfirmActionDialog,
+    HealthStatusGridComponent
   ],
   entryComponents: [ConfirmActionDialog],
-  exports: [HealthStatusComponent]
+  exports: [HealthStatusComponent, HealthStatusGridComponent]
 })
 export class HealthStatusModule {}
