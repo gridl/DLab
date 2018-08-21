@@ -122,7 +122,7 @@ export class HealthStatusComponent implements OnInit {
   public checkUserAccessKey() {
     this.userAccessKeyService.checkUserAccessKey()
       .subscribe(
-        response => this.processAccessKeyStatus(response.status),
+        (response: any) => this.processAccessKeyStatus(response.status),
         error => this.processAccessKeyStatus(error.status));
   }
 

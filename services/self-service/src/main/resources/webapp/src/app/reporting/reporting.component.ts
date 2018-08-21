@@ -17,7 +17,8 @@ limitations under the License.
 ****************************************************************************/
 
 
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
+import { ToastsManager } from 'ng2-toastr';
 
 import { BillingReportService, HealthStatusService, UserAccessKeyService }  from '../core/services';
 import { ReportingGridComponent } from './reporting-grid/reporting-grid.component';
@@ -74,7 +75,11 @@ export class ReportingComponent implements OnInit, OnDestroy {
   constructor(
     private billingReportService: BillingReportService,
     private healthStatusService: HealthStatusService,
-    private userAccessKeyService: UserAccessKeyService) { }
+    private userAccessKeyService: UserAccessKeyService,
+    public toastr: ToastsManager,
+    public vcr: ViewContainerRef) {
+      this.toastr.setRootViewContainerRef(vcr);
+    }
 
   ngOnInit() {
     this.rebuildBillingReport();
@@ -119,9 +124,9 @@ export class ReportingComponent implements OnInit, OnDestroy {
 
   exportBillingReport($event): void {
     this.billingReportService.downloadReport(this.reportData)
-      .subscribe(data => {
-        FileUtils.downloadFile(data);
-      });
+      .subscribe(
+        data => FileUtils.downloadFile(data),
+        error => this.toastr.error('Billing report export failed!', 'Oops!', { toastLife: 5000 }));
   }
 
   getDefaultFilterConfiguration(data): void {
@@ -190,7 +195,7 @@ export class ReportingComponent implements OnInit, OnDestroy {
   public checkUserAccessKey() {
     this.userAccessKeyService.checkUserAccessKey()
       .subscribe(
-        response => this.processAccessKeyStatus(response.status),
+        (response: any) => this.processAccessKeyStatus(response.status),
         error => this.processAccessKeyStatus(error.status));
   }
 
