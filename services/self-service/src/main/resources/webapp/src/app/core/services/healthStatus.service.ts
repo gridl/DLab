@@ -46,7 +46,7 @@ export class HealthStatusService {
     return this.applicationServiceFacade
     .buildGetEnvironmentHealthStatus()
     .map(response => response.json())
-    .catch((error: any) => error);
+    .catch(ErrorUtils.handleServiceError);
   }
 
   public getEnvironmentStatuses(): Observable<GeneralEnvironmentStatus> {

@@ -58,6 +58,7 @@ export class ErrorUtils {
     
     return Observable.throw({
       status: error.code,
+      statusText: errorMessage.statusText,
       message: error.message
     });
   } 

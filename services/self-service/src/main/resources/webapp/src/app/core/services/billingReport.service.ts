@@ -20,6 +20,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { ApplicationServiceFacade } from '.';
+import { ErrorUtils } from '../util';
 
 @Injectable()
 export class BillingReportService {
@@ -29,13 +30,13 @@ export class BillingReportService {
     return this.applicationServiceFacade
       .buildGetGeneralBillingData(data)
       .map(response => response.json())
-      .catch((error: any) => error);
+      .catch(ErrorUtils.handleServiceError);
   }
 
   public downloadReport(data): Observable<string | {}> {
     return this.applicationServiceFacade
       .buildDownloadReportData(data)
       .map(response => response)
-      .catch((error: any) => error);
+      .catch(ErrorUtils.handleServiceError);
   }
 }
