@@ -16,12 +16,12 @@ limitations under the License.
 
 ****************************************************************************/
 
-import { Component, OnInit, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { Response } from '@angular/http';
+import { Component, OnInit, EventEmitter, Input, Output, ViewChild, ViewContainerRef } from '@angular/core';
+import { ToastsManager } from 'ng2-toastr';
 
 import { KeyUploadDialogModel } from './key-upload.model';
 import { UserAccessKeyService } from '../../../core/services';
-import { ErrorUtils, HTTP_STATUS_CODES } from '../../../core/util';
+import { HTTP_STATUS_CODES } from '../../../core/util';
 
 @Component({
   moduleId: module.id,
@@ -31,8 +31,6 @@ import { ErrorUtils, HTTP_STATUS_CODES } from '../../../core/util';
 
 export class UploadKeyDialogComponent implements OnInit {
   model: KeyUploadDialogModel;
-  processError: boolean = false;
-  errorMessage: string = '';
   @Input() primaryUploading: boolean = true;
   
   @ViewChild('bindDialog') bindDialog;
@@ -40,8 +38,13 @@ export class UploadKeyDialogComponent implements OnInit {
   @Output() checkInfrastructureCreationProgress: EventEmitter<{}> = new EventEmitter();
   @Output() generateUserKey: EventEmitter<{}> = new EventEmitter();
 
-  constructor(private userAccessKeyService: UserAccessKeyService) {
+  constructor(
+    private userAccessKeyService: UserAccessKeyService,
+    public toastr: ToastsManager,
+    public vcr: ViewContainerRef
+  ) {
     this.model = KeyUploadDialogModel.getDefault();
+    this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
@@ -67,18 +70,15 @@ export class UploadKeyDialogComponent implements OnInit {
 
   public open(params) {
     if (!this.bindDialog.isOpened) {
-      this.model = new KeyUploadDialogModel(null, (response: Response) => {
-        if (response.status === HTTP_STATUS_CODES.OK) {
-          this.close();
-          this.checkInfrastructureCreationProgress.emit();
-        }
-      },
-        (response: Response) => {
-          this.processError = true;
-          this.errorMessage = `${response.text()}`;
+      this.model = new KeyUploadDialogModel(null,
+        response => {
+          if (response.status === HTTP_STATUS_CODES.OK) {
+            this.close();
+            this.checkInfrastructureCreationProgress.emit();
+          }
         },
+        error => this.toastr.error(error.message, 'Oops!', { toastLife: 5000 }),
         this.userAccessKeyService);
-
       this.bindDialog.open(params);
     }
   }
@@ -90,8 +90,5 @@ export class UploadKeyDialogComponent implements OnInit {
 
   private resetDialog(): void {
     this.userAccessKeyUploadControl.nativeElement.value = '';
-
-    this.processError = false;
-    this.errorMessage = '';
   }
 }
