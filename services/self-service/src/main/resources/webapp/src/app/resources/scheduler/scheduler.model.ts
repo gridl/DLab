@@ -16,10 +16,6 @@ limitations under the License.
 
 ****************************************************************************/
 
-import { Observable } from 'rxjs/Observable';
-import { Response } from '@angular/http';
-
-import { SortUtil } from '../../core/util';
 import { SchedulerService } from '../../core/services';
 
 export interface SchedulerParameters {
@@ -57,15 +53,15 @@ export class SchedulerModel {
         if (this.continueWith) this.continueWith();
     }
 
-    private scheduleInstance(notebook, params, resourse): Observable<Response> {
+    private scheduleInstance(notebook, params, resourse) {
         return this.schedulerService.setExploratorySchedule(notebook, params, resourse);
     }
 
     private prepareModel(fnProcessResults: any, fnProcessErrors: any): void {
         this.confirmAction = (notebook, data, resourse?) => this.scheduleInstance(notebook, data, resourse)
             .subscribe(
-                (response: Response) => fnProcessResults(response),
-                (response: Response) => fnProcessErrors(response));
+                response => fnProcessResults(response),
+                error => fnProcessErrors(error));
     }
 }
 

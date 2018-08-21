@@ -16,7 +16,9 @@ limitations under the License.
 
 ****************************************************************************/
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { ToastsManager } from 'ng2-toastr';
+
 import { ResourcesGridComponent } from './resources-grid';
 import { UserAccessKeyService, UserResourceService, HealthStatusService, AppRoutingService } from '../core/services';
 import { ExploratoryEnvironmentVersionModel, ComputationalResourceImage } from '../core/models';
@@ -52,9 +54,12 @@ export class ResourcesComponent implements OnInit {
     private userAccessKeyService: UserAccessKeyService,
     private userResourceService: UserResourceService,
     private healthStatusService: HealthStatusService,
-    private appRoutingService: AppRoutingService
+    private appRoutingService: AppRoutingService,
+    public toastr: ToastsManager,
+    public vcr: ViewContainerRef
   ) {
     this.userUploadAccessKeyState = HTTP_STATUS_CODES.NOT_FOUND;
+    this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
@@ -83,9 +88,11 @@ export class ResourcesComponent implements OnInit {
   public checkInfrastructureCreationProgress() {
     this.userAccessKeyService.checkUserAccessKey()
       .subscribe(
-      response => this.processAccessKeyStatus(response.status, false),
-      error => this.processAccessKeyStatus(error.status, false)
-      );
+      (response: any) => this.processAccessKeyStatus(response.status, false),
+      error => {
+        this.processAccessKeyStatus(error.status, false);
+        this.toastr.error(error.message, 'Oops!', { toastLife: 5000 });
+      });
   }
 
   public manageUngit(): void {
@@ -94,9 +101,12 @@ export class ResourcesComponent implements OnInit {
   }
 
   public generateUserKey($event) {
-    this.userAccessKeyService.generateAccessKey().subscribe(data => {
-      FileUtils.downloadFile(data);
-      this.checkInfrastructureCreationProgress();
+    this.userAccessKeyService.generateAccessKey().subscribe(
+      data => {
+        FileUtils.downloadFile(data);
+        this.checkInfrastructureCreationProgress();
+    }, error => {
+      this.toastr.error(error.message, 'Oops!', { toastLife: 5000 });
     });
   }
 
@@ -149,6 +159,7 @@ export class ResourcesComponent implements OnInit {
           this.resourcesGrid.billingEnabled = this.billingEnabled;
 
           this.healthStatus === 'error' && this.checkInfrastructureCreationProgress();
-        });
+        },
+      error => this.toastr.error(error.message, 'Oops!', { toastLife: 5000 }));
   }
 }

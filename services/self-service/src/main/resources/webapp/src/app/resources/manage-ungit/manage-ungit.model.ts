@@ -17,8 +17,6 @@ limitations under the License.
 ****************************************************************************/
 
 import { Observable } from 'rxjs/Observable';
-import { Response } from '@angular/http';
-
 import { ManageUngitService } from '../../core/services';
 
 export interface AccountCredentials {
@@ -53,11 +51,11 @@ export class MangeUngitModel {
         if (this.continueWith) this.continueWith();
     }
 
-    public getGitCredentials(): Observable<Response> {
+    public getGitCredentials(): Observable<{}> {
         return this.manageUngitService.getGitCreds();
     }
 
-    private updateGitCredentials(gitCreds): Observable<Response> {
+    private updateGitCredentials(gitCreds): Observable<{}> {
         return this.manageUngitService.updateGitCredentials({
             git_creds : gitCreds
         });
@@ -66,7 +64,7 @@ export class MangeUngitModel {
     private prepareModel(fnProcessResults: any, fnProcessErrors: any): void {
         this.confirmAction = (data?) => this.updateGitCredentials(data)
             .subscribe(
-                (response: Response) => fnProcessResults(response),
-                (response: Response) => fnProcessErrors(response));
+                response => fnProcessResults(response),
+                response=> fnProcessErrors(response));
     }
 }
