@@ -91,7 +91,7 @@ export class ResourcesComponent implements OnInit {
       (response: any) => this.processAccessKeyStatus(response.status, false),
       error => {
         this.processAccessKeyStatus(error.status, false);
-        this.toastr.error(error.message, 'Oops!', { toastLife: 5000 });
+        error.status !== HTTP_STATUS_CODES.NOT_FOUND && this.toastr.error(error.message, 'Oops!', { toastLife: 5000 });
       });
   }
 
