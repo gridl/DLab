@@ -122,7 +122,7 @@ export class ExploratoryEnvironmentCreateModel {
     this.setSelectedTemplate(0);
   }
 
-  private createExploratoryEnvironment(): Observable<Response> {
+  private createExploratoryEnvironment(): Observable<{}> {
     let params: any = {
       image: this.environment_image,
       template_name: this.environment_template_name,

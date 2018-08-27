@@ -250,7 +250,7 @@ export class ResourcesGridComponent implements OnInit {
 
   getUserPreferences(): void {
     this.userResourceService.getUserPreferences()
-      .subscribe((result) => {
+      .subscribe((result : any) => {
         this.isActiveFilter(result);
         this.filterForm = this.loadUserPreferences( result.type ? this.filterActiveInstances() : this.aliveStatuses(result) );
         this.applyFilter_btnClick(this.filterForm);

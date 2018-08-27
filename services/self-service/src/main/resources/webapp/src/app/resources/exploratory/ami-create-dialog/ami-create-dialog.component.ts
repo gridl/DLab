@@ -63,7 +63,7 @@ export class AmiCreateDialogComponent {
   }
 
   public assignChanges(data) {
-    this._userResource.createAMI(data).subscribe(res => {
+    this._userResource.createAMI(data).subscribe((res: any) => {
       if (res.status === HTTP_STATUS_CODES.ACCEPTED) {
         this.bindDialog.close();
         this.buildGrid.emit();
