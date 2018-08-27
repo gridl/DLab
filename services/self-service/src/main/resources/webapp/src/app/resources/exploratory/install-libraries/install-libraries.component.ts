@@ -126,7 +126,7 @@ export class InstallLibrariesComponent implements OnInit {
     if ($event.model.type === 'group_lib') {
       this.group = $event.model.value;
     } else if ($event.model.type === 'destination') {
-      this.resetDialog(true);
+      this.resetDialog();
 
       this.destination = $event.model.value;
       this.destination && this.destination.type === 'СOMPUTATIONAL'
@@ -176,7 +176,7 @@ export class InstallLibrariesComponent implements OnInit {
             this.resetDialog();
           }
         },
-        error => this.toastr.error(error.message || 'Library creation failed!', 'Oops!', { toastLife: 5000 }),
+        error => this.toastr.error(error.message || 'Library installation failed!', 'Oops!', { toastLife: 5000 }),
         () => {
           this.bindDialog.open(param);
 
@@ -274,7 +274,7 @@ export class InstallLibrariesComponent implements OnInit {
     this.group_select && this.group_select.setDefaultOptions([], '', 'group_lib', null, 'array');
   }
 
-  private resetDialog(nActive?): void {
+  private resetDialog(): void {
     this.group = '';
     this.query = '';
     this.libSearch.setValue('');
