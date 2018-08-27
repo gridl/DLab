@@ -24,7 +24,7 @@ import { DICTIONARY } from '../../../../dictionary/global.dictionary';
     moduleId: module.id,
     selector: 'cost-details-dialog',
     templateUrl: 'cost-details-dialog.component.html',
-    styleUrls: ['cost-details-dialog.component.css'],
+    styleUrls: ['cost-details-dialog.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
 export class CostDetailsDialogComponent {
