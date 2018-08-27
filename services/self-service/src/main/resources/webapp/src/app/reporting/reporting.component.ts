@@ -209,7 +209,7 @@ export class ReportingComponent implements OnInit, OnDestroy {
 
   private processAccessKeyStatus(status: number) {
     if (status === HTTP_STATUS_CODES.NOT_FOUND) {
-      this.healthStatus === 'error' && this.keyUploadDialog.open({ isFooter: false });
+      this.keyUploadDialog.open({ isFooter: false });
     } else if (status === HTTP_STATUS_CODES.ACCEPTED) {
       this.preloaderDialog.open({ isHeader: false, isFooter: false });
 

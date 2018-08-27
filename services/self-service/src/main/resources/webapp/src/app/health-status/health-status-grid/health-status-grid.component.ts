@@ -63,7 +63,7 @@ export class HealthStatusGridComponent implements OnInit {
           .runEdgeNode()
           .subscribe(() => {
             this.buildGrid();
-            this.toastr.success('Edge node is starting!', 'Processing!', { toastLife: 5000 });
+            // this.toastr.success('Edge node is starting!', 'Processing!', { toastLife: 5000 });
           }, error => this.toastr.error('Edge Node running failed!', 'Oops!', { toastLife: 5000 }));
       } else if (action === 'stop') {
         this.confirmationDialog.open({ isFooter: false }, data, ConfirmationDialogType.StopEdgeNode);
@@ -72,7 +72,7 @@ export class HealthStatusGridComponent implements OnInit {
           .recreateEdgeNode()
           .subscribe(() => {
             this.buildGrid();
-            this.toastr.success('Edge Node recreation is processing!', 'Processing!', { toastLife: 5000 });
+            // this.toastr.success('Edge Node recreation is processing!', 'Processing!', { toastLife: 5000 });
           }, error => this.toastr.error('Edge Node recreation failed!', 'Oops!', { toastLife: 5000 }));
       }
     }

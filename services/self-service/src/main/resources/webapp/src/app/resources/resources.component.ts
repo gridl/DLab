@@ -158,7 +158,7 @@ export class ResourcesComponent implements OnInit {
           this.resourcesGrid.healthStatus = this.healthStatus;
           this.resourcesGrid.billingEnabled = this.billingEnabled;
 
-          this.healthStatus === 'error' && this.checkInfrastructureCreationProgress();
+          this.checkInfrastructureCreationProgress();
         },
       error => this.toastr.error(error.message, 'Oops!', { toastLife: 5000 }));
   }

@@ -128,7 +128,7 @@ export class HealthStatusComponent implements OnInit {
 
   private processAccessKeyStatus(status: number) {
     if (status === HTTP_STATUS_CODES.NOT_FOUND) {
-      this.healthStatus === 'error' && this.keyUploadDialog.open({ isFooter: false });
+      this.keyUploadDialog.open({ isFooter: false });
       this.uploadKey = false;
     } else if (status === HTTP_STATUS_CODES.ACCEPTED) {
       this.preloaderDialog.open({ isHeader: false, isFooter: false });
