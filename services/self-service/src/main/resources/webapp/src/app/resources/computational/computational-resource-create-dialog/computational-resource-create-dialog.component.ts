@@ -22,7 +22,7 @@ import { ToastsManager } from 'ng2-toastr';
 
 import { ComputationalResourceCreateModel } from '.';
 import { UserResourceService } from '../../../core/services';
-import { ErrorUtils, HTTP_STATUS_CODES, CheckUtils } from '../../../core/util';
+import { HTTP_STATUS_CODES, CheckUtils } from '../../../core/util';
 
 import { DICTIONARY } from '../../../../dictionary/global.dictionary';
 

@@ -117,23 +117,26 @@ export class UserResourceService {
       .map(response => response);
   }
 
-  public getUserImages(image): Observable<Response> {
+  public getUserImages(image): Observable<{}> {
     const body = `?docker_image=${image}`;
     return this.applicationServiceFacade
       .buildGetUserImages(body)
-      .map(response => response.json());
+      .map(response => response.json())
+      .catch(ErrorUtils.handleServiceError);
   }
 
-  public getImagesList(): Observable<Response> {
+  public getImagesList(): Observable<{}> {
     return this.applicationServiceFacade
       .buildGetImagesList()
-      .map(response => response.json());
+      .map(response => response.json())
+      .catch(ErrorUtils.handleServiceError);
   }
 
-  public createAMI(data): Observable<{}> {
+  public createAMI(data): Observable<any> {
     const body = JSON.stringify(data);
     return this.applicationServiceFacade
       .buildCreateAMI(data)
-      .map(response => response);
+      .map(response => response)
+      .catch(ErrorUtils.handleServiceError);
   }
 }
