@@ -17,24 +17,16 @@ limitations under the License.
 ****************************************************************************/
 
 import { Observable } from 'rxjs/Observable';
+import { CheckUtils } from '.';
 
 export class ErrorUtils {
 
-  public static isJson(str) {
-    try {
-      JSON.parse(str);
-    } catch (e) {
-      return false;
-    }
-    return true;
-  };
-
   public static handleError(error: any) {
     let errMsg: string;
-    if (typeof error === 'object' && error._body && this.isJson(error._body)) {
+    if (typeof error === 'object' && error._body && CheckUtils.isJSON(error._body)) {
       if (error.json().error_message)
         errMsg = error.json().error_message;
-    } else if (this.isJson(error._body)) {
+    } else if (CheckUtils.isJSON(error._body)) {
       const body = error.json() || '';
       const err = body.error || JSON.stringify(body);
       errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
@@ -46,12 +38,14 @@ export class ErrorUtils {
   }
 
   public static handleServiceError(errorMessage) {
-    let error = errorMessage.json();
-    
-    return Observable.throw({
-      status: error.code,
-      statusText: errorMessage.statusText,
-      message: error.message
-    });
+    if (errorMessage && CheckUtils.isJSON(errorMessage)) {
+      let error = errorMessage.json();
+
+      return Observable.throw({
+        status: error.code,
+        statusText: errorMessage.statusText,
+        message: error.message
+      });
+    }
   } 
 }
