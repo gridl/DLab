@@ -47,7 +47,7 @@ export class ApplicationSecurityService {
   public login(loginModel: LoginModel): Observable<boolean> {
     return this.serviceFacade
       .buildLoginRequest(loginModel.toJsonString())
-      .map((response) => {
+      .map(response => {
         if (response.status === HTTP_STATUS_CODES.OK) {
           if (!DICTIONARY.use_ldap) {
             this.setAuthToken(response.json().access_token);

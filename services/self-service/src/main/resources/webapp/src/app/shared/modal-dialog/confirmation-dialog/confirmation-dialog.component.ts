@@ -17,7 +17,6 @@ limitations under the License.
 ****************************************************************************/
 
 import { Component, OnInit, ViewChild, Input, Output, EventEmitter, ViewEncapsulation, ViewContainerRef } from '@angular/core';
-// import { Response } from '@angular/http';
 import { ToastsManager } from 'ng2-toastr';
 
 import { ConfirmationDialogModel } from './confirmation-dialog.model';
