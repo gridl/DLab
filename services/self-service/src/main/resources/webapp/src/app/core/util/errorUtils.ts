@@ -29,14 +29,6 @@ export class ErrorUtils {
     return true;
   };
 
-  public static setErrorMessage(errorCode): string {
-    if (errorCode) {
-      const defaultStatus = 'Error status [' + errorCode.status + ']. ';
-
-      return defaultStatus.concat(errorCode.statusText);
-    }
-  }
-
   public static handleError(error: any) {
     let errMsg: string;
     if (typeof error === 'object' && error._body && this.isJson(error._body)) {

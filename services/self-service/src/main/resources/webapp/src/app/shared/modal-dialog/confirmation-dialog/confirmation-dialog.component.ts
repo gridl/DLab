@@ -16,13 +16,14 @@ limitations under the License.
 
 ****************************************************************************/
 
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { Response } from '@angular/http';
+import { Component, OnInit, ViewChild, Input, Output, EventEmitter, ViewEncapsulation, ViewContainerRef } from '@angular/core';
+// import { Response } from '@angular/http';
+import { ToastsManager } from 'ng2-toastr';
 
 import { ConfirmationDialogModel } from './confirmation-dialog.model';
 import { ConfirmationDialogType } from './confirmation-dialog-type.enum';
 import { UserResourceService, HealthStatusService, ManageEnvironmentsService } from '../../../core/services';
-import { ErrorUtils, HTTP_STATUS_CODES } from '../../../core/util';
+import { HTTP_STATUS_CODES } from '../../../core/util';
 import { DICTIONARY } from '../../../../dictionary/global.dictionary';
 
 @Component({
@@ -37,12 +38,8 @@ export class ConfirmationDialogComponent implements OnInit {
   readonly DICTIONARY = DICTIONARY;
   model: ConfirmationDialogModel;
   isAliveResources: boolean;
-  processError: boolean = false;
-  errorMessage: string = '';
-
   dataengines: Array<any> = [];
   dataengineServices: Array<any> = [];
-
   confirmationType: number = 0;
 
   @ViewChild('bindDialog') bindDialog;
@@ -53,9 +50,12 @@ export class ConfirmationDialogComponent implements OnInit {
   constructor(
     private userResourceService: UserResourceService,
     private healthStatusService: HealthStatusService,
-    private manageEnvironmentsService: ManageEnvironmentsService
+    private manageEnvironmentsService: ManageEnvironmentsService,
+    public toastr: ToastsManager,
+    public vcr: ViewContainerRef
   ) {
     this.model = ConfirmationDialogModel.getDefault();
+    this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
@@ -65,16 +65,14 @@ export class ConfirmationDialogComponent implements OnInit {
   public open(param, notebook: any, type: ConfirmationDialogType) {
     this.confirmationType = type;
 
-    this.model = new ConfirmationDialogModel(type, notebook, (response: Response) => {
-      if (response.status === HTTP_STATUS_CODES.OK) {
-        this.close();
-        this.buildGrid.emit();
-      }
-    },
-      (response: Response) => {
-        this.processError = true;
-        this.errorMessage = ErrorUtils.setErrorMessage(response);
+    this.model = new ConfirmationDialogModel(type, notebook,
+      response => {
+        if (response.status === HTTP_STATUS_CODES.OK) {
+          this.close();
+          this.buildGrid.emit();
+        }
       },
+      error => this.toastr.error(error.message || 'Action failed!', 'Oops!', { toastLife: 5000 }),
       this.manageAction,
       this.userResourceService,
       this.healthStatusService,
@@ -96,9 +94,7 @@ export class ConfirmationDialogComponent implements OnInit {
   }
 
   private resetDialog(): void {
-    this.processError = false;
     this.dataengines = [];
     this.dataengineServices = [];
-    this.errorMessage = '';
   }
 }

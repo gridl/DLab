@@ -146,6 +146,8 @@ export class ExploratoryEnvironmentCreateModel {
 
     this.setCreatingParams(environment_name, environment_shape);
     this.confirmAction = () => this.createExploratoryEnvironment()
-      .subscribe((response: Response) => fnProcessResults(response), (response: Response) => fnProcessErrors(response));
+      .subscribe(
+        response => fnProcessResults(response),
+        error => fnProcessErrors(error));
   }
 }
