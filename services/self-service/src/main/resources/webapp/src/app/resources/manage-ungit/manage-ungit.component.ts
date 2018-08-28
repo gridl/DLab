@@ -67,7 +67,7 @@ export class ManageUngitComponent implements OnInit {
   public open(param): void {
     if (!this.bindDialog.isOpened)
       this.model = new MangeUngitModel(response => { },
-      error => this.toastr.error(error.message, 'Oops!', { toastLife: 5000 }),
+      error => this.toastr.error(error.message || 'Manage git credentials failed!', 'Oops!', { toastLife: 5000 }),
       () => {
         this.bindDialog.open(param);
 
@@ -150,10 +150,9 @@ export class ManageUngitComponent implements OnInit {
 
   private getGitCredentials(): void {
     this.model.getGitCredentials()
-      .subscribe((response: any) => {
-          this.gitCredentials = response.git_creds || [];
-        },
-        error => console.log(error));
+      .subscribe(
+        (response: any) => this.gitCredentials = response.git_creds || [],
+        error => this.toastr.error(error.message || 'Git credentials loading failed!', 'Oops!', { toastLife: 5000 }));
   }
 
   private validConfirmField(control) {

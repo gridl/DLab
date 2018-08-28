@@ -20,51 +20,50 @@ import { Observable } from 'rxjs/Observable';
 import { ManageUngitService } from '../../core/services';
 
 export interface AccountCredentials {
-    hostname: string;
-    username: string;
-    email: string;
-    login: string;
-    password: string;
+  hostname: string;
+  username: string;
+  email: string;
+  login: string;
+  password: string;
 }
 
 export class MangeUngitModel {
-    confirmAction: Function;
+  confirmAction: Function;
 
-    public accoutCredsList: Array<AccountCredentials> = [];
-    private continueWith: Function;
-    private manageUngitService: ManageUngitService;
+  public accoutCredsList: Array<AccountCredentials> = [];
+  private continueWith: Function;
+  private manageUngitService: ManageUngitService;
 
-    static getDefault(manageUngitService): MangeUngitModel {
-        return new MangeUngitModel(() => { }, () => { }, null, manageUngitService);
-    }
+  static getDefault(manageUngitService): MangeUngitModel {
+    return new MangeUngitModel(() => {}, () => {}, null, manageUngitService);
+  }
 
-    constructor(
-        fnProcessResults: any,
-        fnProcessErrors: any,
-        continueWith: Function,
-        manageUngitService: ManageUngitService
-    ) {
-        this.continueWith = continueWith;
-        this.manageUngitService = manageUngitService;
-        this.prepareModel(fnProcessResults, fnProcessErrors);
+  constructor(
+    fnProcessResults: any,
+    fnProcessErrors: any,
+    continueWith: Function,
+    manageUngitService: ManageUngitService
+  ) {
+    this.continueWith = continueWith;
+    this.manageUngitService = manageUngitService;
+    this.prepareModel(fnProcessResults, fnProcessErrors);
 
-        if (this.continueWith) this.continueWith();
-    }
+    if (this.continueWith) this.continueWith();
+  }
 
-    public getGitCredentials(): Observable<{}> {
-        return this.manageUngitService.getGitCreds();
-    }
+  public getGitCredentials(): Observable<{}> {
+    return this.manageUngitService.getGitCreds();
+  }
 
-    private updateGitCredentials(gitCreds): Observable<{}> {
-        return this.manageUngitService.updateGitCredentials({
-            git_creds : gitCreds
-        });
-    }
+  private updateGitCredentials(gitCreds): Observable<{}> {
+    return this.manageUngitService.updateGitCredentials({ git_creds: gitCreds });
+  }
 
-    private prepareModel(fnProcessResults: any, fnProcessErrors: any): void {
-        this.confirmAction = (data?) => this.updateGitCredentials(data)
-            .subscribe(
-                response => fnProcessResults(response),
-                response=> fnProcessErrors(response));
-    }
+  private prepareModel(fnProcessResults: any, fnProcessErrors: any): void {
+    this.confirmAction = (data?) =>
+      this.updateGitCredentials(data).subscribe(
+        response => fnProcessResults(response),
+        error => fnProcessErrors(error)
+      );
+  }
 }
