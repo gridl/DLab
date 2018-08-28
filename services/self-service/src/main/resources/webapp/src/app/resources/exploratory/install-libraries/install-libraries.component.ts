@@ -263,9 +263,7 @@ export class InstallLibrariesComponent implements OnInit {
         });
     } else {
       this.model.getLibrariesList(this.group, this.query)
-        .subscribe(libs => {
-          this.filteredList = libs;
-        });
+        .subscribe(libs => this.filteredList = libs);
     }
   }
 
