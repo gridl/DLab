@@ -25,7 +25,6 @@ import { AppRoutingService } from '../../core/services/appRouting.service';
 import { DICTIONARY } from '../../../dictionary/global.dictionary';
 
 @Component({
-  moduleId: module.id,
   selector: 'dlab-navbar',
   templateUrl: 'navbar.component.html',
   styleUrls: ['./navbar.component.css'],

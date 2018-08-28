@@ -25,7 +25,6 @@ import { ConfirmationDialogType } from '../../shared';
 import { FileUtils } from '../../core/util';
 
 @Component({
-  moduleId: module.id,
   selector: 'health-status-grid',
   templateUrl: 'health-status-grid.component.html',
   styleUrls: ['./health-status-grid.component.css',

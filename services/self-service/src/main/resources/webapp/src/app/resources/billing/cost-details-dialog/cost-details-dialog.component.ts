@@ -21,7 +21,6 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { DICTIONARY } from '../../../../dictionary/global.dictionary';
 
 @Component({
-    moduleId: module.id,
     selector: 'cost-details-dialog',
     templateUrl: 'cost-details-dialog.component.html',
     styleUrls: ['cost-details-dialog.component.scss'],

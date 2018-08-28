@@ -27,7 +27,6 @@ import { HTTP_STATUS_CODES, CheckUtils } from '../../../core/util';
 import { DICTIONARY } from '../../../../dictionary/global.dictionary';
 
 @Component({
-  moduleId: module.id,
   selector: 'computational-resource-create-dialog',
   templateUrl: 'computational-resource-create-dialog.component.html',
   styleUrls: ['./computational-resource-create-dialog.component.scss'],

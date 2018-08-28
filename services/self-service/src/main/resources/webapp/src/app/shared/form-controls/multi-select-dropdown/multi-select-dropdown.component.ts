@@ -19,7 +19,6 @@ limitations under the License.
 import { Input, Output, Component, EventEmitter, ViewEncapsulation } from '@angular/core';
 
 @Component({
-  moduleId: module.id,
   selector: 'multi-select-dropdown',
   templateUrl: 'multi-select-dropdown.component.html',
   styleUrls: ['../dropdowns.component.css'],

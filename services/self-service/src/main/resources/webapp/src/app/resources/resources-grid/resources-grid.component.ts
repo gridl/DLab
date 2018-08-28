@@ -26,7 +26,6 @@ import { SortUtil } from '../../core/util';
 import { DICTIONARY } from '../../../dictionary/global.dictionary';
 
 @Component({
-  moduleId: module.id,
   selector: 'resources-grid',
   templateUrl: 'resources-grid.component.html',
   styleUrls: ['./resources-grid.component.css']

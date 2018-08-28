@@ -25,7 +25,6 @@ import { ErrorUtils, HTTP_STATUS_CODES } from '../core/util';
 import { DICTIONARY } from '../../dictionary/global.dictionary';
 
 @Component({
-  moduleId: module.id,
   selector: 'dlab-login',
   templateUrl: 'login.component.html',
   styleUrls: ['./login.component.css']

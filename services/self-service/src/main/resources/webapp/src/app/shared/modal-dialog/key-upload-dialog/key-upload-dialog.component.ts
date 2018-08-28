@@ -24,7 +24,6 @@ import { UserAccessKeyService } from '../../../core/services';
 import { HTTP_STATUS_CODES } from '../../../core/util';
 
 @Component({
-  moduleId: module.id,
   selector: 'key-upload-dialog',
   templateUrl: 'key-upload-dialog.component.html'
 })

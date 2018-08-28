@@ -24,7 +24,6 @@ import { HealthStatusService, BackupService, UserResourceService, UserAccessKeyS
 import { FileUtils, HTTP_STATUS_CODES } from '../core/util';
 
 @Component({
-  moduleId: module.id,
   selector: 'health-status',
   templateUrl: 'health-status.component.html',
   styleUrls: ['./health-status.component.scss']

@@ -26,7 +26,6 @@ import { ErrorUtils, HTTP_STATUS_CODES } from '../../../core/util';
 import { DICTIONARY } from '../../../../dictionary/global.dictionary';
 
 @Component({
-  moduleId: module.id,
   selector: 'exploratory-environment-create-dialog',
   templateUrl: 'exploratory-environment-create-dialog.component.html'
 })

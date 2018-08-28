@@ -27,7 +27,6 @@ export class DropdownListModel {
 }
 
 @Component({
-  moduleId: module.id,
   selector: 'dropdown-list',
   templateUrl: 'dropdown-list.component.html',
   styleUrls: ['../dropdowns.component.css'],

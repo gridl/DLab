@@ -26,7 +26,6 @@ import { HTTP_STATUS_CODES } from '../../../core/util';
 import { DICTIONARY } from '../../../../dictionary/global.dictionary';
 
 @Component({
-  moduleId: module.id,
   selector: 'confirmation-dialog',
   templateUrl: 'confirmation-dialog.component.html',
   styleUrls: ['./confirmation-dialog.component.scss', '../modal.component.scss'],

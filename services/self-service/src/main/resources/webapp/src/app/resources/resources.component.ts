@@ -26,7 +26,6 @@ import { HTTP_STATUS_CODES, FileUtils } from '../core/util';
 import { NavbarComponent } from '../shared';
 
 @Component({
-  moduleId: module.id,
   selector: 'dlab-resources',
   templateUrl: 'resources.component.html',
   styleUrls: ['./resources.component.css']
