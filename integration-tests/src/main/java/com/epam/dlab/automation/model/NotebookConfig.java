@@ -20,8 +20,8 @@ package com.epam.dlab.automation.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 public class NotebookConfig {
@@ -75,7 +75,19 @@ public class NotebookConfig {
 	private boolean imageTestRequired = false;
 
 	@JsonProperty("skipped_libraries")
-	private List<Lib> skippedLibraries = Collections.emptyList();
+	private List<Lib> skippedLibraries;
+
+	@JsonProperty("notebook_shape")
+	private String notebookShape = StringUtils.EMPTY;
+
+	@JsonProperty("des_version")
+	private String desVersion = StringUtils.EMPTY;
+
+	@JsonProperty("des_spot_required")
+	private boolean desSpotRequired = false;
+
+	@JsonProperty("des_spot_price")
+	private int desSpotPrice = 0;
 
 	public List<Lib> getSkippedLibraries() {
 		return skippedLibraries;
@@ -85,7 +97,23 @@ public class NotebookConfig {
     	return timeoutNotebookCreate;
     }
 
-    public String getTimeoutNotebookStartup() {
+	public String getNotebookShape() {
+		return notebookShape;
+	}
+
+	public String getDesVersion() {
+		return desVersion;
+	}
+
+	public boolean isDesSpotRequired() {
+		return desSpotRequired;
+	}
+
+	public int getDesSpotPrice() {
+		return desSpotPrice;
+	}
+
+	public String getTimeoutNotebookStartup() {
     	return timeoutNotebookStartup;
     }
 
@@ -146,6 +174,10 @@ public class NotebookConfig {
 		this.imageTestRequired = imageTestRequired;
 	}
 
+	public void setSkippedLibraries(List<Lib> skippedLibraries) {
+		this.skippedLibraries = skippedLibraries;
+	}
+
 
 	@Override
     public String toString() {
@@ -162,7 +194,11 @@ public class NotebookConfig {
     			.add("timeoutNotebookShutdown", timeoutNotebookShutdown)
     			.add("timeoutNotebookStartup", timeoutNotebookStartup)
     			.add("notebookTemplate", notebookTemplate)
+				.add("notebookShape", notebookShape)
     			.add("dataEngineType", dataEngineType)
+				.add("dataEngineServiceVersion", desVersion)
+				.add("dataEngineServiceSpotRequired", desSpotRequired)
+				.add("dataEngineServiceSpotPrice", desSpotPrice)
     			.add("fullTest", fullTest)
 				.add("imageTestRequired", imageTestRequired)
 				.add("skippedLibraries", skippedLibraries)

@@ -20,7 +20,7 @@ import com.epam.dlab.backendapi.resources.dto.ImageInfoRecord;
 import com.epam.dlab.dto.exploratory.ImageStatus;
 import com.epam.dlab.dto.exploratory.LibStatus;
 import com.epam.dlab.model.ResourceType;
-import com.epam.dlab.model.exloratory.Image;
+import com.epam.dlab.model.exploratory.Image;
 import com.epam.dlab.model.library.Library;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public interface ImageExploratoryDao {
 
 	void updateImageFields(Image image);
 
-	List<ImageInfoRecord> getImages(String user, ImageStatus status, String dockerImage);
+	List<ImageInfoRecord> getImages(String user, String dockerImage, ImageStatus ... statuses);
 
 	Optional<ImageInfoRecord> getImage(String user, String name);
 

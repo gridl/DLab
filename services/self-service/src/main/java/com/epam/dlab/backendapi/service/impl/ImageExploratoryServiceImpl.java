@@ -31,7 +31,7 @@ import com.epam.dlab.dto.exploratory.ImageStatus;
 import com.epam.dlab.exceptions.ResourceAlreadyExistException;
 import com.epam.dlab.exceptions.ResourceNotFoundException;
 import com.epam.dlab.model.ResourceType;
-import com.epam.dlab.model.exloratory.Image;
+import com.epam.dlab.model.exploratory.Image;
 import com.epam.dlab.model.library.Library;
 import com.epam.dlab.rest.client.RESTService;
 import com.epam.dlab.rest.contracts.ExploratoryAPI;
@@ -116,8 +116,8 @@ public class ImageExploratoryServiceImpl implements ImageExploratoryService {
 	}
 
 	@Override
-	public List<ImageInfoRecord> getCreatedImages(String user, String dockerImage) {
-		return imageExploratoryDao.getImages(user, ImageStatus.CREATED, dockerImage);
+	public List<ImageInfoRecord> getNotFailedImages(String user, String dockerImage) {
+		return imageExploratoryDao.getImages(user, dockerImage, ImageStatus.CREATED, ImageStatus.CREATING);
 	}
 
 	@Override
