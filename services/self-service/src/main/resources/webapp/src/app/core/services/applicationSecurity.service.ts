@@ -44,7 +44,7 @@ export class ApplicationSecurityService {
     private appRoutingService: AppRoutingService
   ) { }
 
-  public login(loginModel: LoginModel): Observable<boolean> {
+  public login(loginModel: LoginModel): Observable<boolean | {}> {
     return this.serviceFacade
       .buildLoginRequest(loginModel.toJsonString())
       .map(response => {
@@ -101,8 +101,10 @@ export class ApplicationSecurityService {
           this.appRoutingService.redirectToLoginPage();
           return false;
         })
-        .catch((error: any) => {
-          this.handleError(error);
+        .catch(error => {
+          // this.handleError(error);
+          error = ErrorUtils.handleServiceError(error);
+          this.emmitMessage(error.message);
           this.clearAuthToken();
 
           return Observable.of(false);
@@ -128,7 +130,9 @@ export class ApplicationSecurityService {
         }
 
         if (response.status !== 200) {
-          this.handleError(response);
+          // this.handleError(response);
+          response = ErrorUtils.handleServiceError(response);
+          this.emmitMessage(response.message);
         }
         return false;
 
@@ -136,15 +140,18 @@ export class ApplicationSecurityService {
         if (DICTIONARY.cloud_provider === 'azure' && error && error.status === HTTP_STATUS_CODES.FORBIDDEN) {
           window.location.href = error.headers.get('Location');
         } else {
-          this.handleError(error);
+          // this.handleError(error);
+          error = ErrorUtils.handleServiceError(error);
+          this.emmitMessage(error.message);
           return Observable.of(false);
         }
       });
   }
 
-  private handleError(error: any) {
-    this.emmitMessage(ErrorUtils.handleError(error));
-  }
+  // private handleError(error: any) {
+  //   // this.emmitMessage(ErrorUtils.handleError(error));
+  //   this.emmitMessage(error.message);
+  // }
 
   private emmitMessage(message): void {
     this.appRoutingService.redirectToLoginPage();

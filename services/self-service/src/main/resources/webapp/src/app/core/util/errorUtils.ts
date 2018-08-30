@@ -21,21 +21,21 @@ import { CheckUtils } from '.';
 
 export class ErrorUtils {
 
-  public static handleError(error: any) {
-    let errMsg: string;
-    if (typeof error === 'object' && error._body && CheckUtils.isJSON(error._body)) {
-      if (error.json().error_message)
-        errMsg = error.json().error_message;
-    } else if (CheckUtils.isJSON(error._body)) {
-      const body = error.json() || '';
-      const err = body.error || JSON.stringify(body);
-      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
-    } else {
-      errMsg = error._body ? error._body : error.toString();
-    }
+  // public static handleError(error: any) {
+  //   let errMsg: string;
+  //   if (typeof error === 'object' && error._body && CheckUtils.isJSON(error._body)) {
+  //     if (error.json().error_message)
+  //       errMsg = error.json().error_message;
+  //   } else if (CheckUtils.isJSON(error._body)) {
+  //     const body = error.json() || '';
+  //     const err = body.error || JSON.stringify(body);
+  //     errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+  //   } else {
+  //     errMsg = error._body ? error._body : error.toString();
+  //   }
 
-    return errMsg;
-  }
+  //   return errMsg;
+  // }
 
   public static handleServiceError(errorMessage) {
     if (errorMessage && CheckUtils.isJSON(errorMessage)) {
