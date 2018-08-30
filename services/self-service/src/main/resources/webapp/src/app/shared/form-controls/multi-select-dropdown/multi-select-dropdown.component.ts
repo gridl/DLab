@@ -21,7 +21,7 @@ import { Input, Output, Component, EventEmitter, ViewEncapsulation } from '@angu
 @Component({
   selector: 'multi-select-dropdown',
   templateUrl: 'multi-select-dropdown.component.html',
-  styleUrls: ['../dropdowns.component.css'],
+  styleUrls: ['../dropdowns.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 
