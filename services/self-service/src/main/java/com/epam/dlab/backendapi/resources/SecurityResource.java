@@ -13,12 +13,12 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-
  ****************************************************************************/
 
 package com.epam.dlab.backendapi.resources;
 
 import com.epam.dlab.auth.UserInfo;
+import com.epam.dlab.auth.contract.SecurityAPI;
 import com.epam.dlab.auth.dto.UserCredentialDTO;
 import com.epam.dlab.backendapi.SelfServiceApplicationConfiguration;
 import com.epam.dlab.backendapi.dao.SecurityDAO;
@@ -27,7 +27,7 @@ import com.epam.dlab.backendapi.roles.UserRoles;
 import com.epam.dlab.constants.ServiceConsts;
 import com.epam.dlab.exceptions.DlabException;
 import com.epam.dlab.rest.client.RESTService;
-import com.epam.dlab.auth.contract.SecurityAPI;
+import com.epam.dlab.rest.dto.ErrorDTO;
 import com.epam.dlab.validation.AwsValidation;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -54,10 +54,10 @@ import javax.ws.rs.core.Response.Status;
 @Slf4j
 public class SecurityResource implements SecurityAPI {
 
-    private SecurityDAO dao;
-    private RESTService securityService;
-    private EnvStatusListener envStatusListener;
-    private SelfServiceApplicationConfiguration configuration;
+	private SecurityDAO dao;
+	private RESTService securityService;
+	private EnvStatusListener envStatusListener;
+	private SelfServiceApplicationConfiguration configuration;
 
 	@Inject
 	public SecurityResource(SecurityDAO dao, @Named(ServiceConsts.SECURITY_SERVICE_NAME) RESTService securityService,
@@ -68,69 +68,78 @@ public class SecurityResource implements SecurityAPI {
 		this.configuration = configuration;
 	}
 
-    /**
-     * Login method for the DLab user.
-     *
-     * @param credential user credential.
-     * @return 500 Internal Server Error if post response fails.
-     */
-    @POST
-    @Path("/login")
-    public Response userLogin(@Valid @NotNull UserCredentialDTO credential) {
-        log.debug("Try login for user {}", credential.getUsername());
-        try {
-            dao.writeLoginAttempt(credential);
-            return securityService.post(LOGIN, credential, Response.class);
-        } catch (Exception e) {
-            log.error("Try login for user {} fail", credential.getUsername(), e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage()).build();
-        }
-    }
+	/**
+	 * Login method for the DLab user.
+	 *
+	 * @param credential user credential.
+	 * @return 500 Internal Server Error if post response fails.
+	 */
+	@POST
+	@Path("/login")
+	public Response userLogin(@Valid @NotNull UserCredentialDTO credential) {
+		log.debug("Try login for user {}", credential.getUsername());
+		try {
+			dao.writeLoginAttempt(credential);
+			return securityService.post(LOGIN, credential, Response.class);
+		} catch (Exception e) {
+			log.error("Try login for user {} fail", credential.getUsername(), e);
+			final Status internalServerError = Status.INTERNAL_SERVER_ERROR;
+			return Response.status(internalServerError)
+					.entity(new ErrorDTO(internalServerError.getStatusCode(), e.getMessage()))
+					.type(MediaType.APPLICATION_JSON)
+					.build();
+		}
+	}
 
 
-    /**
-     * Authorize method for the dlab user.
-     *
-     * @param userInfo user info.
-     * @param username user name.
-     * @return 500 Internal Server Error if post request fails.
-     */
-    @POST
-    @Path("/authorize")
-    public Response authorize(@Auth UserInfo userInfo, @Valid @NotBlank(groups = AwsValidation.class) String username) {
-        log.debug("Try authorize accessToken {} for user info {}", userInfo.getAccessToken(), userInfo);
-        try {
-        	Status status = userInfo.getName().equalsIgnoreCase(username) ?
-        			Status.OK :
-        			Status.FORBIDDEN;
-        	if (status == Status.OK) {
-        		envStatusListener.registerSession(userInfo);
-        		if (configuration.isRolePolicyEnabled()) {
-        			UserRoles.initialize(dao, configuration.getRoleDefaultAccess());
-        		}
-        	}
-            return Response.status(status).build();
-        } catch (Exception e) {
-            throw new DlabException("Cannot authorize user " + username + ". " + e.getLocalizedMessage(), e);
-        }
-    }
+	/**
+	 * Authorize method for the dlab user.
+	 *
+	 * @param userInfo user info.
+	 * @param username user name.
+	 * @return 500 Internal Server Error if post request fails.
+	 */
+	@POST
+	@Path("/authorize")
+	public Response authorize(@Auth UserInfo userInfo,
+							  @Valid @NotBlank(groups = AwsValidation.class) String username) {
+		log.debug("Try authorize accessToken {} for user info {}", userInfo.getAccessToken(), userInfo);
+		try {
+			Status status = userInfo.getName().equalsIgnoreCase(username) ?
+					Status.OK :
+					Status.FORBIDDEN;
+			if (status == Status.OK) {
+				envStatusListener.registerSession(userInfo);
+				if (configuration.isRolePolicyEnabled()) {
+					UserRoles.initialize(dao, configuration.getRoleDefaultAccess());
+				}
+			}
+			return Response.status(status).build();
+		} catch (Exception e) {
+			throw new DlabException("Cannot authorize user " + username + ". " + e.getLocalizedMessage(), e);
+		}
+	}
 
-    /**
-     * Logout method for the DLab user.
-     *
-     * @param userInfo user info.
-     * @return 200 OK or 403 Forbidden.
-     */
-    @POST
-    @Path("/logout")
-    public Response userLogout(@Auth UserInfo userInfo) {
-        log.debug("Try logout for accessToken {}", userInfo.getAccessToken());
-        try {
-            envStatusListener.unregisterSession(userInfo);
-            return securityService.post(LOGOUT, userInfo.getAccessToken(), Response.class);
-        } catch (Exception e) {
-            log.error("Try logout for accessToken {}", userInfo.getAccessToken(), e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage()).build();
-        }
-    }
+	/**
+	 * Logout method for the DLab user.
+	 *
+	 * @param userInfo user info.
+	 * @return 200 OK or 403 Forbidden.
+	 */
+	@POST
+	@Path("/logout")
+	public Response userLogout(@Auth UserInfo userInfo) {
+		log.debug("Try logout for accessToken {}", userInfo.getAccessToken());
+		try {
+			envStatusListener.unregisterSession(userInfo);
+			return securityService.post(LOGOUT, userInfo.getAccessToken(), Response.class);
+		} catch (Exception e) {
+			log.error("Try logout for accessToken {}", userInfo.getAccessToken(), e);
+			final Status internalServerError = Status.INTERNAL_SERVER_ERROR;
+			return Response.status(internalServerError)
+					.entity(new ErrorDTO(internalServerError.getStatusCode(), e.getMessage()))
+					.type(MediaType.APPLICATION_JSON)
+					.build();
+		}
+	}
 }
