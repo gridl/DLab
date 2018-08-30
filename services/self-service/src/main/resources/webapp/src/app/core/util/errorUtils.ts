@@ -38,14 +38,12 @@ export class ErrorUtils {
   // }
 
   public static handleServiceError(errorMessage) {
-    if (errorMessage && CheckUtils.isJSON(errorMessage)) {
-      let error = errorMessage.json();
+    let error = errorMessage.json();
 
-      return Observable.throw({
-        status: error.code,
-        statusText: errorMessage.statusText,
-        message: error.message
-      });
-    }
-  } 
+    return Observable.throw({
+      status: error.code,
+      statusText: errorMessage.statusText,
+      message: error.message
+    });
+  }
 }

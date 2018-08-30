@@ -76,7 +76,10 @@ export class UploadKeyDialogComponent implements OnInit {
             this.checkInfrastructureCreationProgress.emit();
           }
         },
-        error => this.toastr.error(error.message, 'Oops!', { toastLife: 5000 }),
+        error => {
+          debugger;
+          this.toastr.error(error.message, 'Oops!', { toastLife: 5000 });
+        },
         this.userAccessKeyService);
       this.bindDialog.open(params);
     }
