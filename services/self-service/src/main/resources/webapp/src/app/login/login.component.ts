@@ -72,9 +72,7 @@ export class LoginComponent implements OnInit {
         if (DICTIONARY.cloud_provider === 'azure' && error && error.status === HTTP_STATUS_CODES.FORBIDDEN) {
           window.location.href = error.headers.get('Location');
         } else {
-          // this.error = ErrorUtils.handleError(error);
-
-          let errObj: { status: number, statusText: string, message: string } | any = ErrorUtils.handleServiceError(error);
+          let errObj = error.json();
           this.error = errObj.message;
           this.loading = false;
         }

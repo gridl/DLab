@@ -103,8 +103,8 @@ export class ApplicationSecurityService {
         })
         .catch(error => {
           // this.handleError(error);
-          error = ErrorUtils.handleServiceError(error);
-          this.emmitMessage(error.message);
+          let errObj = error.json();
+          this.emmitMessage(errObj.message);
           this.clearAuthToken();
 
           return Observable.of(false);
@@ -131,8 +131,8 @@ export class ApplicationSecurityService {
 
         if (response.status !== 200) {
           // this.handleError(response);
-          response = ErrorUtils.handleServiceError(response);
-          this.emmitMessage(response.message);
+          let errObj = response.json();
+          this.emmitMessage(errObj.message);
         }
         return false;
 
@@ -141,8 +141,8 @@ export class ApplicationSecurityService {
           window.location.href = error.headers.get('Location');
         } else {
           // this.handleError(error);
-          error = ErrorUtils.handleServiceError(error);
-          this.emmitMessage(error.message);
+          let errObj = error.json();
+          this.emmitMessage(errObj.message);
           return Observable.of(false);
         }
       });
